@@ -1,0 +1,158 @@
+.form {
+  width: 100%;
+  padding: 0 0 25px;
+}
+
+.detailsSubtitle {
+  margin-bottom: 20px;
+
+  font-weight: 600;
+  color: #6a6a6a;
+}
+
+.descripWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 6px;
+
+  color: #6a6a6a;
+}
+
+.nameWrapper {
+  display: flex;
+
+  margin-top: 15px;
+}
+
+.filedset {
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  &:disabled {
+    opacity: 0.5;
+
+    label,
+    input {
+      cursor: default;
+    }
+  }
+
+  legend {
+    margin-bottom: 5px;
+  }
+
+  &Name {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  &Fields {
+    width: 43%;
+    margin-bottom: 10;
+  }
+
+  &GameTimes {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+
+    & > * {
+      width: 47%;
+    }
+  }
+
+  &Restrooms {
+    width: 15%;
+    margin-right: 20px;
+  }
+
+  &Toiltes {
+    width: 19%;
+  }
+
+  &ParkingAvailable {
+    width: 35%;
+    margin-right: 15px;
+  }
+
+  &DistanceFields {
+    width: 45%;
+    margin-right: 15px;
+  }
+}
+
+.fieldTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6a6a6a;
+}
+
+.fieldList {
+  display: flex;
+  flex-wrap: wrap;
+
+  margin: 0 0 10px -30px;
+  padding: 0;
+
+  list-style: none;
+
+  li {
+    width: 255px;
+    margin: 16px 0 0 30px;
+  }
+}
+
+.restroomWrapper {
+  display: flex;
+  // justify-content: space-between;
+
+  margin-bottom: 15px;
+}
+
+.filedsetGolf {
+  padding-top: 25px;
+}
+
+.restroomDetails {
+  margin-bottom: 25px;
+}
+
+.parkingWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.parkingDetails {
+  margin-bottom: 25px;
+}
+
+.parkingDetailsWrapper {
+  margin-bottom: 20px;
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+  .section {
+    width: 35%;
+
+    &:nth-of-type(2) {
+      width: 50%;
+    }
+    &:nth-of-type(3) {
+      width: 10%;
+    }
+  }
+}
+.btnsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  & > :first-child {
+    margin-bottom: 10px;
+  }
+}

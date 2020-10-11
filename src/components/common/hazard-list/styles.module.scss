@@ -1,0 +1,49 @@
+.wrapper {
+  padding: 50px 30px 15px;
+}
+
+.hazardHeader {
+  margin-bottom: 30px;
+}
+
+.hazardTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 0 0 10px;
+
+  font-size: 22px;
+  color: #1c315f;
+}
+
+.hazardTitleDesc {
+  margin: 0;
+
+  text-align: center;
+  font-size: 18px;
+  color: #1c315f;
+}
+
+.hazardList {
+  dt {
+    font-size: 18px;
+    color: #1c315f;
+    font-weight: bold;
+
+    margin-bottom: 15px;
+
+    a {
+      color: inherit;
+    }
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+
+    margin-bottom: 15px;
+
+    color: #6a6a6a;
+  }
+}

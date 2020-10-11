@@ -1,0 +1,14 @@
+.headerWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 15px;
+}
+
+.scheduleList {
+  margin: 0 0 25px -5px;
+  padding: 0;
+
+  list-style: none;
+}

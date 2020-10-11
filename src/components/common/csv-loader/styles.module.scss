@@ -1,0 +1,78 @@
+.container {
+  width: 1000px;
+  height: 600px;
+  margin: 20px;
+
+  .linearProgressContainer {
+    margin-top: -10px;
+    margin-bottom: 5px;
+
+    .linearProgressLabel {
+      line-height: 1.6;
+      font-size: 12px;
+    }
+  }
+
+  .uploaderWrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    .checkboxWrapper {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .tableContainer {
+    height: 66%;
+    overflow-y: auto;
+    margin: 10px 0;
+  }
+
+  .selectWrapper {
+    & > div {
+      display: block;
+    }
+  }
+
+  .btnsWrapper {
+    display: flex;
+    justify-content: flex-end;
+    & > * {
+      margin-left: 10px;
+    }
+  }
+
+  .requiredFieldWrapper {
+    color: #6a6a6a;
+    .title {
+      font-weight: 600;
+    }
+  }
+
+  table th,
+  table td {
+    padding: 5px;
+  }
+}
+
+.resultContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 66%;
+  margin: 10px 0;
+  background-color: white;
+}
+
+.infoText {
+  width: 70%;
+  margin-top: 100px;
+  text-align: center;
+  font-size: 18px;
+}

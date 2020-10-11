@@ -1,0 +1,56 @@
+.container {
+  width: 560px;
+  padding: 32px;
+}
+.sectionTitle {
+  color: #1c315f;
+  font-size: 24px;
+  font-weight: 600;
+  padding-bottom: 16px;
+}
+.buttonsGroup {
+  padding-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  & > :first-child {
+    margin-right: 15px;
+  }
+}
+
+.sectionItem {
+  color: #6a6a6a;
+  padding-bottom: 4px;
+  .title {
+    font-weight: 600;
+  }
+}
+
+.sectionItemColorPicker {
+  @extend .sectionItem;
+  height: 36px;
+  margin-top: 1px;
+  z-index: 1;
+}
+
+.sectionRow {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 16px;
+}
+.sectionTitle {
+  color: #1c315f;
+  display: flex;
+  justify-content: space-between;
+  width: 747px;
+}
+.sectionLabel {
+  margin: 7px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #6a6a6a;
+  margin-bottom: 7px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}

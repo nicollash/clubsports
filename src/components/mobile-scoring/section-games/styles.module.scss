@@ -1,0 +1,32 @@
+.tabsWrapper {
+  display: flex;
+  width: 100%;
+  :global(.MuiTab-root) {
+    &:global(.Mui-selected) {
+      background-color: #3ca2eb;
+      color: white
+    }
+  }
+}
+
+.dayWrapper {
+  display: flex;
+  align-items: center;
+
+  margin: 0 0 5px;
+  padding: 0 15px;
+  max-width: 500px;
+}
+
+.dayTitle {
+  margin: 0 35px 0 0;
+
+  color: #6a6a6a;
+}
+
+.radionWrapper {
+  margin: 0 0 30px;
+  padding: 0 15px;
+  display: flex;
+  justify-content: center;
+}

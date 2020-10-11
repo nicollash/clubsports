@@ -1,0 +1,36 @@
+.fullScreenWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  height: 100%;
+}
+
+.title {
+  font-size: 28px;
+  color: #1c315f;
+  line-height: 43px;
+  font-weight: 600;
+}
+
+.headerWrapp {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  position: absolute;
+  z-index: 1000;
+}
+
+.titleWrapp {
+  padding: 14px 14px 0 14px;
+  font-size: 25px;
+  line-height: 43px;
+}
+
+.buttonWrapp {
+  margin: 14px;
+}
+
+.tableWrapp {
+  position: relative;
+}

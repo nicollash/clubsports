@@ -1,0 +1,35 @@
+.container {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .buttonsWrapper {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    margin-top: 7px;
+    height: 40px;
+    width: 240px;
+  }
+
+  .badgeContainer {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+
+    .badgeWrapper {
+      display: flex;
+      align-items: center;
+      margin-right: 30px;
+
+      div {
+        width: 10px;
+        height: 10px;
+        border-radius: 100%;
+        margin-right: 10px;
+      }
+    }
+  }
+}

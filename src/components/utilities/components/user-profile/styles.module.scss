@@ -1,0 +1,32 @@
+.editProfileForm {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+}
+
+.userNameWrapper {
+  display: flex;
+  justify-content: space-between;
+
+  margin: 0 0 15px;
+
+  fieldset {
+    width: 48%;
+
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+  }
+}
+
+.userTagFieldset {
+  width: 48%;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+}
+

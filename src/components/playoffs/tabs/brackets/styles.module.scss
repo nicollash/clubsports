@@ -1,0 +1,81 @@
+.container {
+  padding: 24px 15px;
+  margin: 0 0 50px;
+  background-color: #f4f4f4;
+  border-radius: 0 5px 5px 5px;
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+  min-height: 500px;
+  display: flex;
+
+  .seedsContainer {
+    width: 230px;
+    height: 490px;
+
+    .seedsWrapper {
+      background: #e8e8e8;
+      margin-top: 12px;
+      border-radius: 3px;
+      overflow-y: scroll;
+      height: 400px;
+      overflow-x: hidden;
+
+      > p {
+        margin-top: 15px;
+        justify-content: flex-start;
+      }
+
+      h4 {
+        text-align: center;
+        font-size: 14px;
+        color: #1c315f;
+        padding: 15px 0;
+      }
+    }
+  }
+
+  .selectWrapper {
+    width: 29.5%;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #6a6a6a;
+  }
+
+  .bodyWrapper {
+    width: calc(100% - 200px);
+    padding-left: 20px;
+
+    .bracketActions {
+      height: 80px;
+      margin-bottom: 2px;
+      width: 100%;
+      display: flex;
+      flex-direction: column-reverse;
+
+      .cardMessage {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      .buttonsWrapper {
+        display: flex;
+        justify-content: flex-end;
+
+        > button {
+          margin-right: 15px;
+        }
+
+        .reorderTeamsWrapper {
+          margin-left: 15px;
+
+          .reorderTeamsButtons {
+            display: flex;
+            width: 230px;
+            justify-content: space-between;
+            padding-left: 10px;
+          }
+        }
+      }
+    }
+  }
+}

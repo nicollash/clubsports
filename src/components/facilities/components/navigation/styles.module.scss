@@ -1,0 +1,36 @@
+.wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 25px;
+
+  background-color: #f4f4f4;
+
+  border-radius: 5px;
+
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.linkWrapper {
+  display: flex;
+}
+.btnsWrapper {
+  & > :first-child {
+    margin-right: 15px;
+  }
+}
+
+.libraryBtn {
+  display: flex;
+  align-items: center;
+
+  padding: 0 8px;
+
+  color: #00a3ea;
+}

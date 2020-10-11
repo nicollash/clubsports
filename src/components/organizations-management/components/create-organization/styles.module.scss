@@ -1,0 +1,37 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  width: 100%;
+}
+
+.sectionItem {
+  flex-grow: 0;
+
+  margin-bottom: 16px;
+
+  color: #6a6a6a;
+}
+.headingContainer {
+  display: flex;
+  justify-content: space-between;
+}
+.btnsGroup {
+  & > :nth-child(n) {
+    margin-right: 15px;
+  }
+}
+.formContainer {
+  display: flex;
+  .inputGroup {
+    width: 30%;
+  }
+  .inputGroup:first-of-type {
+    margin-right: 100px;
+  }
+}
+.btnsWrapper {
+  display: flex;
+  justify-content: flex-end;
+}

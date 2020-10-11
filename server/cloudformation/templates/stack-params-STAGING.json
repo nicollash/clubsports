@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "TourneyMasterPayments"
+  },
+  {
+    "ParameterKey": "PublicApiGatewayId",
+    "ParameterValue": "kr4h1pzp94"
+  },
+  {
+    "ParameterKey": "PublicRootResource",
+    "ParameterValue": "hfl0syi4x8"
+  }
+]

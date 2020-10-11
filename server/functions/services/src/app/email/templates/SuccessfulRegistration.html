@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <body
+    style="
+      font-family: Calibri;
+      color: #ffffff;
+      background: rgb(28, 49, 95);
+      background: linear-gradient(
+        135deg,
+        rgba(28, 49, 95, 1) 18%,
+        rgba(139, 139, 140, 0.4145367619704131) 80%,
+        rgba(4, 115, 163, 0.2520717759760154) 100%
+      );
+    "
+  >
+    <div>
+      <a href="https://www.tourneymaster.com">
+        <img
+          style="margin-left: 30px;"
+          alt="TourneyMaster"
+          src="https://tourneymaster.s3.amazonaws.com/Logos/tourney+master+color+200+x+156.png"
+          width="100;"
+          height="78;"
+      /></a>
+      <p style="text-align: right; margin-right: 150px; line-height: 50%;">
+        Invoice date: {{invoiceDate}}
+      </p>
+      <p style="text-align: right; margin-right: 150px; line-height: 50%;">
+        Ext Invoice ID: {{extPaymentId}}
+      </p>
+      <p style="text-align: right; margin-right: 150px; line-height: 50%;">
+        Int Invoice ID {{regResponseId}} (<a href="{{invoicePdf}}"
+          >Download PDF Copy</a
+        >)
+      </p>
+    </div>
+
+    <h3 style="margin-left: 10px; color: #ffffff;">Hi {{firstName}},</h3>
+    <p style="margin-left: 10px;">
+      We are happy to inform you that we have accepted your payment for
+      {{eventName}}. Your payment has been successfully charged on your credit
+      card {{card}}.
+    </p>
+    <p>
+      Team: {{teamName}}. Division: {{divisionName}}
+    </p>
+    <style type="text/css">
+      .tftable {
+        margin-left: 50px;
+        font-size: 13px;
+        color: #1c315f;
+        width: 60%;
+        border-width: 3px;
+        border-color: #a9a9a9;
+        border-collapse: collapse;
+      }
+      .tftable th {
+        font-size: 14px;
+        color: white;
+        background-color: #1c315f;
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #ffffff;
+        text-align: left;
+      }
+      .tftable tr {
+        background-color: #c9caca;
+      }
+      .tftable td {
+        font-size: 13px;
+        border-width: 3px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #ffffff;
+      }
+      .tftable tr:hover {
+        background-color: #ffff99;
+      }
+      /* .footer {
+        margin-left: 50px;
+        color: #1c315f;
+        border-width: 2px;
+        border-color: #a9a9a9;
+        border-collapse: collapse;
+      }
+      */
+      th:last-child,
+      td:last-child,
+      th:nth-last-child(1),
+      td:nth-last-child(1) {
+        text-align: right;
+      }
+      .center {
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+
+    <table class="tftable">
+      <tr>
+        <th>Line Item</th>
+        <th>Amount</th>
+      </tr>
+      <tr>
+        <td>Payment Plan:</td>
+        <td>{{paymentPlan}}</td>
+      </tr>
+      <tr>
+        <td>Original Amount:</td>
+        <td>{{amountDue}}</td>
+      </tr>
+      <tr>
+        <td>Amount Paid:</td>
+        <td>{{amountPaid}}</td>
+      </tr>
+      <tr>
+        <td>Outstanding Balance:</td>
+        <td>{{outstandingBalance}}</td>
+      </tr>
+    </table>
+    <p></p>
+    {{body}}
+
+    <p>{{cancellationPolicy}}</p>
+
+    <p style="margin-left: 10px; font: bold;">
+      We look forward to seeing you at the event!
+    </p>
+
+    <p style="margin-left: 10px;">Best regards,</p>
+    <p style="margin-left: 10px;">{{from}}</p>
+    {{eventLogo}}
+
+    <p></p>
+    <hr
+      style="
+        margin-left: 2 px;
+        border: 3 px;
+        border-radius: 10px;
+        width: 90%;
+        background-color: #848484;
+      "
+    />
+    <p></p>
+    <!-- Footer -->
+    <footer>
+      <div class="footer">
+        <p
+          style="
+            text-align: center;
+            line-height: 60%;
+            color: #1c315f;
+            text-shadow: 1px 1px #a6aaad;
+          "
+        >
+          © 2020 Copyright
+        </p>
+        <p
+          style="
+            text-align: center;
+            line-height: 50%;
+            color: #ffffff;
+            text-shadow: 1px 2px #1c315f;
+          "
+        >
+          The Club Sports Organization LLC
+        </p>
+
+        <p
+          style="
+            text-align: center;
+            line-height: 50%;
+            color: #ffffff;
+            text-shadow: 1px 2px #1c315f;
+          "
+        >
+          One World Trade Center | Suite 8500 | New York City | NY
+        </p>
+
+        <style type="text/css">
+          .centerImage {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+          }
+        </style>
+        <a href="https://www.theclubsportsorganization.com">
+          <img
+            class="centerImage"
+            src="https://clubsportsorganization.s3.amazonaws.com/images/CSO+Logo+-+White+Version+130+x+98.png"
+            width="100;"
+            height="78;"
+        /></a>
+      </div>
+    </footer>
+  </body>
+</html>

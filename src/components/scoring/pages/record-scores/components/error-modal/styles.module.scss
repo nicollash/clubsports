@@ -1,0 +1,21 @@
+.modalBody {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+
+  .message {
+    padding: 10px 0 20px 0;
+    color: #565656;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 300px;
+  }
+
+  .btnsWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}

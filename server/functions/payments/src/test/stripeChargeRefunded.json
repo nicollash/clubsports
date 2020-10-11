@@ -1,0 +1,132 @@
+{
+  "id": "evt_1HAlMkBKD7Z3vJuLHiv6bPPD",
+  "object": "event",
+  "account": "acct_1H0QOnBKD7Z3vJuL",
+  "api_version": "2019-12-03",
+  "created": 1596152450,
+  "data": {
+    "object": {
+      "id": "ch_1HAgMSBKD7Z3vJuLknsf61iy",
+      "object": "charge",
+      "amount": 1100,
+      "amount_refunded": 200,
+      "application": "ca_Gy9D4jQMzyYvoyPYzElb1IdGudjfkaVS",
+      "application_fee": "fee_1HAgMSBKD7Z3vJuLAt6GXmHy",
+      "application_fee_amount": 6,
+      "balance_transaction": "txn_1HAgMSBKD7Z3vJuLiirto3Ac",
+      "billing_details": {
+        "address": {
+          "city": "Miami",
+          "country": "US",
+          "line1": "",
+          "line2": "",
+          "postal_code": "22222",
+          "state": "Florida"
+        },
+        "email": "dbro@test.com",
+        "name": "David Brown",
+        "phone": "11231232131"
+      },
+      "calculated_statement_descriptor": "TOURNEYMASTER",
+      "captured": true,
+      "created": 1596133212,
+      "currency": "cad",
+      "customer": "cus_HdKkJFZBunaBAK",
+      "description": "Subscription update",
+      "destination": null,
+      "dispute": null,
+      "disputed": false,
+      "failure_code": null,
+      "failure_message": null,
+      "fraud_details": {},
+      "invoice": "in_1HAgMQBKD7Z3vJuLH1SF5jn4",
+      "livemode": false,
+      "metadata": {},
+      "on_behalf_of": null,
+      "order": null,
+      "outcome": {
+        "network_status": "approved_by_network",
+        "reason": null,
+        "risk_level": "normal",
+        "risk_score": 40,
+        "seller_message": "Payment complete.",
+        "type": "authorized"
+      },
+      "paid": true,
+      "payment_intent": "pi_1HAgMSBKD7Z3vJuLfdkPToTz",
+      "payment_method": "pm_1HAgMMBKD7Z3vJuLX5VL3Npe",
+      "payment_method_details": {
+        "card": {
+          "brand": "visa",
+          "checks": {
+            "address_line1_check": null,
+            "address_postal_code_check": "pass",
+            "cvc_check": "pass"
+          },
+          "country": "US",
+          "exp_month": 2,
+          "exp_year": 2022,
+          "fingerprint": "fS63SQadU0Hb3Ut9",
+          "funding": "credit",
+          "installments": null,
+          "last4": "4242",
+          "network": "visa",
+          "three_d_secure": null,
+          "wallet": null
+        },
+        "type": "card"
+      },
+      "receipt_email": null,
+      "receipt_number": null,
+      "receipt_url": "https://pay.stripe.com/receipts/acct_1H0QOnBKD7Z3vJuL/ch_1HAgMSBKD7Z3vJuLknsf61iy/rcpt_HkAhL5QMpTRNjlYQ9cydG0A1Ijo6Unz",
+      "refunded": false,
+      "refunds": {
+        "object": "list",
+        "data": [
+          {
+            "id": "re_1HAlMjBKD7Z3vJuLZEqwaw3V",
+            "object": "refund",
+            "amount": 200,
+            "balance_transaction": "txn_1HAlMkBKD7Z3vJuLPGlnsqKI",
+            "charge": "ch_1HAgMSBKD7Z3vJuLknsf61iy",
+            "created": 1596152449,
+            "currency": "cad",
+            "metadata": {},
+            "payment_intent": "pi_1HAgMSBKD7Z3vJuLfdkPToTz",
+            "reason": "duplicate",
+            "receipt_number": null,
+            "source_transfer_reversal": null,
+            "status": "succeeded",
+            "transfer_reversal": null
+          }
+        ],
+        "has_more": false,
+        "total_count": 1,
+        "url": "/v1/charges/ch_1HAgMSBKD7Z3vJuLknsf61iy/refunds"
+      },
+      "review": null,
+      "shipping": null,
+      "source": null,
+      "source_transfer": null,
+      "statement_descriptor": null,
+      "statement_descriptor_suffix": null,
+      "status": "succeeded",
+      "transfer_data": null,
+      "transfer_group": null
+    },
+    "previous_attributes": {
+      "amount_refunded": 0,
+      "refunds": {
+        "data": [],
+        "total_count": 0
+      }
+    }
+  },
+  "livemode": false,
+  "pending_webhooks": 1,
+  "request": {
+    "id": "req_Feuczvomm3n8Jy",
+    "idempotency_key": null
+  },
+  "type": "charge.refunded"
+}

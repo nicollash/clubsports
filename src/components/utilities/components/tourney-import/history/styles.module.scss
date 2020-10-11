@@ -1,0 +1,41 @@
+.tournanment {
+  width: calc(100% - 20px);
+}
+.detailsSubtitle {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  line-height: 43px !important;
+}
+.tournanmentHeader {
+  width: 100%;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+  background-color: #F4F4F4;
+  padding: 2rem;
+
+  > div {
+    display: flex;
+    flex-direction: row;
+    >span {
+      display: block;
+      line-height: 42px;
+      margin-right: 20px;
+      margin-bottom: 0 !important;
+    }
+  }
+}
+.tournanmentBody {
+  .status {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6a6a6a;
+    margin-bottom: 7px;
+  }
+}
+.tabHeader {
+  min-height: 3.5rem;
+  margin-bottom: 1.5rem;
+}
+.tabRoot {
+  width: 100%;
+}

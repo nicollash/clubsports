@@ -1,0 +1,14 @@
+.container {
+  width: 100%;
+  min-width: 792px;
+}
+
+.heading {
+  display: flex;
+  justify-content: space-between;
+  margin: 24px 0;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+}

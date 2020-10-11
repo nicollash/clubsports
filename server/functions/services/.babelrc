@@ -1,0 +1,19 @@
+{
+  "presets": [
+    "@babel/preset-typescript",
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "12"
+        }
+      }
+    ]
+  ],
+  "sourceMaps": "inline",
+  "retainLines": true,
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    "babel-plugin-static-fs"
+  ]
+}

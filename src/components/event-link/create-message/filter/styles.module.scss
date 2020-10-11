@@ -1,0 +1,21 @@
+
+.selectWrapper {
+  width: 23%;
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+}
+
+.filterWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.selectTitle {
+  color: #6a6a6a;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19px;
+  margin: 7px 0;
+}

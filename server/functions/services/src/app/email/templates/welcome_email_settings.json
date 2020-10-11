@@ -1,0 +1,9 @@
+{
+  "from": "SuperBowl HQ",
+  "replyTo": "pm@gmind.info",
+  "subject": "Welcome to SuperBowl",
+  "contactPerson": "David Brown (david@tourneymaster.org)",
+  "includeCancellationPolicy": 1,
+  "includeEventLogo": 1,
+  "body": "<p>Additional information</p>"
+}

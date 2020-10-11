@@ -1,0 +1,62 @@
+@import 'src/styles/variables.scss';
+
+.wrapper {
+  width: 540px;
+  height: 100%;
+  padding: 20px;
+}
+.infoCell {
+  font-size: 16px;
+  color: $textGrayColor;
+  display: flex;
+  width: 50%;
+
+  span {
+    font-weight: 600;
+    padding-bottom: 5px;
+    margin-right: 8px;
+  }
+}
+
+.inputsWrapper {
+  padding: 14px 0;
+}
+
+.buttonsWrapper {
+  justify-content: flex-end;
+  margin-top: 20px;
+
+  button {
+    margin-left: 15px;
+  }
+}
+.inputsWrapper,
+  .firstRow,
+  .secondRow,
+  .buttonsWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+.radioBtnsWrapper {
+  padding-top: 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.btnWrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 5px;
+}
+.message {
+  padding-top: 22px;
+}
+.optionsContainer {
+  display: flex;
+
+  .checkbox{
+    padding-top: 9px;
+  }
+}

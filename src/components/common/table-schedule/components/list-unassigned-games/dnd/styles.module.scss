@@ -1,0 +1,268 @@
+.cardContainer {
+  position: relative;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  width: 290px;
+  height: 24px;
+  padding: 0 3px 0 5px;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  line-height: 17px;
+  color: #6a6a6a;
+  border-radius: 2px;
+  background-color: #ffffff;
+  overflow: hidden;
+  box-shadow: 2px 2px 9px -4px #00000080;
+  transition: background-color 0.25s ease-in-out;
+  cursor: grab;
+
+  :active {
+    cursor: grabbing;
+  }
+
+  &Error {
+    border: 1px solid #ff0f19;
+  }
+
+  &Heatmap {
+    border: 0;
+    color: #ffffff;
+  }
+
+  &::before {
+    content: '';
+    flex-shrink: 0;
+    height: 15px;
+    width: 15px;
+    margin-right: 6px;
+    background-image: url(../../../../../../assets/moveIconCard.svg);
+  }
+
+  .cardNameWrapper {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    max-width: 121px;
+    padding-right: 5px;
+  }
+
+  .cardTextWrapper {
+    flex-grow: 1;
+    display: block;
+    max-width: 120px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    &Error {
+      max-width: 100px;
+    }
+  }
+
+  .cardOptionsWrapper {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    border-left: 1px solid #f4f4f4;
+
+    .scoresInputWrapper {
+      margin: 0;
+      padding: 0;
+
+      input {
+        width: 32px;
+        padding-left: 5px;
+
+        font: inherit;
+        color: inherit;
+        font-size: 12px;
+        font-style: italic;
+        line-height: 17px;
+        background-color: transparent;
+        border: 0;
+
+        appearance: none;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    .lockBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      border: 0;
+      cursor: pointer;
+
+      svg {
+        width: 20px;
+      }
+    }
+  }
+}
+
+.dropContainer {
+  width: 180px;
+  height: 24px;
+  margin: 0 0 4px;
+  border-radius: 2px;
+  background-color: #ffffff;
+
+  &.bracketContainer {
+    margin: 0;
+    background-color: #414141;
+
+    &.dropContainerTop {
+      border-radius: 2px 2px 0 0;
+    }
+
+    &.dropContainerBottom {
+      border-radius: 0 0 2px 2px;
+    }
+  }
+}
+
+.isLocked {
+  cursor: not-allowed;
+  opacity: 0.7 !important;
+  :active {
+    cursor: not-allowed;
+  }
+}
+
+.seedContainer {
+  position: relative;
+
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #828282;
+  padding: 1px 0px 1px 5px;
+  font-size: 12px;
+  border-radius: 2px;
+
+  .seedName {
+    max-width: 120px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  &:hover {
+    cursor: grab;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.heatmap {
+    color: #ebebeb;
+    font-weight: 600;
+  }
+
+  .cardOptionsWrapper {
+    border-left: 1px solid #f4f4f4;
+    width: 34px;
+    margin-right: 3px;
+    margin-left: auto;
+
+    .scoresInputWrapper {
+      margin: 0;
+      padding: 0;
+
+      input {
+        width: 32px;
+        padding-left: 5px;
+        color: inherit;
+        font-size: 12px;
+        font-style: italic;
+        line-height: 17px;
+        background-color: transparent;
+        border: 0;
+        appearance: none;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+  }
+
+  &.seedContainerTop {
+    border-radius: 2px 2px 0 0;
+    &::before {
+      content: '';
+      flex-shrink: 0;
+      height: 22px;
+      width: 6px;
+      margin-top: 1px;
+      margin-right: 10px;
+      margin-left: -3px;
+      border-radius: 2px 2px 0 0;
+      background-color: #00000047;
+      // background-color: #ffffff47;
+      // content: '';
+      // flex-shrink: 0;
+      // height: 16px;
+      // width: 14px;
+      // margin-top: 8px;
+      // margin-right: 6px;
+      // border-radius: 100% 100% 0 0;
+      // background-color: #e0e0e0;
+    }
+  }
+
+  &.seedContainerBottom {
+    border-radius: 0 0 2px 2px;
+    &::before {
+      content: '';
+      flex-shrink: 0;
+      height: 22px;
+      width: 6px;
+      margin-bottom: 2px;
+      margin-right: 10px;
+      margin-left: -3px;
+      border-radius: 0 0 2px 2px;
+      background-color: #00000047;
+      // background-color: #ffffff47;
+      // content: '';
+      // flex-shrink: 0;
+      // height: 16px;
+      // width: 14px;
+      // margin-bottom: 8px;
+      // margin-right: 6px;
+      // border-radius: 0 0 100% 100%;
+      // background-color: #e0e0e0;
+    }
+  }
+}
+
+.cancelIcon {
+  z-index: 100;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 60px;
+  height: 22px;
+}

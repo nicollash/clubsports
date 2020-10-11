@@ -1,0 +1,83 @@
+$containerWidth: 600px;
+$containerHeight: 230px;
+
+.dialogPaper {
+  position: absolute !important;
+  margin: 0 !important;
+  max-height: none !important;
+}
+
+.container {
+  width: $containerWidth;
+  height: $containerHeight;
+
+  .wrapper {
+    background-color: #ececec;
+    width: $containerWidth;
+    height: $containerHeight;
+    display: flex;
+    flex-direction: column;
+
+    .innerWrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+
+      .leftColumn,
+      .rightColumn {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        padding: 10px 20px;
+      }
+
+      .withIconWrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+        svg,
+        span {
+          font-size: 18px;
+          color: #545454;
+        }
+      }
+
+      .leftColumn {
+        padding: 10px 0px 10px 20px;
+      }
+
+      .rightColumn {
+        .buttonsWrapper {
+          display: flex;
+          width: 100%;
+          align-items: normal;
+          justify-content: space-between;
+          padding: 7px 0 0 0;
+        }
+
+        .checkboxWrapper {
+          width: 100%;
+          display: flex;
+          justify-content: flex-start;
+        }
+      }
+    }
+
+    .controlWrapper {
+      height: 50px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 0 20px;
+
+      button:first-child {
+        margin-right: 20px;
+      }
+    }
+  }
+}

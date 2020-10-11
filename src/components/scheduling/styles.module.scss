@@ -1,0 +1,268 @@
+.container {
+  .noFoundWrapper {
+    padding: 40px 20px;
+    text-align: center;
+
+    span {
+      font-size: 21px;
+      color: #878787;
+    }
+  }
+
+  .errorMessage {
+    font-size: 17px;
+    color: red;
+    cursor: default;
+
+    svg {
+      margin-right: 10px;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    margin: 0 0 12px;
+
+    .heading {
+      display: flex;
+    }
+  }
+
+  .titleWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tourneyArchitect {
+    width: 100%;
+    margin-left: -24px;
+
+    .sectionCell {
+      display: flex;
+      align-items: center;
+
+      font-size: 15px;
+      color: #6a6a6a;
+
+      div.sectionCellHeader {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-start;
+
+        svg {
+          margin-left: 8px;
+        }
+      }
+
+      span {
+        font-weight: 600;
+        padding-bottom: 5px;
+      }
+    }
+
+    .taFirst {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 35px;
+      padding: 16px 24px;
+
+      background-color: #f4f4f4;
+
+      border-radius: 5px;
+
+      box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .taSecond {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 15px;
+      input {
+        text-align: center;
+      }
+    }
+
+    .results {
+      display: flex;
+      justify-content: space-between;
+
+      min-height: 64px;
+      margin-bottom: 15px;
+      padding: 12px 14px;
+
+      background-color: #f4f4f4;
+
+      border-radius: 5px;
+    }
+
+    .resultsBtns {
+      display: flex;
+      justify-content: flex-end;
+
+      margin: 0 -7px 15px;
+    }
+
+    .numberGames {
+      margin: 0;
+      padding: 0;
+
+      border: 0;
+
+      legend {
+        font-size: 16px;
+        font-weight: 600;
+        color: #6a6a6a;
+        white-space: nowrap;
+      }
+    }
+
+    .numberGamesWrapper {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .tournamentPlay,
+  .brackets {
+    width: 100%;
+
+    .sectionCellHor {
+      display: flex;
+      font-size: 16px;
+      color: #6a6a6a;
+
+      span {
+        font-weight: 600;
+        margin-right: 8px;
+      }
+    }
+
+    .tnFirst,
+    .tnSecond {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+
+    .scheduleStatus {
+      height: 12px;
+      width: 12px;
+      border-radius: 50%;
+      align-self: center;
+      margin-left: 4px;
+    }
+  }
+
+  .tournamentList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+
+    .tournamentPlay {
+      width: 49%;
+
+      margin-bottom: 25px;
+    }
+  }
+
+  .textWrapper {
+    display: flex;
+
+    margin: 0 0 10px;
+
+    font-size: 16px;
+    color: #6a6a6a;
+
+    b {
+      margin-right: 5px;
+    }
+  }
+
+  .nameWrapper {
+    flex-grow: 1;
+
+    padding: 0 5px 0 0;
+  }
+
+  .dateWrapper {
+    white-space: nowrap;
+  }
+
+  .textNameWrapper {
+    flex-grow: 1;
+
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .btnsWrapper {
+    display: flex;
+    justify-content: space-between;
+
+    margin: 0 -5px;
+  }
+
+  .bracketsList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+
+    .brackets {
+      width: 49%;
+
+      margin-bottom: 25px;
+    }
+  }
+}
+
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  padding: 20px;
+
+  > span {
+    font-size: 16px;
+    color: #646363;
+    padding: 0 0 10px 0;
+    line-height: 1.4;
+    margin-top: 10px;
+
+    > b {
+      white-space: nowrap;
+      margin-top: 20px;
+      display: block;
+      text-align: center;
+    }
+  }
+
+  .modalBtnsWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding: 0 30px;
+
+    > button {
+      margin-top: 20px;
+      margin-left: 20px;
+    }
+  }
+}

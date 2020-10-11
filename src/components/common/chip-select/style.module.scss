@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  // overflow-x: hidden;
+  position: relative;
+
+  .label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6a6a6a;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    white-space: nowrap;
+  }
+
+  .placeholder {
+    position: absolute;
+    z-index: 10;
+    top: 10px;
+    left: 18px;
+    color: silver;
+    pointer-events: none;
+  }
+}

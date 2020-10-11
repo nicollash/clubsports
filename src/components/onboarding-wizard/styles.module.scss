@@ -1,0 +1,41 @@
+.container {
+  width: 800px;
+  height: 100%;
+  margin: 20px;
+  color: #6a6a6a;
+  .headerWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .radioBtnsWrapper {
+    padding-top: 9px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .statusWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 5px;
+
+    a {
+      color: #00a3ea;
+      font-weight: 500;
+    }
+
+    .btnWrapper {
+      & > :nth-child(n) {
+        margin-right: 15px;
+      }
+    }
+  }
+  .message {
+    padding-top: 22px;
+  }
+}
+
+.overflow {
+  overflow: auto;
+}

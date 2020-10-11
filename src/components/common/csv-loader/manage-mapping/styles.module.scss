@@ -1,0 +1,39 @@
+.container {
+  width: 500px;
+  height: 300px;
+  margin: 20px;
+  color: #6a6a6a;
+
+  .sectionTitle {
+    color: #1c315f;
+    font-size: 24px;
+    font-weight: 600;
+    padding-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.mappingsTable {
+  margin-bottom: 6px;
+
+  background-color: #ffffff;
+
+  border-radius: 6px;
+  width: 100%;
+
+  th {
+    height: 30px;
+    text-align: left;
+
+    color: #6a6a6a;
+  }
+
+  td,
+  th {
+    padding-left: 5px;
+    border-bottom: 2px solid #ececec;
+  }
+}
+.mappingName {
+  width: 85%;
+}

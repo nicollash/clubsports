@@ -1,0 +1,26 @@
+.container {
+  width: 450px;
+  padding: 32px 32px 24px 32px;
+}
+.sectionItemWarning {
+  color: #6a6a6a;
+  font-weight: 600;
+  display: flex;
+  padding-bottom: 16px;
+  .iconContainer {
+    align-self: center;
+    padding-right: 8px;
+  }
+  .title {
+    font-weight: 600;
+  }
+}
+.buttonsGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.message {
+  color: #6a6a6a;
+  font-weight: 600;
+}

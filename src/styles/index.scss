@@ -1,0 +1,165 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  min-height: 100vh;
+
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  line-height: 21px;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-color: #ececec;
+
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  margin: 0;
+  font-size: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+
+  // overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+}
+
+.visually-hidden {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  clip: rect(0 0 0 0);
+  clip-path: inset(100%);
+}
+#historical-imports {
+  margin-bottom: 2.75rem;
+}
+#alert-dialog-box {
+  .MuiPaper-root {
+    padding: 1.5rem;
+  }
+}
+#alert-dialog-title {
+  h2 {
+    color: #1c315f;
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    line-height: 43px !important;
+  }
+}
+
+.MuiToolbar-root {
+  :nth-child(2) {
+    order: 2;
+  }
+  
+  :nth-child(3) {
+    order: 3;
+  }
+  
+  :nth-child(4) {
+    order: 1;
+    margin-left: 20px;
+  }
+}
+.ag-theme-alpine .ag-header {
+  background: linear-gradient(121deg, #073b65 38%, #0079ae);
+  border-bottom: solid 1px;
+  border-bottom-color: #babfc7;
+  border-bottom-color: var(--ag-border-color, #babfc7);
+  font-family: 'Open Sans', sans-serif;
+  .ag-header-cell-text{
+    color: white;
+  }
+      .ag-header-cell-label{
+      .ag-sort-ascending-icon,  .ag-sort-descending-icon {
+      
+      color: white;
+    
+  }
+  .ag-cell-label-container{
+     .ag-header-icon{
+    color: white !important;
+  }
+  }
+ 
+  }
+}
+
+.ag-root ::-webkit-scrollbar {
+  width: .9em;
+  height: .9em;
+}
+.ag-root ::-webkit-scrollbar-button {
+  background: #ccc;
+      height: 0;
+  width: 0;
+}
+.ag-root ::-webkit-scrollbar-track-piece {
+      background: #eeeeee;
+  border-radius: 6px;
+}
+
+.ag-root ::-webkit-scrollbar-thumb{
+  
+  background: #999;
+  border-radius: 6px;
+}
+
+.ag-theme-alpine{
+.ag-menu{
+  background-color: #2a3234;
+  color: #fff;
+}
+} 

@@ -1,0 +1,10 @@
+.muiTableContainer {
+  height: 66%;
+  overflow-y: auto;
+  margin: 10px 0;
+
+  table th,
+  table td {
+    padding: 10px !important;
+  }
+}

@@ -1,0 +1,227 @@
+.section {
+  padding: 24px 15px;
+  margin: 0 0 50px;
+  background-color: #f4f4f4;
+  border-radius: 5px;
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+  border-top-left-radius: 0px;
+  min-width: 1412px;
+}
+
+.checkboxWrapper {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.diagnosticsWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  width: 290px;
+  color: #6a6a6a;
+  font-weight: 600;
+  margin-left: 20px;
+}
+
+.scheduleTableWrapper {
+  display: flex;
+  position: relative;
+  padding-top: 12px;
+
+  .topAreaWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    top: -15px;
+    width: 100%;
+
+    .topCheckboxWrapper {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+
+    .topBtnsWrapper {
+      width: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-right: 20px;
+
+      h3 {
+        font-size: 16px;
+        color: #6a6a76;
+      }
+    }
+  }
+  
+  .scoring{
+  padding-top: 0;
+  }
+}
+
+.tableWrapper {
+  flex-grow: 1;
+
+  .headerWrapper {
+    display: flex;
+    align-items: flex-end;
+    min-height: 110px;
+
+    .popupAdvanced {
+      margin: 10px;
+    }
+  }
+
+  @media screen and (max-width: 1366px) {
+    max-width: 1060px;
+  }
+}
+
+.btnsWrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.listWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  height: inherit;
+  padding: 8px 5px 5px;
+  margin: 26px 8px 0 0;
+  background-color: #ececec;
+  border-radius: 2px;
+  transition: background-color 0.25s ease-in-out;
+
+  .title {
+    margin: 0;
+    text-align: center;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 700;
+    color: #6a6a6a;
+  }
+
+  .checkboxWrapper {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+  }
+}
+
+.toggleButtomGroup {
+  width: 100%;
+}
+
+.modalWrapper {
+  width: 640px;
+  height: 300px;
+  display: '';
+  padding: 0 20px;
+}
+
+.allStarButtonBar {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selectBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.formWrapperAllstar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 300px;
+  width: 600px;
+  height: 240px;
+}
+
+.formWrapperPractice {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 300px;
+  width: 600px;
+  height: 240px;
+}
+
+.modalName {
+  margin: 20px 0px;
+  text-align: center;
+}
+
+.modalDescription {
+  text-align: center;
+}
+
+.controlModalZone {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  min-width: 150px;
+}
+
+.buttonControl {
+  margin-right: 25px;
+}
+
+.selectWrap {
+  margin-left: 25px;
+  &:first-child {
+    margin-left: 0px;
+  }
+}
+
+.homeTeam {
+  margin-top: 10px;
+}
+
+[class*="MuiToggleButtonGroup-root"] {
+  width: 100% !important;
+  margin-top: 8px;
+}
+
+.addExtraGamesWrapper {
+  display: flex;
+  justify-content: center;
+
+  & > * {
+    margin-right: 8px;
+    background: rgba(0, 0, 0, 0);
+  }
+
+  &:last-child > * {
+    margin-right: 0;
+  }
+}
+
+.title {
+  font-size: 32px;
+  color: #1c315f;
+  line-height: 43px;
+  font-weight: 600;
+}
+
+.titleWrapp {
+  font-size: 28px;
+  line-height: 43px;
+}

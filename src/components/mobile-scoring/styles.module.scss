@@ -1,0 +1,28 @@
+.main {
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.mainTitle {
+  margin: 0 0 15px;
+
+  text-align: center;
+  line-height: 1.5;
+
+  color: #1c315f;
+}
+
+.eventSelectWrapper {
+  display: flex;
+  align-items: center;
+
+  padding: 0 15px;
+  max-width: 500px;
+}
+
+.eventSelectTitle {
+  margin: 0 25px 0 0;
+
+  color: #6a6a6a;
+}

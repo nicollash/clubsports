@@ -1,0 +1,28 @@
+.header {
+  background-color: #0081b9;
+
+  margin: 0 0 70px;
+}
+
+.headerWrapper {
+  position: relative;
+
+  max-width: 1200px;
+  min-height: 70px;
+  margin: 0 auto;
+  padding: 20px 15px;
+}
+
+.headerLogoWrapper {
+  position: absolute;
+  bottom: 0;
+  transform: translateY(50%);
+
+  margin: 0;
+}
+
+.headerLogoWrapper a {
+  font-size: 35px;
+  color: #ffffff;
+  text-decoration: none;
+}

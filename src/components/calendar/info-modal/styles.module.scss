@@ -1,0 +1,36 @@
+.container {
+  width: 510px;
+  padding: 32px;
+}
+.sectionTitle {
+  color: #1c315f;
+  font-size: 24px;
+  font-weight: 600;
+  padding-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+.buttonsGroup {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  & > :first-child {
+    margin-right: 15px;
+  }
+}
+
+.sectionItem {
+  display: flex;
+  color: #6a6a6a;
+  padding-bottom: 10px;
+  .title {
+    font-weight: 600;
+    align-self: flex-end;
+    margin-right: 5px;
+  }
+}
+.sectionItemEdit {
+  @extend .sectionItem;
+  width: 350px;
+  justify-content: space-between;
+}

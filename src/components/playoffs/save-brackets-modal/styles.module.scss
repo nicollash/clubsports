@@ -1,0 +1,16 @@
+.popupWrapper {
+  padding: 32px 25px 25px 32px;
+  width: 460px;
+
+  .popupText {
+    margin-bottom: 24px;
+    color: #6a6a6a;
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  .btnsWrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

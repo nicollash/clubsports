@@ -1,0 +1,407 @@
+# TourneyMasterApiExtensions.yaml
+#
+# Date: 04/28/2020
+
+Parameters:
+  ProjectName:
+    Type: String
+    Description: Name of the project to be used in naming everything else
+  PublicApiGatewayId:
+    Type: String
+    Description: Public API Gateway Api ID
+  PublicRootResource:
+    Type: String
+    Description: Public API Gateway Root Resource ID
+
+Resources:
+  UserEventsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ${ProjectName}-UserEventsTopic
+  IncomingMessageTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ${ProjectName}-IncomingMessageTopic
+  ErrorsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ${ProjectName}-ErrorsTopic
+
+  UnsentEmailsQueue:
+    Type: AWS::SQS::Queue
+
+  EmailsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      DelaySeconds: 0
+      VisibilityTimeout: 60
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt UnsentEmailsQueue.Arn
+        maxReceiveCount: 3
+
+  EmailsQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref EmailsQueue
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*" # TODO: Specify EventsTopic
+            Action: SQS:SendMessage
+            Resource: "*" # TODO: Specify this queue
+
+  IncomingMessageTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref IncomingMessageTopic
+      Endpoint: !GetAtt IncomingMessageFunction.Arn
+      Protocol: lambda
+
+  UserEventsTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref UserEventsTopic
+      Endpoint: !GetAtt EmailsQueue.Arn
+      Protocol: sqs
+
+  LambdaExecRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub LambdaExecRole${ProjectName}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: AWSLambdaBasicExecutionRole
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+        - PolicyName: PublishMessagesToSNS
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: sns:*
+                Resource:
+                  - !Ref ErrorsTopic
+                  - !Ref UserEventsTopic
+        - PolicyName: ReceiveMessagesFromSQS
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource:
+                  - !GetAtt EmailsQueue.Arn
+        - PolicyName: UseSES
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: ses:*
+                Resource: "*"
+        - PolicyName: GetSecretValue
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${ProjectName}*
+        - PolicyName: GetSMParameter
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: ssm:GetParameter
+                Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*
+
+  SyncProductsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${ProjectName}-SyncProductsFunction
+      Description: !Sub ${ProjectName}-SyncProductsFunction
+      Handler: syncProducts.handler
+      Role: !GetAtt LambdaExecRole.Arn
+      Code:
+        ZipFile: 'exports.handler = function(event, context) { console.log("Hello World")}'
+      Runtime: nodejs12.x
+      MemorySize: 256
+      Timeout: 60
+      Environment:
+        Variables:
+          EVENT_NOTIFICATIONS_TOPIC: !Ref ErrorsTopic
+          STRIPE_SECRET_KEY: ""
+          STRIPE_PUBLISHABLE_KEY: ""
+          PUBLIC_API_BASE_URL: "1"
+
+  PaymentsApiFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${ProjectName}-PaymentsApiFunction
+      Description: Create PaymentIntent
+      Handler: index.handler
+      Role: !GetAtt LambdaExecRole.Arn
+      Code:
+        ZipFile: "import json"
+      Runtime: nodejs12.x
+      MemorySize: 1024
+      Timeout: 120
+      Environment:
+        Variables:
+          EVENT_NOTIFICATIONS_TOPIC: !Ref ErrorsTopic
+          SMParameterName: "TourneyMasterAPIv2"
+          STRIPE_SECRET_KEY: ""
+          STRIPE_PUBLISHABLE_KEY: ""
+          STRIPE_WEBHOOK_SIGNING_SECRET: ""
+          PUBLIC_API_BASE_URL: "1"
+
+  ServicesApiFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${ProjectName}-ServicesApiFunction
+      Description: TourneyMaster extensions
+      Handler: index.handler
+      Role: !GetAtt LambdaExecRole.Arn
+      Code:
+        ZipFile: "import json"
+      Runtime: nodejs12.x
+      Timeout: 60
+      MemorySize: 1024
+      Environment:
+        Variables:
+          SMParameterName: "TourneyMasterAPIv2"
+          FONTCONFIG_PATH: "/var/task/fonts"
+
+  SendEmailFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${ProjectName}-SendEmailFunction
+      Description: !Sub ${ProjectName}-SendEmailFunction
+      Handler: sendEmail.handler
+      Role: !GetAtt LambdaExecRole.Arn
+      Code:
+        ZipFile: "exports.handler = function(event, context) { console.log(`Event: %{event}`)}"
+      Runtime: nodejs12.x
+      Timeout: 15
+      Environment:
+        Variables:
+          EVENT_NOTIFICATIONS_TOPIC: !Ref ErrorsTopic
+
+  IncomingMessageFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${ProjectName}-IncomingMessageFunction
+      Handler: incomingMessage.handler
+      Role: !GetAtt LambdaExecRole.Arn
+      Code:
+        ZipFile: 'exports.handler = function(event, context) { console.log("Hello World")}'
+      Runtime: nodejs12.x
+      Timeout: 15
+      Environment:
+        Variables:
+          INCOMING_MESSAGE_TOPIC: !Ref IncomingMessageTopic
+
+  EmailSystemFunctionEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      Enabled: True
+      EventSourceArn: !GetAtt EmailsQueue.Arn
+      FunctionName: !GetAtt SendEmailFunction.Arn
+
+  IncomingMessagePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt IncomingMessageFunction.Arn
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref IncomingMessageTopic
+
+  ServicesPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt ServicesApiFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${PublicApiGatewayId}/*/*/*
+
+  PaymentsPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt PaymentsApiFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${PublicApiGatewayId}/*/*/*
+
+  PaymentsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref PublicApiGatewayId
+      ParentId: !Ref PublicRootResource
+      PathPart: "payments"
+
+  ProxyResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref PublicApiGatewayId
+      ParentId: !Ref PaymentsApiResource
+      PathPart: "{proxy+}"
+
+  AnyMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: False
+      AuthorizationType: NONE
+      #      AuthorizerId: !Ref Authorizer
+      HttpMethod: ANY
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join
+          - ""
+          - - !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/"
+            - !GetAtt PaymentsApiFunction.Arn
+            - "/invocations" # :${stageVariables.lambdaAlias}
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseTemplates:
+              application/json: ""
+      MethodResponses:
+        - StatusCode: 200
+      ResourceId: !Ref ProxyResource
+      RestApiId: !Ref PublicApiGatewayId
+
+  OptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      RestApiId: !Ref PublicApiGatewayId
+      ResourceId: !Ref ProxyResource
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        Type: MOCK
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: "Empty"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  ServicesApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref PublicApiGatewayId
+      ParentId: !Ref PublicRootResource
+      PathPart: "services"
+
+  ServicesProxyResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId: !Ref PublicApiGatewayId
+      ParentId: !Ref ServicesApiResource
+      PathPart: "{proxy+}"
+
+  ServicesAnyMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: False
+      AuthorizationType: None
+      HttpMethod: ANY
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Join
+          - ""
+          - - !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/"
+            - !GetAtt ServicesApiFunction.Arn
+            - "/invocations" # :${stageVariables.lambdaAlias}
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseTemplates:
+              application/json: ""
+      MethodResponses:
+        - StatusCode: 200
+      ResourceId: !Ref ServicesProxyResource
+      RestApiId: !Ref PublicApiGatewayId
+
+  ServicesOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      RestApiId: !Ref PublicApiGatewayId
+      ResourceId: !Ref ServicesProxyResource
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        Type: MOCK
+      MethodResponses:
+        - StatusCode: 200
+          ResponseModels:
+            application/json: "Empty"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+
+  EventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub ${ProjectName}-runSyncProducts
+      ScheduleExpression: "rate(1 minute)"
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt SyncProductsFunction.Arn
+          Id: "SyncProductsFunction"
+    DependsOn:
+      - SyncProductsFunction
+
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref SyncProductsFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt EventRule.Arn
+    DependsOn:
+      - SyncProductsFunction

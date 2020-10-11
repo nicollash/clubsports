@@ -1,0 +1,139 @@
+.fieldGroupWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.fieldGroupContainer {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.subGroup {
+  margin: 10px;
+}
+
+.defaultGroupWrapper {
+  flex: 1;
+  border-radius: 6px;
+  padding: 10px;
+  min-height: 40px;
+  background-color: #dcdcdc;
+  margin: 10px;
+}
+
+.defaultGroup {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.defaultGroupHeader {
+  margin: 10px;
+  width: 200px;
+}
+
+.requestGroup {
+  border-radius: 6px;
+  padding: 10px;
+  max-width: 300px;
+  min-width: 300px;
+  min-height: 40px;
+  background-color: #dcdcdc;
+  margin: 10px;
+}
+
+.requestGroupHeader {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 12px;
+  margin-right: 9px;
+
+  &Title {
+    align-self: center;
+    margin-right: auto;
+    color: #6a6a6a;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  &Label {
+    margin: 0 3px;
+    text-align: right;
+
+    .rightHeaderLabel {
+      margin-left: 10px;
+    }
+
+    .leftHeaderLabel {
+      margin-right: 10px;
+    }
+  }
+
+  &Label:last-child {
+    text-align: left;
+  }
+}
+
+.fieldGroupTitle {
+  padding: 10px 0 6px;
+  color: #6a6a6a;
+  font-weight: 600;
+}
+
+.fieldWrapper {
+  display: flex;
+  align-items: center;
+  margin: 3px 0;
+  border-radius: 6px;
+  padding: 3px 10px;
+  background-color: #ffffff;
+  color: #00a3ea;
+  font-size: 12px;
+  cursor: grab;
+}
+
+.iconWrapper {
+  display: flex;
+}
+
+.editIconWrapper {
+  margin: 5px 0 2px 10px;
+  color: black;
+  cursor: pointer;
+}
+
+.field {
+  flex: 1;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.selectWrapper {
+  margin-right: -16px;
+
+  span {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+}
+
+.closeIcon {
+  cursor: pointer;
+}
+
+.swapVertIcon {
+  display: flex;
+  align-items: center;
+  margin-left: -5px;
+  padding: 0 5px;
+  color: #6a6a6a;
+  cursor: pointer;
+
+  svg {
+    margin: 0px !important;
+  }
+}

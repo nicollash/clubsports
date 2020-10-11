@@ -1,0 +1,127 @@
+.container {
+  height: inherit;
+  padding: 8px 5px 5px;
+  margin: 26px 8px 0 0;
+  background-color: #ececec;
+  border-radius: 2px;
+  transition: background-color 0.25s ease-in-out;
+
+  .title {
+    margin: 0;
+    text-align: center;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 700;
+    color: #6a6a6a;
+  }
+
+  .checkboxWrapper {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .dropArea {
+    height: inherit;
+    min-height: calc(100% - 62px);
+    min-width: 180px;
+    max-height: 344px;
+
+    .table {
+      border-collapse: collapse;
+      min-width: inherit;
+
+      .emptyRow {
+        background: #ffffff;
+        margin: 4px 0 7px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        td {
+          min-width: 90px;
+          font-size: 12px;
+          color: #8b8b8c;
+        }
+      }
+
+      thead {
+        th {
+          font-size: 12px;
+          width: 90px;
+          font-weight: 300;
+          color: #777777;
+          padding: 3px 0;
+          border-radius: 3px 0 0 3px;
+          background: #fefefe;
+
+          &.poolName {
+            border-radius: 0;
+            border-left: 1px solid #ececec;
+
+            svg {
+              opacity: 0.2;
+            }
+          }
+
+          &:last-child {
+            width: 100%;
+            margin-left: 1px;
+            border-radius: 0 3px 3px 0;
+          }
+        }
+
+        tr {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+        }
+      }
+
+      tbody {
+        display: block;
+        height: 290px;
+        width: 310px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+
+        &.collapsed {
+          width: 266px;
+        }
+
+        tr {
+          width: 100%;
+        }
+
+        td.poolName {
+          color: #999999;
+          padding-top: 2px;
+          font-size: 13px;
+          background-color: #fefefe;
+          margin-top: 1px;
+          width: 100px;
+        }
+
+        .gamesNum {
+          color: #999999;
+          padding-top: 2px;
+          font-size: 13px;
+          background-color: #fefefe;
+          width: 170px;
+          text-align: center;
+          height: 29px;
+
+          &.collapsed {
+            width: 70px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.inner.container {
+    margin-top: 0!important;
+}

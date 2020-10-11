@@ -1,0 +1,22 @@
+.headingWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.scoringList {
+  margin: 25px 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    margin-bottom: 25px;
+    min-width: 440px;
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+}

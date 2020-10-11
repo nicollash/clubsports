@@ -1,0 +1,46 @@
+.container {
+  width: 470px;
+  padding: 24px;
+}
+.sectionTitle {
+  color: #1c315f;
+  font-size: 24px;
+  font-weight: 600;
+  padding-bottom: 16px;
+}
+.buttonsGroup {
+  padding-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.sectionItem {
+  color: #6a6a6a;
+  padding: 0 0 4px 32px;
+  .title {
+    font-weight: 600;
+  }
+}
+.sectionItemWarning {
+  color: #6a6a6a;
+  font-weight: 600;
+  display: flex;
+  padding-bottom: 16px;
+  .iconContainer {
+    align-self: center;
+    padding-right: 8px;
+  }
+}
+
+.sectionRow {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 16px;
+}
+.sectionTitle {
+  color: #1c315f;
+  display: flex;
+  justify-content: space-between;
+  width: 747px;
+}

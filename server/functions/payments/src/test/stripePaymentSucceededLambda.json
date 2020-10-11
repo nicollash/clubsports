@@ -1,0 +1,71 @@
+{
+	"resource": "/payments/{proxy+}",
+	"path": "/public/payments/payment-success",
+	"httpMethod": "POST",
+	"headers": {
+		"Accept": "*/*; q=0.5, application/xml",
+		"Cache-Control": "no-cache",
+		"Content-Type": "application/json; charset=utf-8",
+		"Host": "api.tourneymaster.org",
+		"Stripe-Signature": "t=1588643040,v1=af7009688ab35796e58daab3e2da22568586e35359f89b96b2615896991da0ea,v0=7f9e619e5abb522854654429d3cadcbafc26dc94768cc10dbd6906bef7ba369a",
+		"User-Agent": "Stripe/1.0 (+https://stripe.com/docs/webhooks)",
+		"X-Amzn-Trace-Id": "Root=1-5eb0c4e0-8351c32251d3412bf8048448",
+		"X-Forwarded-For": "54.187.174.169",
+		"X-Forwarded-Port": "443",
+		"X-Forwarded-Proto": "https"
+	},
+	"multiValueHeaders": {
+		"Accept": ["*/*; q=0.5, application/xml"],
+		"Cache-Control": ["no-cache"],
+		"Content-Type": ["application/json; charset=utf-8"],
+		"Host": ["api.tourneymaster.org"],
+		"Stripe-Signature": [
+			"t=1588643040,v1=af7009688ab35796e58daab3e2da22568586e35359f89b96b2615896991da0ea,v0=7f9e619e5abb522854654429d3cadcbafc26dc94768cc10dbd6906bef7ba369a"
+		],
+		"User-Agent": ["Stripe/1.0 (+https://stripe.com/docs/webhooks)"],
+		"X-Amzn-Trace-Id": ["Root=1-5eb0c4e0-8351c32251d3412bf8048448"],
+		"X-Forwarded-For": ["54.187.174.169"],
+		"X-Forwarded-Port": ["443"],
+		"X-Forwarded-Proto": ["https"]
+	},
+	"queryStringParameters": null,
+	"multiValueQueryStringParameters": null,
+	"pathParameters": {
+		"proxy": "payment-success"
+	},
+	"stageVariables": {
+		"lambdaAlias": "PROD"
+	},
+	"requestContext": {
+		"resourceId": "y858xc",
+		"resourcePath": "/payments/{proxy+}",
+		"httpMethod": "POST",
+		"extendedRequestId": "MCOzFG81IAMF7tQ=",
+		"requestTime": "05/May/2020:01:44:00 +0000",
+		"path": "/public/payments/payment-success",
+		"accountId": "564748484972",
+		"protocol": "HTTP/1.1",
+		"stage": "PROD",
+		"domainPrefix": "api",
+		"requestTimeEpoch": 1588643040481,
+		"requestId": "fa7613cd-07d3-4af1-a6ca-7e203bf47b28",
+		"identity": {
+			"cognitoIdentityPoolId": null,
+			"accountId": null,
+			"cognitoIdentityId": null,
+			"caller": null,
+			"sourceIp": "54.187.174.169",
+			"principalOrgId": null,
+			"accessKey": null,
+			"cognitoAuthenticationType": null,
+			"cognitoAuthenticationProvider": null,
+			"userArn": null,
+			"userAgent": "Stripe/1.0 (+https://stripe.com/docs/webhooks)",
+			"user": null
+		},
+		"domainName": "api.tourneymaster.org",
+		"apiId": "kr4h1pzp94"
+	},
+	"body": "{\n  \"id\": \"evt_1GfFpDLMHSTfcs3HTQ1AnzDt\",\n  \"object\": \"event\",\n  \"api_version\": \"2020-03-02\",\n  \"created\": 1588643039,\n  \"data\": {\n    \"object\": {\n      \"id\": \"pi_1GfFouLMHSTfcs3HZdMmmJDf\",\n      \"object\": \"payment_intent\",\n      \"amount\": 210000,\n      \"amount_capturable\": 0,\n      \"amount_received\": 210000,\n      \"application\": null,\n      \"application_fee_amount\": null,\n      \"canceled_at\": null,\n      \"cancellation_reason\": null,\n      \"capture_method\": \"automatic\",\n      \"charges\": {\n        \"object\": \"list\",\n        \"data\": [\n          {\n            \"id\": \"ch_1GfFpCLMHSTfcs3H4Fw9PVAd\",\n            \"object\": \"charge\",\n            \"amount\": 210000,\n            \"amount_refunded\": 0,\n            \"application\": null,\n            \"application_fee\": null,\n            \"application_fee_amount\": null,\n            \"balance_transaction\": \"txn_1GfFpDLMHSTfcs3Hc7pKVP28\",\n            \"billing_details\": {\n              \"address\": {\n                \"city\": null,\n                \"country\": null,\n                \"line1\": null,\n                \"line2\": null,\n                \"postal_code\": \"12345\",\n                \"state\": null\n              },\n              \"email\": null,\n              \"name\": null,\n              \"phone\": null\n            },\n            \"calculated_statement_descriptor\": \"TOURNEYMASTER\",\n            \"captured\": true,\n            \"created\": 1588643038,\n            \"currency\": \"usd\",\n            \"customer\": null,\n            \"description\": null,\n            \"destination\": null,\n            \"dispute\": null,\n            \"disputed\": false,\n            \"failure_code\": null,\n            \"failure_message\": null,\n            \"fraud_details\": {\n            },\n            \"invoice\": null,\n            \"livemode\": false,\n            \"metadata\": {\n              \"stripeOrderId\": \"or_1GfFouLMHSTfcs3HTbaqIWZU\",\n              \"reg_type\": \"individual\",\n              \"reg_response_id\": \"FFAZE49N\"\n            },\n            \"on_behalf_of\": null,\n            \"order\": null,\n            \"outcome\": {\n              \"network_status\": \"approved_by_network\",\n              \"reason\": null,\n              \"risk_level\": \"normal\",\n              \"risk_score\": 33,\n              \"seller_message\": \"Payment complete.\",\n              \"type\": \"authorized\"\n            },\n            \"paid\": true,\n            \"payment_intent\": \"pi_1GfFouLMHSTfcs3HZdMmmJDf\",\n            \"payment_method\": \"pm_1GfFpCLMHSTfcs3HoIwXzsXN\",\n            \"payment_method_details\": {\n              \"card\": {\n                \"brand\": \"visa\",\n                \"checks\": {\n                  \"address_line1_check\": null,\n                  \"address_postal_code_check\": \"pass\",\n                  \"cvc_check\": \"pass\"\n                },\n                \"country\": \"US\",\n                \"exp_month\": 5,\n                \"exp_year\": 2020,\n                \"fingerprint\": \"fS63SQadU0Hb3Ut9\",\n                \"funding\": \"credit\",\n                \"installments\": null,\n                \"last4\": \"4242\",\n                \"network\": \"visa\",\n                \"three_d_secure\": null,\n                \"wallet\": null\n              },\n              \"type\": \"card\"\n            },\n            \"receipt_email\": null,\n            \"receipt_number\": null,\n            \"receipt_url\": \"https://pay.stripe.com/receipts/acct_1GCdnGLMHSTfcs3H/ch_1GfFpCLMHSTfcs3H4Fw9PVAd/rcpt_HDhDWcVG4JVmJamlipFBmzVr4MuHD3z\",\n            \"refunded\": false,\n            \"refunds\": {\n              \"object\": \"list\",\n              \"data\": [\n\n              ],\n              \"has_more\": false,\n              \"total_count\": 0,\n              \"url\": \"/v1/charges/ch_1GfFpCLMHSTfcs3H4Fw9PVAd/refunds\"\n            },\n            \"review\": null,\n            \"shipping\": null,\n            \"source\": null,\n            \"source_transfer\": null,\n            \"statement_descriptor\": null,\n            \"statement_descriptor_suffix\": null,\n            \"status\": \"succeeded\",\n            \"transfer_data\": null,\n            \"transfer_group\": null\n          }\n        ],\n        \"has_more\": false,\n        \"total_count\": 1,\n        \"url\": \"/v1/charges?payment_intent=pi_1GfFouLMHSTfcs3HZdMmmJDf\"\n      },\n      \"client_secret\": \"pi_1GfFouLMHSTfcs3HZdMmmJDf_secret_UYAtfeDaqCiZzuGWjrfDjwzWe\",\n      \"confirmation_method\": \"automatic\",\n      \"created\": 1588643020,\n      \"currency\": \"usd\",\n      \"customer\": null,\n      \"description\": null,\n      \"invoice\": null,\n      \"last_payment_error\": null,\n      \"livemode\": false,\n      \"metadata\": {\n        \"stripeOrderId\": \"or_1GfFouLMHSTfcs3HTbaqIWZU\",\n        \"reg_type\": \"individual\",\n        \"reg_response_id\": \"FFAZE49N\"\n      },\n      \"next_action\": null,\n      \"on_behalf_of\": null,\n      \"payment_method\": \"pm_1GfFpCLMHSTfcs3HoIwXzsXN\",\n      \"payment_method_options\": {\n        \"card\": {\n          \"installments\": null,\n          \"request_three_d_secure\": \"automatic\"\n        }\n      },\n      \"payment_method_types\": [\n        \"card\"\n      ],\n      \"receipt_email\": null,\n      \"review\": null,\n      \"setup_future_usage\": null,\n      \"shipping\": null,\n      \"source\": null,\n      \"statement_descriptor\": null,\n      \"statement_descriptor_suffix\": null,\n      \"status\": \"succeeded\",\n      \"transfer_data\": null,\n      \"transfer_group\": null\n    }\n  },\n  \"livemode\": false,\n  \"pending_webhooks\": 1,\n  \"request\": {\n    \"id\": \"req_jkezg1ALpeAlrJ\",\n    \"idempotency_key\": null\n  },\n  \"type\": \"payment_intent.succeeded\"\n}",
+	"isBase64Encoded": false
+}

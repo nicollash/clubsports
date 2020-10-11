@@ -1,0 +1,13 @@
+.dateFilter {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  z-index: 2;
+  border: 1px solid #cccccc;
+  box-shadow: 3px 3px 3px #999999;
+}
+
+.dataGrid {
+  margin: 10px 0px;
+}

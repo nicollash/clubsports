@@ -1,0 +1,49 @@
+.titleWrapper {
+  margin: 0 0 15px;
+}
+
+.inputWrapper {
+  display: flex;
+  justify-content: space-between;
+
+  margin: 0 0 15px;
+  padding: 0;
+
+  border: 0;
+}
+
+.popupWrapper {
+  width: 540px;
+  padding: 24px 32px 12px;
+}
+
+.infoTable {
+  margin-bottom: 35px;
+
+  td {
+    padding-right: 70px;
+
+    white-space: nowrap;
+    font-size: 16px;
+    color: #6a6a6a;
+  }
+}
+
+.btnsWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dellBtnWrapper {
+  margin-left: -12px;
+
+  color: #ff0f19;
+}
+
+.navBtnWrapper {
+  display: flex;
+}
+
+.cancelBtnWrapper {
+  margin-right: 15px;
+}

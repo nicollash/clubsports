@@ -1,0 +1,82 @@
+.sectionContainer {
+  width: 100%;
+  min-width: 792px;
+  padding-bottom: 23px;
+  border-bottom: 1px solid #d1d1d1;
+}
+.mainMenu {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  .btnsWrapper {
+    & > :first-child {
+      margin-right: 15px;
+    }
+  }
+}
+.heading {
+  margin: 24px 0;
+}
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  .sectionRow {
+    display: flex;
+    justify-content: space-between;
+  }
+  .sectionThirdRow {
+    display: flex;
+    justify-content: space-between;
+    .sectionItemSelect {
+      width: 48.5%;
+      .selectContainer {
+        width: 47.5%;
+      }
+    }
+  }
+  .sectionRowColumn {
+    display: flex;
+    flex-direction: column;
+  }
+  .sectionItem {
+    flex-grow: 0;
+    width: 23%;
+    color: #6a6a6a;
+    margin-bottom: 16px;
+  }
+  .sectionItemLarge {
+    @extend .sectionItem;
+    width: 48.5%;
+  }
+  .sectionItemColorPicker {
+    @extend .sectionItem;
+    width: 23%;
+    height: 36px;
+    margin-top: 1px;
+    z-index: 1;
+  }
+}
+.sectionLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6a6a6a;
+  margin-bottom: 7px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+.sectionItemTime {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 80px;
+
+  .innerSpanText {
+    align-self: center;
+    color: #6a6a6a;
+    font-size: 16px;
+    margin-top: 38px;
+  }
+}

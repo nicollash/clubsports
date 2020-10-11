@@ -1,0 +1,75 @@
+.container {
+  &.containerFullScreen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .paperWrapper {
+    margin-bottom: 20px;
+
+    .paperContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .bracketName {
+        font-size: 22px;
+        display: flex;
+        font-weight: 600;
+        margin: auto 10px;
+
+        div {
+          margin-right: 10px;
+          color: #646464;
+        }
+      }
+
+      .additionalName {
+        margin-left: 10px;
+        font-size: 16px;
+        font-weight: 400;
+        margin-top: 4px;
+      }
+
+      button {
+        margin-left: 20px;
+      }
+    }
+  }
+
+  .tabsContainer {
+    .tabToggle {
+      background: #f4f4f4;
+      width: 300px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      position: relative;
+      border-radius: 5px 5px 0 0;
+      box-shadow: -6px -5px 10px 0 rgba(0, 0, 0, 0.03);
+      background: #ececec;
+
+      > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a4a1a1;
+        height: 40px;
+        width: 153px;
+        border-radius: 5px 5px 0 0;
+        cursor: pointer;
+        font-size: 15px;
+
+        &.active {
+          box-shadow: 8px -4px 14px -8px rgba(0, 0, 0, 0.2);
+          color: #565656;
+          background: #f4f4f4;
+        }
+      }
+    }
+  }
+}

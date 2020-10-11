@@ -1,0 +1,50 @@
+.pool {
+  display: flex;
+  flex-direction: column;
+
+  padding-left: 25px;
+}
+
+.poolTitle {
+  margin: 0 0 8px;
+
+  font-size: 21px;
+  line-height: 28px;
+  font-weight: 600;
+  color: #1c315f;
+
+  span {
+    color: #6a6a6a;
+    font-size: 14px;
+  }
+}
+
+.teamsTable {
+  margin-bottom: 6px;
+
+  background-color: #ffffff;
+
+  border-radius: 6px;
+  text-indent: 10px;
+
+  th {
+    height: 25px;
+    color: #6a6a6a;
+  }
+
+  td,
+  th {
+    align-content: left;
+
+    border-bottom: 2px solid #ececec;
+  }
+}
+
+.teamActions {
+  text-align: center;
+}
+
+.teamLeftAlign {
+  padding-left: 25px;
+  text-align: left;
+}

@@ -1,0 +1,23 @@
+.container {
+  width: 500px;
+  height: 145px;
+  margin: 20px;
+
+  .sectionTitle {
+    color: #1c315f;
+    font-size: 24px;
+    font-weight: 600;
+    padding-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .buttonsGroup {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 10px;
+    & > * {
+      margin-left: 10px;
+    }
+  }
+}

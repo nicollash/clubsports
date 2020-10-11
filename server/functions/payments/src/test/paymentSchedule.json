@@ -1,0 +1,22 @@
+[
+  {
+    "id": "FP",
+    "name": "Pay in full",
+    "type": "installment",
+    "iterations": 1,
+    "interval": "month",
+    "intervalCount": "1"
+  },
+  {
+    "id": "S",
+    "type": "schedule",
+    "name": "Pay later",
+    "schedule": [
+      { "date": 1592656000, "amount": "20", "amountType": "percent" },
+      { "date": 1592659600, "amountType": "percent", "amount": "20" },
+      { "date": 1592663200, "amountType": "percent", "amount": "20" },
+      { "date": 1592666800, "amountType": "percent", "amount": "20" },
+      { "date": 1592670400, "amountType": "percent", "amount": "20" }
+    ]
+  }
+]

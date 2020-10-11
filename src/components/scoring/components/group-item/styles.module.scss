@@ -1,0 +1,30 @@
+.groupItem {
+  min-width: 365px;
+}
+
+.groupTable {
+  width: 100%;
+
+  color: #6a6a6a;
+
+  background-color: #ffffff;
+
+  td,
+  th {
+    max-width: 35px;
+    min-width: 35px;
+    padding: 5px 5px;
+
+    text-align: center;
+
+    border: 2px solid #f4f4f4;
+  }
+
+  tr td:first-child,
+  tr th:first-child {
+    width: 100%;
+    max-width: 100%;
+
+    text-align: left;
+  }
+}

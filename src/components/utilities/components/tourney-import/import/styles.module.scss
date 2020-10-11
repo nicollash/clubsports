@@ -1,0 +1,66 @@
+.tournanment {
+  width: calc(100% - 20px);
+}
+.detailsSubtitle {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  line-height: 43px !important;
+}
+.tournanment {
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+  background-color: #F4F4F4;
+  padding: 2rem;
+  width: 100%;
+}
+.tournanmentHeader {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    display: flex;
+    flex-direction: row;
+    >span {
+      display: block;
+      line-height: 42px;
+      margin-right: 20px;
+      margin-bottom: 0 !important;
+    }
+  }
+}
+.tournanmentBody {
+  .status {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6a6a6a;
+    margin-bottom: 7px;
+  }
+}
+.tabHeader {
+  min-height: 3.5rem;
+  margin-bottom: 1.5rem;
+}
+.tabRoot {
+  width: 100%;
+}
+.buttonGroup {
+  margin-top: 1rem;
+  display: flex;
+  align-items: flex-end;
+  margin-left: auto;
+  button {
+    margin: 0 0 0 .8rem;
+  }
+}
+.buttonGroup2 {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin-left: auto;
+  margin-right: 0;
+  justify-content: flex-end;
+  button {
+    margin: 0 0 0 .8rem;
+  }
+}

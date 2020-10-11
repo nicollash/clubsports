@@ -1,0 +1,427 @@
+$width: 100%;
+$height: 400px;
+
+.container {
+  position: relative;
+
+  width: $width;
+  height: $height;
+
+  > div {
+    width: $width;
+    height: $height;
+    max-width: 1200px;
+  }
+
+  .bracketContainer {
+    width: $width;
+    height: calc(100% - 40px);
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: row;
+    padding-top: 40px;
+
+    // MAIN BRACKET GAME STYLE
+    .bracketGame {
+      // background: #e9e9e9;
+      width: 200px;
+      height: 120px;
+      margin-bottom: 20px;
+      transform: rotateY(0deg);
+      transition: transform 0.2s ease-in-out;
+
+      &.hidden {
+        transform: rotateY(90deg);
+      }
+
+      .gameNote {
+        min-height: 28px;
+        font-size: 14px;
+        margin-top: -28px;
+
+        .gameNoteContainer {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+
+          span {
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.8);
+            padding-left: 1px;
+          }
+
+          .btnEdit {
+            opacity: 0.1;
+            cursor: pointer;
+            transition: opacity 0.3s ease-in-out;
+          }
+          .btnEdit:hover {
+            opacity: 1;
+            color: #00A3EA;
+            transition: color 0.2s ease-in-out;
+          }
+        }
+      }
+
+      .seedDrop {
+        // background: white;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 10px;
+      }
+
+      .bracketGameDescription {
+        height: 40px;
+        display: flex;
+        flex-direction: row;
+
+        .descriptionInfo {
+          width: 160px;
+          display: flex;
+          flex-direction: column;
+          align-items: baseline;
+          justify-content: center;
+
+          span {
+            font-size: 13px;
+            color: #1c315f;
+            font-weight: 600;
+            white-space: nowrap;
+          }
+        }
+      }
+
+      &:last-of-type {
+        margin-bottom: 0px;
+      }
+    }
+
+    .connectors8,
+    .connectors4,
+    .connectors2 {
+      // background: #cecece;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding: 0px 20px;
+
+      .connector {
+        height: 110px;
+        width: 30px;
+        margin-right: 10px;
+        border: 2px solid #1c315f;
+        border-left: none;
+        position: relative;
+
+        &.negativeConnector {
+          transform: rotate(180deg);
+        }
+
+        &.hidden {
+          opacity: 0;
+        }
+
+        &.hiddenTop {
+          &:before {
+            content: '';
+            width: 40px;
+            height: calc(50% + 3px);
+            display: block;
+            background: #f4f4f4;
+            margin-top: -3px;
+            margin-left: -1px;
+          }
+        }
+
+        &.hiddenBottom {
+          &:before {
+            content: '';
+            width: 40px;
+            height: calc(50% + 3px);
+            display: block;
+            background: #f4f4f4;
+            margin-top: 55px;
+            margin-left: -1px;
+          }
+        }
+
+        &:last-of-type {
+          margin-bottom: 0px;
+        }
+
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 100%;
+          width: 10px;
+          border-top: 1px solid #b0b1b3;
+          border-bottom: 1px solid #b0b1b3;
+          border-color: #1c315f;
+        }
+      }
+    }
+
+    .connectors3{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding: 0px 20px;
+      margin-top: 45px;
+      margin-bottom: 50px;
+
+      .connector {
+        height: 110px;
+        width: 30px;
+        margin-right: 10px;
+        border: 2px solid #1c315f;
+        border-left: none;
+        position: relative;
+
+        &.negativeConnector {
+          transform: rotate(180deg);
+        }
+
+        &.hidden {
+          opacity: 0;
+        }
+
+        &.hiddenTop {
+          &:before {
+            content: '';
+            width: 40px;
+            height: calc(50% + 3px);
+            display: block;
+            background: #f4f4f4;
+            margin-top: -3px;
+            margin-left: -1px;
+          }
+        }
+
+        &.hiddenBottom {
+          &:before {
+            content: '';
+            width: 40px;
+            height: calc(50% + 3px);
+            display: block;
+            background: #f4f4f4;
+            margin-top: 55px;
+            margin-left: -1px;
+          }
+        }
+
+        &:last-of-type {
+          margin-bottom: 0px;
+        }
+
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 100%;
+          width: 10px;
+          border-top: 1px solid #b0b1b3;
+          border-bottom: 1px solid #b0b1b3;
+          border-color: #1c315f;
+        }
+      }
+    }
+
+    .connectors4 {
+      .connector {
+        height: 27%;
+      }
+    }
+
+    .connectors2 {
+      .connector {
+        height: 52%;
+      }
+    }
+
+    .negative {
+      padding-top: 5%;
+    }
+
+    .connectors3before {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding: 0px 20px;
+      margin-top: 45px;
+      margin-bottom: 50px;
+
+      .connector {
+        height: 110px;
+        width: 30px;
+        margin-right: 10px;
+        border: 2px solid #1c315f;
+        border-left: none;
+        position: relative;
+
+        &.negativeConnector {
+          transform: rotate(180deg);
+        }
+
+        &.hidden {
+          opacity: 0;
+        }
+
+        &.hiddenTop {
+          &:before {
+            content: '';
+            width: 40px;
+            height: calc(50% + 3px);
+            display: block;
+            background: #f4f4f4;
+            margin-top: -3px;
+            margin-left: -1px;
+          }
+        }
+
+        &.hiddenBottom {
+          &:before {
+            content: '';
+            width: 40px;
+            height: calc(50% + 3px);
+            display: block;
+            background: #f4f4f4;
+            margin-top: 55px;
+            margin-left: -1px;
+          }
+        }
+
+        &:last-of-type {
+          margin-bottom: 0px;
+        }
+
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 100%;
+          width: 10px;
+          border-top: 1px solid #b0b1b3;
+          border-bottom: 1px solid #b0b1b3;
+          border-color: #1c315f;
+        }
+      }
+    }
+
+    .bracketRound3 {
+      // background: pink;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+
+      .roundTitle {
+        position: absolute;
+        width: 100%;
+        top: -35px;
+        color: #1c315f;
+        font-weight: 600;
+        font-size: 15px;
+        text-align: center;
+      }
+    }
+
+    .bracketHidden {
+      width: 280px;
+    }
+
+    .bracketRound {
+      // background: pink;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      position: relative;
+
+      .roundTitle {
+        position: absolute;
+        width: 100%;
+        top: -35px;
+        color: #1c315f;
+        font-weight: 600;
+        font-size: 15px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.section {
+  width: 515px;
+  padding: 25px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  .titleWrapper {
+    margin-bottom: 10px;
+  }
+
+  .addNoteInput{
+    margin-bottom: 15px;
+
+    .validationSpan {
+      color: rgba(0, 0, 0, 0.26);
+      font-size: 12px;
+    }
+
+    .validate{
+      color: #FF0F19;
+    }
+  }
+
+  .btnsWrapper {
+    display: flex;
+    justify-content: flex-end;
+
+    .cancelBtn {
+      margin-right: 15px;
+    }
+    .deleteBtn {
+      flex: 1;
+    }
+  }
+}
+
+.bracketManage {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+  width: 60px;
+
+  .btnNote {
+    margin-left: 5px;
+  }
+
+  .btnNote, .btnTrash {
+    opacity: 0.1;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  > div {
+      color: rgb(44, 44, 44);
+      transition: color 0.2s ease-in-out;
+  }
+
+  & .btnTrash:hover {
+    opacity: 1;
+    color: #e82b2b;
+  }
+
+  & .btnNote:hover {
+    opacity: 1;
+    color: #00A3EA;
+  }
+}
+

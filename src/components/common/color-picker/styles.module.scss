@@ -1,0 +1,46 @@
+:local(.ColorPickerWrapper) {
+  display: flex;
+}
+
+:local(.ColorPickerContainer) {
+  position: relative;
+  width: 100%;
+}
+
+:local(.ColorPickerText) {
+  z-index: 101;
+
+  input {
+    padding: 10.5px 14px 10.5px 44px;
+
+    border: 1px solid #cdcfd2;
+
+    height: 15px;
+    color: #6a6a6a;
+  }
+}
+
+:local(.ColorPickerPreview) {
+  position: absolute;
+  z-index: 102;
+
+  border: 1px solid #cdcfd2;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+
+  height: 100%;
+  width: 30px;
+}
+
+:local(.ColorPickerPalette) {
+  position: absolute;
+  z-index: 100;
+}
+
+:local(.ColorPickerCover) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}

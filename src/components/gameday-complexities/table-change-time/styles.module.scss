@@ -1,0 +1,31 @@
+.tableWrapper {
+  width: 60%;
+  margin: 20px auto 0;
+  padding: 0 30px;
+
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.table {
+  width: 100%;
+
+  thead {
+    color: #ffffff;
+
+    background-color: #1c315f;
+  }
+
+  thead th {
+    padding: 15px;
+  }
+
+  th,
+  td {
+    text-align: center;
+  }
+}
+
+.cardMessageWrapper {
+  margin: 0 0 15px;
+}

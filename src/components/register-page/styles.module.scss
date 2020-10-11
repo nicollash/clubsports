@@ -1,0 +1,352 @@
+.container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  .main {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    flex: 1 0 auto;
+  }
+  .stepperWrapper {
+    width: 65%;
+    margin: 0 8px;
+
+    .headerStepper {
+      display: flex;
+      justify-content: center;
+    }
+  }
+  .sideContent {
+    width: 25%;
+    min-width: 350px;
+    margin: 42px 8px 0 8px;
+    .headingWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 120px;
+    }
+    .sideContentItem {
+      color: #6a6a6a;
+      margin-top: 3px;
+      margin-bottom: 7px;
+    }
+  }
+}
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  .sectionRow {
+    display: flex;
+    flex-wrap: wrap;
+    // & > :last-child {
+    //   margin-bottom: 0;
+    // }
+  }
+  .sectionItem {
+    flex-grow: 0;
+    color: #6a6a6a;
+    margin-bottom: 32px;
+    width: calc(25% - 16px);
+    margin: 8px 8px;
+
+    .sectionContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+
+      .sectionTitle {
+        font-size: 16px;
+        font-weight: 600;
+        color: #6a6a6a;
+        margin-top: 7px;
+        white-space: nowrap;
+      }
+    }
+    // [class *= style_container] {
+    //   min-width: 100px;
+    //   min-width: 200px;
+    // }
+  }
+
+  .paymentRow {
+    .sectionItem {
+      width: calc(33% - 16px);
+    }
+  }
+
+  .cardWrapp {
+    display: flex;
+    flex-wrap: wrap;
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      width: calc(100% - 196px);
+      max-width: 500px;
+      margin: 8px 0;
+    }
+  }
+}
+.sectionTitle {
+  color: #6a6a6a;
+  font-weight: 600;
+}
+
+.logo {
+  width: 120px;
+  background-size: contain;
+}
+
+.phoneContainer {
+  flex-grow: 0;
+  color: #6a6a6a;
+  margin-bottom: 32px;
+  width: calc(25% - 16px);
+  margin: 8px 8px;
+  display: flex;
+  flex-direction: column;
+
+  .phoneTitle {
+    color: #6a6a6a;
+    font-weight: 600;
+    margin-top: 7px;
+  }
+}
+
+.buttonsWrapper {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  & > :first-child {
+    margin-right: 15px;
+  }
+}
+.modalWrapp {
+  margin: 8px;
+}
+.modalContainer {
+  height: 100%;
+  margin: 20px 20px 10px 20px;
+  color: #6a6a6a;
+  .radioBtnsWrapper {
+    padding-top: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btnWrapper {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .message {
+    padding-top: 10px;
+  }
+}
+.stripeElement {
+  width: 100%;
+  margin-top: 7px;
+  padding: 10px !important;
+  background-color: white !important;
+  border: 1px solid #cdcfd2;
+  border-radius: 4px;
+  border-color: #dddedf;
+}
+.successMessage,
+.centeredText {
+  width: 100%;
+  color: #1c315f;
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+}
+
+.errorMessage {
+  width: 100%;
+  color: #ff0000;
+  text-align: center;
+}
+
+.confirmWrapp {
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+
+  .confMain {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    font-size: 22px;
+    background-color: white;
+    margin: 10px;
+
+    .confirmCol {
+      width: 45%;
+      margin-left: 20px;
+      font-size: 16px;
+    }
+
+    .label {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+
+  .confSide {
+    width: 100%;
+    font-size: 16px;
+    margin: 10px;
+  }
+
+  .confSideWrapp {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    width: 30%;
+    margin: 10px;
+  }
+
+  .confPayment {
+    background-color: white;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    margin: auto;
+    padding: 10px;
+  }
+
+  .confirmFieldMain,
+  .label {
+    color: #1c315f;
+    font-weight: 600;
+  }
+
+  .confirmField,
+  .confirmFieldMain {
+    font-size: 18px;
+    margin: 10px 4px;
+  }
+}
+.toolTipMessage {
+  margin: 25px 0;
+}
+
+.emailSectionItem {
+  form {
+    margin-top: 7px;
+  }
+
+  input {
+    padding: 10px 14px;
+    color: #6a6a6a;
+  }
+
+  p {
+    padding: 10px 14px;
+    position: absolute;
+    bottom: -51px;
+    background: #e8402f;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 6px;
+    color: white !important;
+
+    &:before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 5px solid #e8402f;
+      top: -5px;
+      position: absolute;
+    }
+  }
+
+  .label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6a6a6a;
+    margin-bottom: 7px;
+    white-space: nowrap;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .container {
+    .stepperWrapper {
+      width: calc(100% - 392px);
+    }
+  }
+  .section {
+    .sectionItem {
+      width: calc(50% - 16px);
+    }
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .container {
+    .sideContent {
+      width: 100%;
+      min-width: auto;
+      margin: 0 8px;
+    }
+    .stepperWrapper {
+      width: 100%;
+
+      [class*='MuiStepper-root'] {
+        padding: 8px;
+      }
+
+      .headerStepper {
+        margin: 8px 0;
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .section {
+    .paymentRow {
+      .sectionItem {
+        width: calc(100% - 16px);
+      }
+    }
+    .cardWrapp {
+      .card {
+        width: calc(100% - 16px);
+      }
+      img {
+        display: none;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .section {
+    .sectionItem {
+      width: calc(100% - 16px);
+    }
+    .paymentRow {
+      .sectionItem {
+        width: calc(100% - 16px);
+      }
+    }
+  }
+}

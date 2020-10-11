@@ -1,0 +1,127 @@
+.sign-form {
+  position: relative;
+
+  width: 768px;
+  max-width: 100%;
+  min-height: 480px;
+  height: 480px;
+
+  background-color: #ffffff;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.sign-form--sign-up .sign-form__login {
+  transform: translateX(100%);
+}
+
+.sign-form--sign-up .sign-form__create {
+  z-index: 5;
+  transform: translateX(100%);
+
+  animation: show 0.6s;
+}
+
+.sign-form--sign-up .sign-form__overlay {
+  transform: translateX(-100%);
+}
+
+.sign-form--sign-up .sign-form__overlay-wrapper {
+  transform: translateX(50%);
+}
+
+.sign-form--sign-up .sign-form__register {
+  transform: translateX(20%);
+}
+
+.sign-form--sign-up .sign-form__register-already {
+  transform: translateX(0);
+}
+
+.sign-form__login,
+.sign-form__create {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 50%;
+  height: 100%;
+  padding: 0 50px;
+
+  background-color: #ffffff;
+
+  transition: all 0.6s ease-in-out;
+}
+
+.sign-form__login {
+  z-index: 2;
+}
+
+.sign-form__create {
+  z-index: 1;
+}
+
+.sign-form__register,
+.sign-form__register-already {
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  width: 50%;
+  height: 100%;
+  padding: 0 40px;
+
+  transition: transform 0.6s ease-in-out;
+}
+
+.sign-form__overlay {
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+
+  transition: transform 0.6s ease-in-out;
+
+  overflow: hidden;
+}
+
+.sign-form__overlay-wrapper {
+  position: relative;
+  left: -100%;
+  transform: translateX(0);
+
+  height: 100%;
+  width: 200%;
+
+  background-color: #1c315f;
+  background-image: linear-gradient(to right, #272e52, #0081b9);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 0 0;
+
+  transition: transform 0.6s ease-in-out;
+}
+
+.sign-form__register {
+  right: 0;
+  transform: translateX(0);
+}
+
+.sign-form__register-already {
+  top: 0;
+  transform: translateX(-20%);
+}

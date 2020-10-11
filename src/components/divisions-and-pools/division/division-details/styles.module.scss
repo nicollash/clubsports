@@ -1,0 +1,15 @@
+.divisionDetailsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #cdcfd2;
+  padding-bottom: 24px;
+  .divisionItem {
+    flex-grow: 1;
+    width: 33%;
+    color: #6a6a6a;
+    padding-bottom: 4px;
+  }
+  .divisionTitle {
+    font-weight: 600;
+  }
+}

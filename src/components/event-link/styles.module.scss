@@ -1,0 +1,117 @@
+.container {
+  width: 100%;
+  height: 100%;
+  min-width: 792px;
+  .headingContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .paperWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    & > :first-child {
+      margin-right: 15px;
+    }
+    .btnsWrapper {
+      & > :first-child {
+        margin-right: 15px;
+      }
+    }
+  }
+
+  .libraryList {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    & > li {
+      border-top: 1px solid #d1d1d1;
+
+      margin-bottom: 5px;
+      padding-bottom: 7px;
+    }
+  }
+  .loadBtnsWrapper {
+    display: flex;
+  }
+  .libraryBtn {
+    display: flex;
+    align-items: center;
+
+    padding: 0 8px;
+
+    color: #00a3ea;
+  }
+}
+
+// messaging
+.msContainer {
+  width: 100%;
+}
+.msMessageList {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+  & > li {
+    margin-bottom: 5px;
+    padding-bottom: 7px;
+  }
+}
+.msHeadingContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.msLoadeMoreBtnWrapper {
+  display: flex;
+  justify-content: center;
+}
+.msContent {
+  width: 100%;
+  color: #6a6a6a;
+  padding: 0 20px 20px 24px;
+  .msContentTitle {
+    font-weight: 600;
+  }
+  .msInfoWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .msInfoContent {
+      display: flex;
+
+      & > :first-child {
+        margin-right: 20px;
+      }
+    }
+  }
+}
+.msTitleContainer {
+  display: flex;
+  font-size: 20px;
+  font-weight: normal;
+  align-items: baseline;
+  justify-content: space-between;
+  .msTitle {
+    font-weight: 600;
+    padding-right: 20px;
+  }
+  .msDeliveryDate {
+    font-size: 16px;
+  }
+}
+.noFoundWrapper {
+  padding: 40px 20px;
+  text-align: center;
+
+  span {
+    font-size: 21px;
+    color: #878787;
+  }
+}

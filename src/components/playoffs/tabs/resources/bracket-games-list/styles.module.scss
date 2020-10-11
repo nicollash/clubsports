@@ -1,0 +1,31 @@
+.gamesTitle {
+  position: sticky;
+  top: -10px;
+  left: 0;
+  width: 199px;
+  background: #dadada;
+  height: 30px;
+  font-size: 14px;
+  color: #646664;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0px 12px 0;
+  // text-transform: uppercase;
+  box-shadow: 0px 10px 7px -9px #00000059;
+  z-index: 100;
+}
+
+.separationLine {
+  display: flex;
+  background: #dadada;
+  font-size: 14px;
+  color: #646664;
+  font-weight: 600;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0 6px 0;
+  border-radius: 3px;
+  width: 199px;
+}

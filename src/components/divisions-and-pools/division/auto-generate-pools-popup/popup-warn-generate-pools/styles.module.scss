@@ -1,0 +1,41 @@
+.popupWrapper {
+  width: 385px;
+  position: relative;
+
+  margin: 32px 25px 25px 32px;
+}
+
+.popupText {
+  color: #6a6a6a;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+.btnsWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.exitBtnWrapper {
+  display: inline-block;
+
+  margin-right: 15px;
+
+  vertical-align: middle;
+}
+.sectionItemWarning {
+  color: #6a6a6a;
+  font-weight: 600;
+  display: flex;
+  .iconContainer {
+    align-self: center;
+    padding-right: 15px;
+  }
+}
+
+.cancelOnTheTop {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}

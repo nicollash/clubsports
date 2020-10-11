@@ -1,0 +1,28 @@
+.dangerBtn {
+  background-color: red !important;
+  color: #ffffff !important;
+}
+
+.squaredBtn {
+  border: 0.75px solid #1c315f !important;
+  border-radius: 3.75px !important;
+}
+
+.squaredOutlinedBtn {
+  border: 0.75px solid #1c315f !important;
+  border-radius: 3.75px !important;
+  background-color: #ffffff !important;
+  color: #1c315f !important;
+}
+.dangerLinkBtn {
+  color: red !important;
+}
+
+.iconWrapper {
+  display: flex;
+  margin-right: 7px;
+}
+
+.icon {
+  display: flex;
+}

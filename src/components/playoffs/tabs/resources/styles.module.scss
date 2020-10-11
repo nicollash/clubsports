@@ -1,0 +1,117 @@
+.container {
+  padding: 24px 15px;
+  margin: 0 0 50px;
+  background-color: #f4f4f4;
+  border-radius: 0 5px 5px 5px;
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+  min-height: 500px;
+  display: flex;
+
+  .leftColumn {
+    background-color: #dadada;
+    width: 277px;
+    height: 450px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0 0 10px;
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .filterBar {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .buttonBar {
+    display: flex;
+    justify-content: center;
+  }
+
+  .rightColumn {
+    background-color: #dadada;
+    width: 100%;
+    height: 450px;
+    margin-left: 20px;
+
+    .filterWrapper {
+      display: flex;
+      justify-content: space-between;
+      height: 80px;
+      background: #f4f4f4;
+      // align-items: center;
+      padding-bottom: 20px;
+
+      .bracketsDate {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 140px;
+        font-size: 16px;
+        margin-right: 20px;
+      }
+
+      .selectWrapper {
+        width: 190px;
+        margin: 0;
+        padding: 0;
+        border: 0;
+
+        .selectTitle {
+          color: #6a6a6a;
+          font-size: 16px;
+          font-weight: 600;
+          line-height: 19px;
+          margin-top: 7px;
+          margin-bottom: 7px;
+        }
+      }
+
+      .moveBrackets {
+        display: flex;
+        flex-direction: column;
+        width: 320px;
+        height: 70px;
+        margin-top: 3px;
+
+        .moveBracketsBtns {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          width: 152px;
+
+          > button {
+            color: #858585;
+            font-weight: 600;
+          }
+        }
+
+        > * {
+          margin-right: 20px;
+        }
+      }
+
+      .dndToggleWrapper {
+        width: 320px;
+        color: gray;
+        font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+
+        h3 {
+          font-size: 16px;
+          color: #6a6a76;
+        }
+      }
+    }
+
+    section {
+      height: 370px;
+    }
+  }
+}

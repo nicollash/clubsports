@@ -1,0 +1,22 @@
+.autocomplete {
+  width: 300px;
+}
+
+.input {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-x: hidden;
+
+  .label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6a6a6a;
+    margin-bottom: 7px;
+    white-space: nowrap;
+  }
+}

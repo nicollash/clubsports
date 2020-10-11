@@ -1,0 +1,42 @@
+:local(.sectionWrapper) {
+  width: 100%;
+  min-width: 792px;
+}
+
+:local(.headingWrapper) {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+:local(.facilitiesList) {
+  margin: 0;
+  padding: 0;
+}
+
+:local(.numberWrapper) {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  .numberContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+:local(.numberTitleWrapper) {
+  margin-bottom: 5px;
+
+  color: #6a6a6a;
+  font-weight: bold;
+}
+
+:local(.facilitiesItem) {
+  margin-top: 25px;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+}

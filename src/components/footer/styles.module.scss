@@ -1,0 +1,80 @@
+.footerContainer {
+  width: 100%;
+  flex-shrink: 0;
+  font-family: 'Open Sans';
+  font-size: 14px;
+  background: linear-gradient(
+    121deg,
+    rgba(7, 59, 101, 1) 38%,
+    rgba(0, 121, 174, 1) 100%
+  );
+  box-shadow: 0px -3px 20px -8px #00000070;
+  padding: 15px 10px;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  .footerCenter {
+    .addressInfoContainer {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+    .footerWithIcon {
+      display: flex;
+      margin-right: 20px;
+      svg {
+        align-self: center;
+        margin-right: 5px;
+      }
+    }
+    .logoContainer {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .logo {
+      width: 121px;
+      height: 108px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .footerCopyright {
+      font-size: 14px;
+      font-weight: normal;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+    }
+    .footerLinks {
+      padding: 0;
+      width: 33%;
+      a {
+        color: white;
+        display: inline-block;
+        line-height: 1.8;
+        font-weight: 400;
+        text-decoration: none;
+      }
+    }
+    .footerLinksRight {
+      @extend .footerLinks;
+      text-align: right;
+    }
+  }
+}
+
+.line {
+  margin-top: 10px;
+  height: 1px;
+
+  background: linear-gradient(
+    to right,
+    rgba(255, 0, 0, 0),
+    rgba(255, 255, 255, 1),
+    rgba(255, 0, 0, 0)
+  );
+}

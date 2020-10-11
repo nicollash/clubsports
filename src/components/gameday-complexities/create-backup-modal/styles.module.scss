@@ -1,0 +1,44 @@
+.container {
+  padding: 25px 35px;
+  width: 1300px;
+  .title {
+    color: #1c315f;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    padding-top: 15px;
+    .item {
+      width: 282px;
+      color: #6a6a6a;
+      margin-right: 30px;
+    }
+    .itemLarge {
+      width: 602px;
+    }
+    .itemDouble {
+      @extend .item;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .itemTimeSlots {
+      margin-right: 10px;
+    }
+
+    .itemTimeSlotsWrapper {
+      display: flex;
+    }
+  }
+
+  .buttonsGroup {
+    display: flex;
+    justify-content: flex-end;
+    & > * {
+      margin: 0 10px;
+    }
+  }
+}

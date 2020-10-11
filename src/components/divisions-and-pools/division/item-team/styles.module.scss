@@ -1,0 +1,56 @@
+.team {
+  position: relative;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  min-height: 42px;
+  margin: 0 auto 4px;
+  padding: 3px 0px;
+
+  font-size: 17px;
+  line-height: 24px;
+  color: #00a3ea;
+
+  background-color: #ffffff;
+
+  border-radius: 6px;
+
+  &::before {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    background-image: url(../../../../assets/moveIconCard.svg);
+  }
+
+  & .teamEdit_name{
+    margin-left: 6px;
+  }
+  & .teamEdit_dragContainer{
+    display: flex;
+    align-items: center;
+  }
+}
+
+.teamEdit {
+  @extend .team;
+  cursor: grab;
+}
+
+.teamBtnsWrapper {
+  margin: 0;
+}
+
+.delBtnWrapper {
+  color: #ff0f19;
+}
+
+.btnsWrapper {
+  display: flex;
+}
+
+.iconWrapper {
+  padding: 6px 0px 6px 8px;
+  display: flex;
+}

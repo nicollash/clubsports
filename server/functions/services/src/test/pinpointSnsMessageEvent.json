@@ -1,0 +1,22 @@
+{
+  "Records": [
+    {
+      "EventSource": "aws:sns",
+      "EventVersion": "1.0",
+      "EventSubscriptionArn": "arn:aws:sns:us-east-1:564748484972:IncomingSMS-TM-STAGING:6c216da0-e883-4b4f-bc7e-e64c5c906c45",
+      "Sns": {
+        "Type": "Notification",
+        "MessageId": "d5c526ba-600f-532b-b31b-717a075608eb",
+        "TopicArn": "arn:aws:sns:us-east-1:564748484972:IncomingSMS-TM-STAGING",
+        "Subject": null,
+        "Message": "{\"originationNumber\":\"+13479896944\",\"destinationNumber\":\"+12068882314\",\"messageKeyword\":\"SCORE\",\"messageBody\":\"0UYRD8YE,13,3\",\"inboundMessageId\":\"7b1f4412-ae0f-57b1-92a6-13d2c9566304\",\"previousPublishedMessageId\":\"g181p8qk0mqpjicm9gu41oja0quk57meqm80l000\"}",
+        "Timestamp": "2020-08-26T13:35:21.592Z",
+        "SignatureVersion": "1",
+        "Signature": "o9wBRDzyDblkj9z6oUH9l7C6lNHb74wgDWwT+6M7nGxFhW9CCwCeTuCo6xzqCimEYAxJXNfVWhSiXGQfcywfw+4TYZGcZzG1hJPSwF8GhnUEQdv5NiS7zuZwJWubC+LRaMi2WNGw+IkxVhK5eboAw0D0VQ10tCROsC9bcB1js8LXlE6GDJ5M8MH62Fsfpu5/Bv9eqn/N6WHA3b2j4gC39trFl7ilQMH1xNzhKiF3ICjEsOLaFzH0IvZ80tNjP3K7sQ+vfVJQM4tkmw1MDDLjftlYEXt7bRqvC2lS4MUFYI8rO5On+B1UhLjeFVDveLc9cNPWbUm7OgwXjDS5dk6vCA==",
+        "SigningCertUrl": "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-a86cb10b4e1f29c941702d737128f7b6.pem",
+        "UnsubscribeUrl": "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:564748484972:IncomingSMS-TM-STAGING:6c216da0-e883-4b4f-bc7e-e64c5c906c45",
+        "MessageAttributes": {}
+      }
+    }
+  ]
+}

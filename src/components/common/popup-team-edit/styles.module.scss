@@ -1,0 +1,186 @@
+.popupWrapper {
+  width: 700px;
+  padding: 25px 20px;
+}
+
+.headerWrapper {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 25px;
+}
+
+.editBtnWrapper {
+  flex-shrink: 0;
+
+  margin: 0;
+}
+
+.popupFormWrapper {
+  display: flex;
+
+  margin: 0 0 25px;
+}
+
+.mainInfo {
+  width: 50%;
+
+  padding-right: 15px;
+}
+
+.modalLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6a6a6a;
+  margin-bottom: 7px;
+  display: block;
+  margin-top: 7px;
+  white-space: nowrap;
+}
+
+.infoList,
+.contactList {
+  margin: 0 0 20px;
+  padding: 0;
+
+  color: #6a6a6a;
+  list-style: none;
+
+  .contactListDouble {
+    display: initial;
+
+    label {
+      display: flex;
+      flex-wrap: nowrap;
+
+      margin: 5px 0;
+    }
+  }
+
+  li {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-bottom: 5px;
+    align-items: center;
+  }
+
+  b {
+    white-space: nowrap;
+    margin-right: 5px;
+  }
+
+  p {
+    display: flex;
+    flex-direction: column;
+    margin: 0 0 0 20px;
+  }
+
+  label {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  input {
+    width: inherit;
+    margin: 0;
+    padding: 0 5px;
+
+    font: inherit;
+
+    background-color: transparent;
+
+    border: 0;
+    border-bottom: 1px solid #6a6a6a;
+  }
+}
+
+.infoList {
+  margin-bottom: 20px;
+}
+
+.fieldList {
+  width: 60%;
+  max-height: 225px;
+  margin: 0;
+  padding: 0 20px 0 0;
+
+  list-style: none;
+
+  overflow-y: auto;
+}
+
+.gamesMessage {
+  display: flex;
+  align-items: center;
+
+  width: 50%;
+  margin: 0;
+
+  color: #6a6a6a;
+  font-size: 18px;
+  text-align: center;
+}
+
+.btnsWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.BtnDeleteWrapper {
+  color: #ff0f19;
+}
+
+.popupBtnsWrapper {
+  display: flex;
+  justify-content: space-between;
+  & > :first-child {
+    margin-right: 15px;
+  }
+}
+
+.emailSectionItem {
+  input {
+    padding: 10px 14px;
+    color: #6a6a6a;
+  }
+
+  p {
+    padding: 10px 14px;
+    padding: 10px 14px;
+    position: absolute;
+    bottom: -51px;
+    background: #e8402f;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 6px;
+    color: white !important;
+
+    &:before {
+      content: "";
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 5px solid #e8402f;
+      top: -5px;
+      position: absolute;
+    }
+  }
+}
+
+.sectionRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  .sectionItem {
+    width: 48.5%;
+  }
+}
+
+.backdrop{
+  z-index: 1000 !important;
+  color: #ffffff;
+}

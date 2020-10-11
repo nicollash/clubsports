@@ -1,0 +1,22 @@
+.container {
+  margin: 3px;
+  .msgWrapper {
+    display: flex;
+    align-items: center;
+    & > :first-child {
+      padding-right: 5px;
+    }
+    .msg {
+      font-family: 'Open Sans';
+      color: #6a6a6a;
+      .type {
+        font-weight: 600;
+      }
+    }
+  }
+  .btnsWrapper {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+  }
+}

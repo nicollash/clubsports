@@ -1,0 +1,41 @@
+.root {
+  width: 100%;
+  padding: 16px;
+  background-color: #f4f4f4 !important;
+}
+
+.container {
+  max-height: 440px;
+
+  .rowCell{
+    display: flex;
+  }
+
+  .sortButton svg {
+    opacity: 0.2;
+  }
+
+  .tableHeadCell {
+    width: 130px;
+
+    .cellText {
+      white-space: pre-wrap;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 70px;
+    }
+  }
+
+  .tableCell {
+    width: 130px;
+    min-width: 130px;
+    text-align: center;
+    height: 70px;
+  }
+}
+
+.btnsWrapper {
+  display: flex;
+  justify-content: flex-end;
+}

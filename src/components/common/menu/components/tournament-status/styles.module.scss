@@ -1,0 +1,36 @@
+.progressBarWrapper {
+  margin-bottom: 5px;
+}
+
+.progressBarStatusWrapper {
+  margin: 8px 0;
+}
+
+.progressBarStatus,
+.progressBarComplete {
+  color: #ffffff;
+
+  span,
+  output {
+    font-weight: bold;
+  }
+}
+
+.doneBtnWrapper {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 19px;
+
+  button {
+    background-color: #00cc47;
+  }
+
+  button:hover {
+    background-color: #00cc47;
+  }
+}

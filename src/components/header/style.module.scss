@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+$horizontalPadding: 14%;
+$transition: 0.20s ease-in-out;
+
+.wrapper {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  color: #FFFFFF;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: 'Open Sans';
+  font-weight: bold;
+  box-shadow: 0px 3px 20px -14px #00000070;
+  flex: 0 0 auto;
+  background: linear-gradient(121deg,#073b65 38%,#0079ae);
+
+  @media screen and (min-width: 1920px) {
+    padding: 0 21%;
+  }
+
+  .container {
+    width: 1110px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+
+    @media screen and (min-width: 1920px) {
+      width: 100%;
+    }
+
+    .logo {
+      width: 61px;
+      height: 48px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .listWrapper {
+      width: calc(100% - 61px - 50px);
+    }
+
+    .list {
+      display: flex;
+      justify-content: space-evenly;
+      padding: 0 $horizontalPadding / 2;
+
+      .listItem {
+        color: #fff;
+        padding-right: 10px;
+        white-space: nowrap;
+        transition: color $transition, text-shadow $transition;
+        a {
+          text-decoration: none;
+          color: #fff;
+        }
+
+        &:hover {
+          cursor: pointer;
+          color: #636cc2;
+          text-shadow: 0px 0px 0.5px #0000008a;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+.tournamentContainer {
+  width: 100%;
+}
+.tournamentHeader {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #ececec;
+  padding-top: 12px;
+}
+
+.buttonsGroup {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 20%;
+  align-self: center;
+}
+.tournamentContent {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 16px 0 12px 90px;
+}
+.tournamentContentItem {
+  flex-grow: 1;
+  width: 49%;
+  color: #6a6a6a;
+}
+.cardImage {
+  display: flex;
+  justify-content: center;
+  align-self: flex-start;
+  flex-grow: 1;
+  width: 95px;
+}
+.cardHeader {
+  flex-grow: 1;
+  width: 70%;
+  .cardTitle {
+    color: #6a6a6a;
+    font-weight: 600;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .additionalMessage {
+    color: #6a6a6a;
+    font-size: 16px;
+  }
+}
+.tournamentContentTitle {
+  font-weight: 600;
+}
+.tournamentStatus {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.logo {
+  max-width: 50px;
+  max-height: 50px;
+}
