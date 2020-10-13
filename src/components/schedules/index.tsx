@@ -58,6 +58,7 @@ import {
   saveDraft,
   updateDraft,
   fetchSchedulesDetails,
+  fetchScheduleTeamDetails,
   publishSchedulesGames,
   updatePublishedSchedulesDetails,
   schedulesSavingInProgress,
@@ -146,6 +147,7 @@ interface IMapDispatchToProps {
   updateSchedulesTable: (teamCard: ITeamCard) => void;
   onScheduleUndo: () => void;
   fetchSchedulesDetails: (scheduleId: string) => void;
+  fetchScheduleTeamDetails: (scheduleId: string, eventId: string) => void;
   publishSchedulesGames: (schedulesGames: ISchedulesGame[]) => void;
   publishedClear: () => void;
   publishedSuccess: () => void;
@@ -252,6 +254,7 @@ class Schedules extends Component<Props, State> {
 
   async componentDidMount() {
     const {
+      event,
       facilities,
       match,
       scheduleData,
@@ -260,6 +263,7 @@ class Schedules extends Component<Props, State> {
       fetchFields,
       fetchEventSummary,
       fetchSchedulesDetails,
+      fetchScheduleTeamDetails,
       setIsAlreadyDraftSaveStatus,
     } = this.props;
     setIsAlreadyDraftSaveStatus(false);
@@ -320,6 +324,9 @@ class Schedules extends Component<Props, State> {
     if (scheduleId) {
       this.setState({ scheduleId });
       fetchSchedulesDetails(scheduleId);
+      if (event) {
+        fetchScheduleTeamDetails(scheduleId, event.event_id);
+      }
     } else {
       await this.calculateNeccessaryData();
 
@@ -350,8 +357,10 @@ class Schedules extends Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const {
+      event,
       schedule,
       schedulesDetails,
+      fetchScheduleTeamDetails,
       schedulesTeamCards,
       draftSaved,
       divisions,
@@ -377,6 +386,9 @@ class Schedules extends Component<Props, State> {
 
     if (scheduleId && !schedule) {
       this.props.fetchSchedulesDetails(scheduleId);
+       if (event) {
+        fetchScheduleTeamDetails(scheduleId, event.event_id);
+      }
     }
 
     if (
@@ -1200,6 +1212,7 @@ class Schedules extends Component<Props, State> {
       onToggleFullScreen,
       updateSchedulesDetails,
       schedulesDetails,
+      scheduleTeamDetails,
       addTeams,
       addNewPool,
     } = this.props;
@@ -1301,6 +1314,7 @@ class Schedules extends Component<Props, State> {
                   scheduleData?.schedule_name ? scheduleData : schedule!
                 }
                 schedulesDetails={schedulesDetails}
+                scheduleTeamDetails={scheduleTeamDetails}
                 historyLength={schedulesHistoryLength}
                 teamsDiagnostics={teamsDiagnostics}
                 divisionsDiagnostics={divisionsDiagnostics}
@@ -1363,6 +1377,7 @@ const mapStateToProps = ({
   scheduleData: scheduling?.schedule,
   schedule: schedules?.schedule,
   schedulesDetails: schedules?.schedulesDetails,
+  scheduleTeamDetails: schedules?.scheduleTeamDetails,
   pools: divisions?.pools,
   gamesAlreadyExist: schedules?.gamesAlreadyExist,
 });
@@ -1383,6 +1398,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       publishedSuccess,
       onScheduleUndo,
       fetchSchedulesDetails,
+      fetchScheduleTeamDetails,
       schedulesSavingInProgress,
       clearSchedulesTable,
       getAllPools,

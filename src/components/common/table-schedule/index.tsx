@@ -28,6 +28,7 @@ import { IField } from "common/models/schedule/fields";
 import ITimeSlot from "common/models/schedule/timeSlots";
 import { IScheduleFacility } from "common/models/schedule/facilities";
 import { ITeam, ITeamCard } from "common/models/schedule/teams";
+import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
 import { Button, CardMessage, MatrixTable, Checkbox } from "components/common";
 import PopupConfirm from "components/common/popup-confirm";
 import Filter from "./components/filter";
@@ -88,6 +89,7 @@ interface Props {
   facilities: IScheduleFacility[];
   scheduleData: ISchedule;
   schedulesDetails?: ISchedulesDetails[];
+  scheduleTeamDetails?: IScheduleTeamDetails[];
   eventSummary: IEventSummary[];
   isEnterScores?: boolean;
   historyLength?: number;
@@ -142,6 +144,7 @@ const TableSchedule = ({
   facilities,
   scheduleData,
   schedulesDetails,
+  scheduleTeamDetails,
   timeSlots,
   timeValues,
   eventSummary,
@@ -998,6 +1001,7 @@ const TableSchedule = ({
               timeSlots={timeSlots}
               facilities={facilities}
               schedule={scheduleData}
+              scheduleTeamDetails={scheduleTeamDetails}
               eventDays={days}
               isOpen={isPopupSaveReportOpen}
               teamCards={teamCards}

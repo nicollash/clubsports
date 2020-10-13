@@ -11,6 +11,8 @@ import {
   SCHEDULES_DRAFT_SAVED_FAILURE,
   FETCH_SCHEDULES_DETAILS_SUCCESS,
   FETCH_SCHEDULES_DETAILS_FAILURE,
+  FETCH_SCHEDULE_TEAM_DETAILS_SUCCESS,
+  FETCH_SCHEDULE_TEAM_DETAILS_FAILURE,
   SCHEDULES_PUBLISHED_SUCCESS,
   SCHEDULES_PUBLISHED_FAILURE,
   SCHEDULES_PUBLISHED_CLEAR,
@@ -32,6 +34,7 @@ import { IField, ISchedule } from 'common/models';
 import { IEventSummary } from 'common/models/event-summary';
 import { IAppState } from 'reducers/root-reducer.types';
 import { ISchedulesDetails } from 'common/models/schedule/schedules-details';
+import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
 import { successToast, errorToast, infoToast } from 'components/common/toastr/showToasts';
 import { ISchedulesGame } from 'common/models/schedule/game';
 import { ScheduleStatuses } from 'common/enums';
@@ -74,6 +77,13 @@ const fetchSchedulesDetailsSuccess = (payload: {
   payload,
 });
 
+const fetchScheduleTeamDetailsSuccess = (payload: {
+  scheduleTeamDetails: IScheduleTeamDetails[];
+}) => ({
+  type: FETCH_SCHEDULE_TEAM_DETAILS_SUCCESS,
+  payload,
+});
+
 export const schedulesDetailsClear = () => ({
   type: SCHEDULES_DETAILS_CLEAR,
 });
@@ -92,6 +102,9 @@ const publishFailure = () => ({
 
 const fetchSchedulesDetailsFailure = () => ({
   type: FETCH_SCHEDULES_DETAILS_FAILURE,
+});
+const fetchScheduleTeamDetailsFailure = () => ({
+  type: FETCH_SCHEDULE_TEAM_DETAILS_FAILURE,
 });
 
 const anotherSchedulePublished = (payload: boolean) => ({
@@ -330,6 +343,25 @@ export const fetchSchedulesDetails = (scheduleId: string) => async (
     );
   } else {
     dispatch(fetchSchedulesDetailsFailure());
+  }
+};
+
+export const fetchScheduleTeamDetails = (scheduleId: string, eventId: string) => async (
+  dispatch: Dispatch
+) => {
+  const scheduleTeamDetails: IScheduleTeamDetails[] = await api.get('games_normalized_summary', {
+    schedule_id: scheduleId,
+    event_id: eventId,
+  });
+
+  if (scheduleTeamDetails && scheduleTeamDetails[0]) {
+    dispatch(
+      fetchScheduleTeamDetailsSuccess({
+        scheduleTeamDetails,
+      })
+    );
+  } else {
+    dispatch(fetchScheduleTeamDetailsFailure());
   }
 };
 

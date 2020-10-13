@@ -1,6 +1,7 @@
 import React from 'react';
 import PDFTableSchedule from 'pdg-layouts/table-schedule';
 import PDFTableFieldsSchedule from 'pdg-layouts/table-fields-schedule';
+import PDFTableScheduleTeamDetail from 'pdg-layouts/table-schedule-team-detail';
 import {
   Modal,
   HeadingLevelTwo,
@@ -14,6 +15,7 @@ import { onPDFSave, getSelectDayOptions, getGamesByDays, onXLSXSave } from 'help
 import { BindingAction, IPool } from 'common/models';
 import { ButtonColors, ButtonVariant, DefaultSelectValues, TableScheduleTypes } from 'common/enums';
 import { IEventDetails, ISchedule } from 'common/models';
+import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
 import { IGame, settleTeamsPerGamesDays } from 'components/common/matrix-table/helper';
 import { IField } from 'common/models/schedule/fields';
 import ITimeSlot from 'common/models/schedule/timeSlots';
@@ -30,14 +32,15 @@ const STYLES_ICOM_WARNING = {
 };
 
 interface Props {
-  pools?: IPool[];
   event: IEventDetails;
+  schedule: ISchedule;
+  scheduleTeamDetails?: IScheduleTeamDetails[];
   timeSlots: ITimeSlot[];
+  pools?: IPool[];
   tableType?: string;
   facilities: IScheduleFacility[];
   games: IGame[];
   fields: IField[];
-  schedule: ISchedule;
   teamCards: ITeamCard[];
   eventDays: string[];
   isOpen: boolean;
@@ -45,19 +48,20 @@ interface Props {
 }
 
 const PopupSaveReporting = ({
-  pools,
-  event,
-  facilities,
-  tableType,
-  timeSlots,
-  teamCards,
-  games,
-  fields,
-  schedule,
-  eventDays,
-  isOpen,
-  onClose,
-}: Props) => {
+    event,
+    schedule,
+    scheduleTeamDetails,
+    timeSlots,
+    pools,
+    facilities,
+    tableType,
+    teamCards,
+    games,
+    fields,
+    eventDays,
+    isOpen,
+    onClose,
+  }: Props) => {
   const [isAllowDownload, changeAllowDownload] = React.useState<boolean>(true);
   const [activeDay, changeActiveDay] = React.useState<string[]>([
     DefaultSelectValues.ALL,
@@ -124,7 +128,7 @@ const PopupSaveReporting = ({
         } (HeatMap)`
       : type === TableScheduleTypes.SCHEDULES
       ? "Schedule"
-      : "Srores";
+      : "Scores";
     onPDFSave(
       <PDFTableSchedule
         event={event}
@@ -141,6 +145,7 @@ const PopupSaveReporting = ({
     );
   };
 
+  
   const onScheduleFieldsSave = () =>
     onPDFSave(
       <PDFTableFieldsSchedule
@@ -153,8 +158,27 @@ const PopupSaveReporting = ({
         scorerMobile={scorerMobile}
       />,
       event.event_name
-        ? `${event.event_name} Master Fields Schedule`
+        ? `${event.event_name} Master Fields Schedule `
         : 'FieldsSchedule'
+    );
+    
+  const onScheduleTeamDetailSave = () =>
+    onPDFSave(
+      <PDFTableScheduleTeamDetail
+        event={event}
+        schedule={schedule}
+        scheduleTeamDetails={scheduleTeamDetails}
+        timeSlots={timeSlots}
+        games={gamesByDay}
+        fields={fields}
+        facilities={facilities}
+        teamCards={teamCards}
+        isHeatMap={true}
+        scorerMobile={scorerMobile}
+      />,
+      event.event_name
+        ? `${event.event_name} Schedule Team Detail`
+        : 'TeamDetail'
     );
 
   const onScoringTableXLSXSave = async () => {
@@ -261,6 +285,16 @@ const PopupSaveReporting = ({
                       <b>Field-by-Field Schedule</b>
                       <ButtonLoad
                         loadFunc={onScheduleFieldsSave}
+                        variant={ButtonVariant.TEXT}
+                        color={ButtonColors.SECONDARY}
+                        isDisabled={!isAllowDownload}
+                        label="Download"
+                      />
+                    </li>
+                    <li className={styles.dowloadLinkWrapper}>
+                      <b>Schedule-Team Details</b>
+                      <ButtonLoad
+                        loadFunc={onScheduleTeamDetailSave}
                         variant={ButtonVariant.TEXT}
                         color={ButtonColors.SECONDARY}
                         isDisabled={!isAllowDownload}

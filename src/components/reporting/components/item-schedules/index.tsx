@@ -1,5 +1,6 @@
 import React from 'react';
 import PDFTableSchedule from 'pdg-layouts/table-schedule';
+import PDFTableScheduleTeamDetail from 'pdg-layouts/table-schedule-team-detail';
 import PDFTableFieldsSchedule from 'pdg-layouts/table-fields-schedule';
 import {
   HeadingLevelThree,
@@ -50,21 +51,22 @@ interface Props {
   isEmptyListsIncluded?: boolean;
 }
 
-const ItemSchedules = ({
-  event,
-  facilities,
-  timeSlots,
-  games,
-  fields,
-  schedule,
-  teamCards,
-  pools,
-  bracketGames,
-  playoffTimeSlots,
-  divisions,
-  schedulesGames,
-  isEmptyListsIncluded,
-}: Props) => {  
+const ItemSchedules = (props: Props) => {  
+  const {
+    event,
+    facilities,
+    timeSlots,
+    games,
+    fields,
+    schedule,
+    teamCards,
+    pools,
+    bracketGames,
+    playoffTimeSlots,
+    divisions,
+    schedulesGames,
+    isEmptyListsIncluded,
+  } = props;
   const [isAllowDownload, changeAllowDownload] = React.useState<boolean>(true);
   const [activeDay, changeActiveDay] = React.useState<string[]>([
     DefaultSelectValues.ALL,
@@ -156,6 +158,28 @@ const ItemSchedules = ({
       event.event_name
         ? `${event.event_name} Printed Pools Schedule (with Heatmap) - PDF`
         : 'Schedule'
+    );
+
+  const onScheduleTeamDetailsPDFSave = () =>
+    onPDFSave(
+      <PDFTableScheduleTeamDetail
+        event={event}
+        games={gamesByDay}
+        fields={fields}
+        timeSlots={timeSlots}
+        facilities={facilities}
+        schedule={schedule}
+        teamCards={teamCards}
+        isHeatMap={true}
+        // byPool={true}
+        divisions={divisions}
+        pools={pools}
+        scorerMobile={scorerMobile}
+        isEmptyListsIncluded={isEmptyListsIncluded}
+      />,
+      event.event_name
+        ? `${event.event_name} Schedule Team Detail`
+        : 'TeamDetail'
     );
 
   const onScheduleFieldsSave = () => {
@@ -250,6 +274,14 @@ const ItemSchedules = ({
               variant={ButtonVariant.TEXT}
               color={ButtonColors.SECONDARY}
               label="Printed Pools Schedule (with Heatmap) - PDF"
+            />
+          </li>
+          <li>
+            <ButtonLoad
+              loadFunc={onScheduleTeamDetailsPDFSave}
+              variant={ButtonVariant.TEXT}
+              color={ButtonColors.SECONDARY}
+              label="Schedule - Team Details - PDF"
             />
           </li>
         </ul>
