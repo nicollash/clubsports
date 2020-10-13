@@ -3,8 +3,11 @@ import {
   MESSAGES_FETCH_SUCCESS,
   SEND_SAVED_MESSAGES_SUCCESS,
   DELETE_MESSAGES_SUCCESS,
+  RESPONSES_FETCH_SUCCESS,
+  OPTIONS_FETCH_SUCCESS,
 } from './actionTypes';
 import { IDivision, IEventDetails, IPool, ITeam } from 'common/models';
+import { IResponse } from "..";
 
 export interface IState {
   data: {
@@ -14,6 +17,7 @@ export interface IState {
     teams: ITeam[];
   };
   messages: any[];
+  responses: IResponse[];
   messagesAreLoading: boolean;
 }
 
@@ -26,6 +30,7 @@ const defaultState: IState = {
   },
   messages: [],
   messagesAreLoading: true,
+  responses: [],
 };
 
 export default (
@@ -38,6 +43,9 @@ export default (
     }
     case MESSAGES_FETCH_SUCCESS: {
       return { ...state, messages: action.payload, messagesAreLoading: false };
+    }
+    case RESPONSES_FETCH_SUCCESS: {
+      return { ...state, responses: action.payload };
     }
     case SEND_SAVED_MESSAGES_SUCCESS: {
       const updatedMessagesIds = action.payload.map(
@@ -56,9 +64,12 @@ export default (
       return {
         ...state,
         messages: state.messages.filter(
-          message => !action.payload.includes(message.message_id)
+          message => action.payload !== message.message_id
         ),
       };
+    }
+    case OPTIONS_FETCH_SUCCESS: {
+      return { ...state, options: action.payload };
     }
     default:
       return state;

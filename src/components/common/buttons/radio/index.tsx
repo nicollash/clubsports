@@ -12,6 +12,7 @@ interface IRadioProps {
   formLabel?: string;
   onChange: any;
   row?: boolean;
+  disabledField?: string;
 }
 
 const Radio: React.FC<IRadioProps> = ({
@@ -20,6 +21,7 @@ const Radio: React.FC<IRadioProps> = ({
   checked,
   onChange,
   row,
+  disabledField,
 }) => (
     <div className={styles.container}>
       {formLabel && <span className={styles.label}>{formLabel}</span>}
@@ -31,6 +33,7 @@ const Radio: React.FC<IRadioProps> = ({
             control={<MuiRadio checked={option === checked} color="secondary" />}
             label={option}
             onChange={onChange}
+            disabled={disabledField === option}
           />
         ))}
       </RadioGroup>

@@ -607,7 +607,6 @@ export const createTeamsCsv: ActionCreator<ThunkAction<
     const teamsInDivision = allTeams.filter(
       (t: ITeam) => t.division_id === team.division_id
     );
-    console.log("teamsInDivision: ", team, teamsInDivision);
 
     try {
       await Yup.array()
@@ -629,26 +628,6 @@ export const createTeamsCsv: ActionCreator<ThunkAction<
           msg: err.message,
         });
       }
-    }
-
-    try {
-      await Yup.array()
-        .of(teamSchema)
-        .unique(
-          (t) => t.long_name,
-          "Within a division, Long Names must be unique."
-        )
-        .validate([...data, team]);
-    } catch (err) {
-      const invalidTeam = err.value[err.value.length - 1];
-      const index = teams.findIndex(
-        (team) => team.team_id === invalidTeam.team_id
-      );
-
-      dupList.push({
-        index,
-        msg: err.message,
-      });
     }
   }
 

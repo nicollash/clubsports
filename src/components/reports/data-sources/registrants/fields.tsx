@@ -371,3 +371,36 @@ export const initialColumns: ColDef[] = [
     hide: true,
   },
 ];
+
+export const columnsForMessages: ColDef[] = [
+  {
+    headerName: 'Recipient',
+    field: 'recipientTarget',
+  },
+  {
+    headerName: 'Send On',
+    field: 'sendDatetime',
+    type: ['dateColumnWithTimeFilter', 'rightAligned'],
+    width: 200,
+  },
+  {
+    headerName: 'Received On',
+    field: 'receivedDatetime',
+    type: ['dateColumnWithTimeFilter', 'rightAligned'],
+    hide: true,
+  },
+  {
+    headerName: 'Answer',
+    field: 'answerText',
+    rowGroupIndex: 0,
+  },
+  {
+    headerName: 'Status',
+    field: 'messageStatus',
+  },
+  {
+    headerName: 'Message ID',
+    field: 'messageId',
+    hide: true,
+  },
+];

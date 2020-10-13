@@ -38,7 +38,7 @@ const ScoringFilter = (props: IProps) => {
       <div className={styles.selectWrapper}>
         <legend className={styles.selectTitle}>Groups</legend>
         <MultiSelect
-          name="divisionsOptions"
+          name="groupsOptions"
           selectOptions={groupsOptions}
           onChange={onSelectUpdate}
         />

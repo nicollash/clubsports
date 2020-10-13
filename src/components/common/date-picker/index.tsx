@@ -126,6 +126,7 @@ const DatePicker: React.FC<IDatePickerProps> = ({
       size='small'
       inputVariant='outlined'
       value={value}
+      format={'MMM d, hh:ss a'}
       onChange={onChange}
       disabled={disabled}
       required={isRequired}

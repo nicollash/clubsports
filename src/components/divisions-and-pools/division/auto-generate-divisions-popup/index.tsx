@@ -60,7 +60,7 @@ const onSave = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <section className={styles.section}>
           <div className={styles.titleWrapper}>
-            <HeadingLevelTwo>Auto-generate Divisions</HeadingLevelTwo>
+            <HeadingLevelTwo>Auto-Generate Divisions</HeadingLevelTwo>
           </div>
           <div className={styles.selectDate}>
             <Slider

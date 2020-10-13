@@ -85,7 +85,10 @@ export const EventMenu = [
     title: EventMenuTitles.EVENT_LINK,
     icon: Icons.EMAIL,
     link: Routes.EVENT_LINK,
-    children: [EventMenuTitles.MESSAGING, EventMenuTitles.SCHEDULE_REVIEW],
+    children: [
+      EventMenuTitles.MESSAGING,
+      EventMenuTitles.SCHEDULE_REVIEW,
+    ],
     isAllowEdit: false,
   },
 ];

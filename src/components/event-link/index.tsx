@@ -7,15 +7,22 @@ import Navigation from './navigation';
 import Messaging from './messaging';
 import ScheduleReview from './schedule-review';
 import {
+  getData,
   getMessages,
-  sendSavedMessages,
   deleteMessages,
 } from './logic/actions';
-import { BindingCbWithOne } from 'common/models';
+import { BindingCbWithOne, IDivision, IPool, ITeam } from 'common/models';
 import { IMessage } from 'common/models/event-link';
-import { groupBy } from 'lodash';
-import { orderBy } from 'lodash-es';
 import { RouteComponentProps } from "react-router-dom";
+
+export interface IResponse {
+  answerText: string;
+  messageRecipient: string;
+  messageStatus: string;
+  receivedDatetime: string | Date;
+  sendDatetime: string | Date;
+  messageId: string;
+};
 
 interface MatchParams {
   eventId: string;
@@ -33,50 +40,39 @@ export interface IGroupedMessages {
 }
 
 interface IProps {
+  divisions: IDivision[];
+  pools: IPool[];
+  teams: ITeam[];
   getMessages: (eventId: string) => void;
-  sendSavedMessages: BindingCbWithOne<IGroupedMessages>;
-  deleteMessages: BindingCbWithOne<string[]>;
+  getData: () => void;
+  deleteMessages: BindingCbWithOne<string>;
   messages: IMessage[];
   messagesAreLoading: boolean;
+  responses: IResponse[];
 }
 
 const EventLink = ({
+  divisions,
+  pools,
+  teams,
+  responses,
   match,
   getMessages,
   messages,
   messagesAreLoading,
-  sendSavedMessages,
   deleteMessages,
+  getData,
 }: IProps & RouteComponentProps<MatchParams>) => {
   const eventId = match.params.eventId;
   useEffect(() => {
     getMessages(eventId);
+    getData();
   }, []);
 
   const [isSectionsExpand, toggleSectionCollapse] = useState<boolean>(true);
 
   const onToggleSectionCollapse = () => {
     toggleSectionCollapse(!isSectionsExpand);
-  };
-
-  const groupMessages = () => {
-    const data = messages?.filter(message => message.message_id);
-    const groupedMessages = groupBy(data, 'request_id');
-    const res = Object.entries(groupedMessages).map(([_key, value]) => {
-      return {
-        message_title: value[0].message_title,
-        message_type: value[0].message_type,
-        message_body: value[0].message_body,
-        message_ids: value.map(mes => mes.message_id),
-        uniqueIds: value.map(mes => mes.sns_unique_id),
-        recipients: value.map(mes => mes.recipient_details),
-        sendDatetime: value[0].send_datetime,
-        status: value[0].status,
-        senderName: value[0].email_from_name,
-      };
-    });
-
-    return orderBy(res, ['sendDatetime'], ['desc']);
   };
 
   return (
@@ -94,10 +90,13 @@ const EventLink = ({
       <ul className={styles.libraryList}>
         <Messaging
           isSectionExpand={isSectionsExpand}
-          data={groupMessages()}
+          data={messages}
           messagesAreLoading={messagesAreLoading}
-          sendMessages={sendSavedMessages}
           deleteMessages={deleteMessages}
+          responses={responses}
+          divisions={divisions}
+          pools={pools}
+          teams={teams}
         />
         <ScheduleReview isSectionExpand={isSectionsExpand} />
       </ul>
@@ -106,17 +105,30 @@ const EventLink = ({
 };
 
 const mapStateToProps = (state: {
-  eventLink: { messages: IMessage[]; messagesAreLoading: boolean };
+  eventLink: {
+    messages: IMessage[];
+    messagesAreLoading: boolean;
+    responses: IResponse[];
+    data: {
+      divisions: IDivision[];
+      pools: IPool[];
+      teams: ITeam[];
+    };
+  };
 }) => {
   return {
     messages: state.eventLink.messages,
     messagesAreLoading: state.eventLink.messagesAreLoading,
+    responses: state.eventLink.responses,
+    divisions: state.eventLink.data.divisions,
+    pools: state.eventLink.data.pools,
+    teams: state.eventLink.data.teams,
   };
 };
 
 const mapDispatchToProps = {
+  getData,
   getMessages,
-  sendSavedMessages,
   deleteMessages,
 };
 

@@ -1,36 +1,44 @@
-import React, { useState } from 'react';
-import { SectionDropdown, Button } from 'components/common';
+import React, { useEffect, useState } from 'react';
+import { SectionDropdown, Button, DataGrid } from 'components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
 import styles from '../../styles.module.scss';
-// import { IMessage } from 'common/models/event-link';
 import { capitalize } from 'lodash';
 import moment from 'moment';
-import { BindingCbWithOne } from 'common/models';
-import { IGroupedMessages } from 'components/event-link';
+import { BindingCbWithOne, IDivision, IPool, ITeam } from 'common/models';
+import { IResponse } from 'components/event-link';
 import DeletePopupConfrim from 'components/common/delete-popup-confirm';
-import { formatPhoneNumber } from 'helpers/formatPhoneNumber';
-
+import { columnsForMessages } from "components/reports/data-sources/registrants/fields";
+import { IMessage } from "common/models/event-link";
+import { IRecipientDetails } from "components/event-link/create-message";
+import { getDivisions, getPools, getRecipient, getTeams, Recipient, Type } from "components/event-link/helpers";
 interface IProps {
+  divisions: IDivision[];
+  pools: IPool[];
+  teams: ITeam[];
   isSectionExpand: boolean;
-  message: IGroupedMessages;
-  sendMessages: BindingCbWithOne<IGroupedMessages>;
-  deleteMessages: BindingCbWithOne<string[]>;
+  message: IMessage;
+  responses: IResponse[];
+  deleteMessages: BindingCbWithOne<string>;
 }
 
 const MessageItem = ({
+  divisions,
+  pools,
+  teams,
   isSectionExpand,
   message,
-  sendMessages,
+  responses,
   deleteMessages,
 }: IProps) => {
   const [isDeleteModalOpen, toggleDeleteModal] = useState<boolean>(false);
-  const onMessageSend = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    sendMessages(message);
-  };
+  const [recipientDetails, setRecipientDetails] = useState<IRecipientDetails>();
+
+  useEffect(() => {
+    setRecipientDetails(JSON.parse(message.recipient_details));
+  }, [message]);
 
   const onMessagesDelete = () => {
-    deleteMessages(message.message_ids);
+    deleteMessages(message.message_id);
     toggleDeleteModal(false);
   };
 
@@ -53,16 +61,11 @@ const MessageItem = ({
             {capitalize(message.message_title) || message.message_type}
           </p>
           <p className={styles.msDeliveryDate}>
-            {message.status === 1 || message.sendDatetime ? (
-              `Sent ${moment(message.sendDatetime).format('MM.DD.YYYY, HH:mm')}`
-            ) : (
-              <Button
-                label="Send Now"
-                color="secondary"
-                variant="text"
-                onClick={onMessageSend}
-              />
-            )}
+            {new Date(message.send_datetime) < new Date()
+              ? `Sent ${moment(message.send_datetime).format("MMM d, hh:ss a")}`
+              : `Will be sent ${moment(message.send_datetime).format(
+                  'MMM d, hh:ss a'
+                )}`}
           </p>
         </div>
         <div className={styles.msContent}>
@@ -73,12 +76,46 @@ const MessageItem = ({
             </p>
             <div className={styles.msInfoWrapper}>
               <div className={styles.msInfoContent}>
-                <p>
-                  <span className={styles.msContentTitle}>Recipients:</span>{' '}
-                  {message.recipients.length === 1
-                    ? formatPhoneNumber(message.recipients[0])
-                    : message.recipients.length}
-                </p>
+                {recipientDetails &&
+                  recipientDetails.recipient === Recipient.ONE && (
+                    <p>
+                      <span className={styles.msContentTitle}>
+                        {message.message_type === Type.EMAIL
+                          ? "Participant's Email:"
+                          : "Participant's Phone number:"}
+                      </span>{" "}
+                      {getRecipient(recipientDetails, message.message_type)}
+                    </p>
+                  )}
+                {recipientDetails &&
+                  recipientDetails.recipient === Recipient.MANY && (
+                    <>
+                      {recipientDetails.divisionIds?.length !== 0 && (
+                        <p>
+                          <span className={styles.msContentTitle}>Divisions of participants:</span>{" "}
+                          {getDivisions(recipientDetails.divisionIds, divisions)}
+                        </p>
+                      )}
+                      {recipientDetails.poolIds?.length !== 0 && (
+                        <p>
+                          <span className={styles.msContentTitle}>Pools of participants:</span>{" "}
+                          {getPools(recipientDetails.poolIds, pools)}
+                        </p>
+                      )}
+                      {recipientDetails.teamIds?.length !== 0 && (
+                        <p>
+                          <span className={styles.msContentTitle}>Teams of participants:</span>{" "}
+                          {getTeams(recipientDetails.teamIds, teams)}
+                        </p>
+                      )}
+                      {recipientDetails.groups?.length !== 0 && (
+                        <p>
+                          <span className={styles.msContentTitle}>Groups of participants:</span>{" "}
+                          {recipientDetails.groups.join(', ')}
+                        </p>
+                      )}
+                    </>
+                  )}
                 <p>
                   <span className={styles.msContentTitle}>Type:</span>{' '}
                   {message.message_type}
@@ -101,6 +138,14 @@ const MessageItem = ({
                 />
               </div>
             </div>
+          </div>
+          <div className={styles.msContainer}>
+            <DataGrid
+              columns={columnsForMessages}
+              rows={responses}
+              defaultToolPanel={''}
+              height={40}
+            />
           </div>
         </div>
       </SectionDropdown>
