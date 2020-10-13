@@ -6,16 +6,18 @@ import {
   MESSAGES_FETCH_SUCCESS,
   SEND_SAVED_MESSAGES_SUCCESS,
   DELETE_MESSAGES_SUCCESS,
+  RESPONSES_FETCH_SUCCESS,
+  OPTIONS_FETCH_SUCCESS,
 } from './actionTypes';
 import { Toasts } from 'components/common';
-import { IMessageToSend } from '../create-message';
+import { IMessageToSend, IPollOption, IRecipientDetails } from '../create-message';
 import history from 'browserhistory';
 import { getVarcharEight } from 'helpers';
 import { Auth } from 'aws-amplify';
 import { IMember, IEventDetails, IDivision, IPool, ITeam } from 'common/models';
 import { chunk } from 'lodash-es';
 import { IMessage } from 'common/models/event-link';
-import { IGroupedMessages } from '..';
+import { getAnswerText } from "../helpers";
 
 interface IExtendedMessage extends IMessageToSend {
   unique_id: string;
@@ -44,6 +46,20 @@ export const getMessagesSuccess = (
   payload,
 });
 
+export const getResponsesSuccess = (
+  payload: any[]
+): { type: string; payload: IMessage[] } => ({
+  type: RESPONSES_FETCH_SUCCESS,
+  payload,
+});
+
+export const getOptionsSuccess = (
+  payload: any[]
+): { type: string; payload: IMessage[] } => ({
+  type: OPTIONS_FETCH_SUCCESS,
+  payload,
+});
+
 export const sendSavedMessagesSuccess = (
   payload: IExtendedMessage[]
 ): { type: string; payload: IExtendedMessage[] } => ({
@@ -52,8 +68,8 @@ export const sendSavedMessagesSuccess = (
 });
 
 export const deleteMessagesSuccess = (
-  payload: string[]
-): { type: string; payload: string[] } => ({
+  payload: string
+): { type: string; payload: string } => ({
   type: DELETE_MESSAGES_SUCCESS,
   payload,
 });
@@ -72,73 +88,16 @@ export const getData: ActionCreator<ThunkAction<
   dispatch(getDataSuccess({ events, divisions, pools, teams }));
 };
 
-export const sendMessages: ActionCreator<ThunkAction<
-  void,
-  {},
-  null,
-  { type: string }
->> = (data: IMessageToSend) => async () => {
-  if (!data.message) {
-    return Toasts.errorToast('Please, provide a message');
-  } else if (!data.recipients.length) {
-    return Toasts.errorToast('Please, provide recipients');
-  }
-
-  let response;
-  try {
-    response = await api.post('/messages', data);
-
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-  } catch (err) {
-    return Toasts.errorToast(err.message);
-  }
-
-  // Save messages
-
-  const currentSession = await Auth.currentSession();
-  const userEmail = currentSession.getIdToken().payload.email;
-  const members = await api.get(`/members?email_address=${userEmail}`);
-  const member = members.find((it: IMember) => it.email_address === userEmail);
-  const requestId = getVarcharEight();
-
-  const messagesToSave = response.results.map((message: IExtendedMessage) => ({
-    message_id: getVarcharEight(),
-    request_id: requestId,
-    sns_unique_id: message.unique_id,
-    member_id: member.member_id,
-    message_type: message.type,
-    recipient_details: message.recipient,
-    message_title: message.title,
-    message_body: message.message,
-    send_datetime: message.send_datetime,
-    status: message.status,
-    email_from_name: data.senderName,
-  }));
-
-  const messagesToSaveChunk = chunk(messagesToSave, 50);
-
-  try {
-    await Promise.all(
-      messagesToSaveChunk.map(async chunkOfMessages => {
-        await api.post('/messaging', chunkOfMessages);
-      })
-    );
-  } catch (e) {
-    Toasts.errorToast("Couldn't save messages");
-  }
-
-  history.push('/event-link');
-  return Toasts.successToast('Messages are successfully sent');
-};
-
 export const saveMessages: ActionCreator<ThunkAction<
   void,
   {},
   null,
   { type: string }
->> = (data: IMessageToSend) => async () => {
+>> = (
+  data: IMessageToSend,
+  recipientDetails: IRecipientDetails,
+  pollOptions?: IPollOption[]
+) => async () => {
   if (!data.message) {
     return Toasts.errorToast('Please, provide a message');
   }
@@ -148,90 +107,54 @@ export const saveMessages: ActionCreator<ThunkAction<
   const member = members.find((it: IMember) => it.email_address === userEmail);
   const requestId = getVarcharEight();
 
-  const messagesToSave = data.recipients.map(recipient => ({
+  const messageToSave = {
     message_id: getVarcharEight(),
     request_id: requestId,
     member_id: member.member_id,
     message_type: data.type,
-    recipient_details: recipient,
     message_title: data.title,
     message_body: data.message,
     status: 0,
     email_from_name: data.senderName,
     event_id: data.eventId,
-  }));
-
-  const messagesToSaveChunk = chunk(messagesToSave, 50);
-
-  try {
-    await Promise.all(
-      messagesToSaveChunk.map(async chunkOfMessages => {
-        await api.post('/messaging', chunkOfMessages);
-      })
-    );
-  } catch (e) {
-    Toasts.errorToast("Couldn't save messages");
-  }
-
-  history.push('/event-link');
-
-  return Toasts.successToast('Messages are successfully saved');
-};
-
-export const sendSavedMessages: ActionCreator<ThunkAction<
-  void,
-  {},
-  null,
-  { type: string }
->> = (data: IGroupedMessages) => async (dispatch: Dispatch) => {
-  const message = {
-    type: data.message_type,
-    title: data.message_title,
-    message: data.message_body,
-    recipients: data.recipients,
-    senderName: data.senderName,
+    recipient_details: JSON.stringify(recipientDetails),
+    send_datetime: data.sendDatetime,
   };
 
-  const response = await api.post('/event-link', message);
-
-  if (!response || response.status === 500) {
-    return Toasts.errorToast(response.message);
-  }
-
-  // update messages in db
-
-  const currentSession = await Auth.currentSession();
-  const userEmail = currentSession.getIdToken().payload.email;
-  const members = await api.get(`/members?email_address=${userEmail}`);
-  const member = members.find((it: IMember) => it.email_address === userEmail);
-
-  const messagesToUpdate = response.results.map(
-    (message: IExtendedMessage, index: number) => ({
-      message_id: data.message_ids[index],
-      sns_unique_id: message.unique_id,
-      member_id: member.member_id,
-      recipient_details: message.recipient,
-      send_datetime: message.send_datetime,
-      status: message.status,
-    })
-  );
-
-  const messagesToUpdateChunk = chunk(messagesToUpdate, 50);
-
   try {
-    await Promise.all(
-      messagesToUpdateChunk.map(async chunkOfMessages => {
-        await api.put('/messaging', chunkOfMessages);
-      })
-    );
+    await api.post('/messaging', messageToSave);
   } catch (e) {
     Toasts.errorToast("Couldn't save messages");
   }
 
-  dispatch(sendSavedMessagesSuccess(messagesToUpdate));
+  if (pollOptions) {
+    const options = pollOptions.map((opt: IPollOption) => {
+      return {
+        answer_option_id: getVarcharEight(),
+        message_id: messageToSave.message_id,
+        response_message: opt.responseMessage,
+        has_response_YN: opt.hasResponse,
+        answer_code: opt.answerCode,
+        answer_text: opt.answerText,
+      };
+    });
 
-  history.push('/event-link');
-  return Toasts.successToast('Messages are successfully sent');
+    const optionsChunk = chunk(options, 50);
+
+    try {
+      await Promise.all(
+        optionsChunk.map(async chunkOfOptions => {
+          await api.post('/messaging_response_options', chunkOfOptions);
+        })
+      );
+    } catch (e) {
+      Toasts.errorToast("Couldn't save messages");
+    }
+  }
+
+  history.push(`/event/event-link/${data.eventId}`);
+
+  return Toasts.successToast('Messages are successfully saved');
 };
 
 export const deleteMessages: ActionCreator<ThunkAction<
@@ -239,12 +162,10 @@ export const deleteMessages: ActionCreator<ThunkAction<
   {},
   null,
   { type: string }
->> = (messagesIds: string[]) => async (dispatch: Dispatch) => {
-  messagesIds.forEach(messageId =>
-    api.delete(`/messaging?message_id=${messageId}`)
-  );
+>> = (messageId: string) => async (dispatch: Dispatch) => {
+  api.delete(`/messaging?message_id=${messageId}`);
 
-  dispatch(deleteMessagesSuccess(messagesIds));
+  dispatch(deleteMessagesSuccess(messageId));
 
   return Toasts.successToast('Messages are successfully deleted');
 };
@@ -256,6 +177,8 @@ export const getMessages: ActionCreator<ThunkAction<
   { type: string }
 >> = (eventId: string) => async (dispatch: Dispatch) => {
   const messages = await api.get(`/messaging`);
+  const responses = await api.get(`/messaging_recipients`);
+  const options = await api.get(`/messaging_response_options`);
 
   if (!messages) {
     return Toasts.errorToast("Couldn't load the messages.");
@@ -265,5 +188,19 @@ export const getMessages: ActionCreator<ThunkAction<
     ? messages.filter((mes: IMessage) => mes.event_id === eventId)
     : messages;
 
+  const mappedResponses = await Promise.all(
+    responses.map(async (mess: any) => {
+      return {
+        recipientTarget: mess.recipient_target,
+        sendDatetime: mess.send_datetime,
+        receivedDatetime: mess.received_datetime,
+        answerText: getAnswerText(mess.answer_option_id, options),
+        messageStatus: mess.message_status,
+        messageId: mess.message_id,
+      };
+    })
+  );
+
   dispatch(getMessagesSuccess(filterMesssages));
+  dispatch(getResponsesSuccess(mappedResponses));
 };

@@ -3,21 +3,28 @@ import { SectionDropdown, Button, Loader } from 'components/common';
 import { MenuTitles } from 'common/enums';
 import MessageItem from './message-item';
 import styles from '../styles.module.scss';
-import { BindingCbWithOne } from 'common/models';
-import { IGroupedMessages } from '..';
+import { BindingCbWithOne, IDivision, IPool, ITeam } from 'common/models';
+import { IResponse } from '..';
+import { IMessage } from "common/models/event-link";
 
 interface Props {
+  divisions: IDivision[];
+  pools: IPool[];
+  teams: ITeam[];
   isSectionExpand: boolean;
-  data: IGroupedMessages[];
+  data: IMessage[];
   messagesAreLoading: boolean;
-  sendMessages: BindingCbWithOne<IGroupedMessages>;
-  deleteMessages: BindingCbWithOne<string[]>;
+  responses: IResponse[];
+  deleteMessages: BindingCbWithOne<string>;
 }
 const Messaging = ({
+  divisions,
+  pools,
+  teams,
   isSectionExpand,
   data,
+  responses,
   messagesAreLoading,
-  sendMessages,
   deleteMessages,
 }: Props) => {
   const [areMessagesExpand, toggleMessagesExpand] = useState<boolean>(true);
@@ -60,8 +67,13 @@ const Messaging = ({
                       key={index}
                       isSectionExpand={areMessagesExpand}
                       message={message}
-                      sendMessages={sendMessages}
+                      divisions={divisions}
+                      pools={pools}
+                      teams={teams}
                       deleteMessages={deleteMessages}
+                      responses={responses.filter(
+                        (resp) => resp.messageId === message.message_id
+                      )}
                     />
                   ))
               : !messagesAreLoading && (

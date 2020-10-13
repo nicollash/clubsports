@@ -1,6 +1,8 @@
 import { IPool, IDivision, ITeam } from 'common/models';
 import { IMultiSelectOption } from 'components/common/multi-select';
 import { findIndex, find } from 'lodash-es';
+import { IRecipientDetails } from "./create-message";
+import { IScheduleFilter } from "./create-message/filter";
 
 export enum Type {
   TEXT = 'Text',
@@ -18,10 +20,15 @@ export enum Recipient {
 };
 
 export enum Group {
+  COACHES = 'COACHES',
+  REGISTRANTS = 'REGISTRANTS',
+  PLAYERS = 'PLAYERS',
+};
+
+export enum GroupLabels {
   COACHES = 'Coaches',
   REGISTRANTS = 'Registrants',
-  PHYSICAL_ATTENDEES = 'Physical Attendees',
-  FOLLOWERS_ON_THE_APP = 'Followers on the App',
+  PLAYERS = 'Players',
 };
 
 export const typeOptions = [Type.TEXT, Type.EMAIL];
@@ -71,22 +78,17 @@ export const applyFilters = (params: any, event?: string) => {
 
   const groupsOptions = [
     {
-      label: Group.COACHES,
+      label: GroupLabels.COACHES,
       value: Group.COACHES,
       checked: true,
     },
     {
-      label: Group.FOLLOWERS_ON_THE_APP,
-      value: Group.FOLLOWERS_ON_THE_APP,
+      label: GroupLabels.PLAYERS,
+      value: Group.PLAYERS,
       checked: true,
     },
     {
-      label: Group.PHYSICAL_ATTENDEES,
-      value: Group.PHYSICAL_ATTENDEES,
-      checked: true,
-    },
-    {
-      label: Group.REGISTRANTS,
+      label: GroupLabels.REGISTRANTS,
       value: Group.REGISTRANTS,
       checked: true,
     },
@@ -224,6 +226,27 @@ export const mapTeamsByFilter = (
   }
 };
 
+export const mapValuesByFilter = (filterValues: IScheduleFilter) => {
+  const {
+    divisionsOptions,
+    poolsOptions,
+    teamsOptions,
+    groupsOptions,
+  } = filterValues;
+
+  const divisionIds = mapCheckedValues(divisionsOptions);
+  const poolIds = mapCheckedValues(poolsOptions);
+  const teamIds = mapCheckedValues(teamsOptions);
+  const groups = mapCheckedValues(groupsOptions);
+
+  return {
+    divisionIds,
+    poolIds,
+    teamIds,
+    groups,
+  };
+};
+
 const checkDivisions = (team: ITeam, divisionIds: string[]) => {
   return divisionIds.includes(team.division_id);
 };
@@ -234,4 +257,49 @@ const checkPools = (team: ITeam, poolIds: string[]) => {
 
 const checkTeams = (team: ITeam, teamIds: string[]) => {
   return teamIds.includes(team.team_id);
+};
+
+export const getAnswerText = (answerOptionId: string, options: any[]) => {
+  const currentOption = options.find(
+    (opt: any) => opt.answer_option_id === answerOptionId
+  );
+  return currentOption?.answer_text;
+};
+
+export const getRecipient = (
+  recipientDetails: IRecipientDetails,
+  messageType: string
+) => {
+  if (messageType === Type.EMAIL) {
+    return recipientDetails.email;
+  };
+  if (messageType === Type.TEXT) {
+    return recipientDetails.phoneNumber;
+  };
+};
+
+//do one function
+
+export const getDivisions = (ids: string[], divisions: IDivision[]) => {
+  const names = divisions
+    .filter((div: IDivision) => ids.includes(div.division_id))
+    .map((div: IDivision) => div.short_name).join(', ');
+  console.log(names);
+  return names;
+};
+
+export const getPools = (ids: string[], pools: IPool[]) => {
+  const names = pools
+    .filter((pool: IPool) => ids.includes(pool.pool_id))
+    .map((pool: IPool) => pool.pool_name).join(', ');
+  console.log(names);
+  return names;
+};
+
+export const getTeams = (ids: string[], teams: ITeam[]) => {
+  const names = teams
+    .filter((team: ITeam) => ids.includes(team.team_id))
+    .map((team: ITeam) => team.short_name).join(', ');
+  console.log(names);
+  return names;
 };

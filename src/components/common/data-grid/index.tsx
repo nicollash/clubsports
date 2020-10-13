@@ -36,6 +36,14 @@ const dateValueFormatter = (params: any) => {
   }
 };
 
+const dateTimeValueFormatter = (params: any) => {
+  try {
+    return params.value ? moment(params.value).format('MMM d, hh:ss a') : '';
+  } catch (err) {
+    return params.value;
+  }
+};
+
 export const dateComparator = function (
   filterLocalDateAtMidnight: any,
   cellValue: any
@@ -108,6 +116,14 @@ const columnTypes = {
     },
     valueFormatter: dateValueFormatter,
   },
+  dateColumnWithTimeFilter: {
+    width: 120,
+    filter: 'dateRangeFilter',
+    filterParams: {
+      comparator: dateComparator,
+    },
+    valueFormatter: dateTimeValueFormatter,
+  },
 };
 
 const defaultColDef: ColDef = {
@@ -122,16 +138,26 @@ const defaultColDef: ColDef = {
 interface DataGridProps {
   columns: any[];
   rows: any[];
-  onGridReady: (params: GridReadyEvent) => void;
-  getData: () => void;
+  defaultToolPanel: string;
+  height: number;
+  onGridReady?: (params: GridReadyEvent) => void;
+  getData?: () => void;
 }
 
-const DataGrid = ({ columns, rows, onGridReady, getData }: DataGridProps) => {
+const DataGrid = ({
+  columns,
+  rows,
+  defaultToolPanel,
+  height,
+  onGridReady,
+  getData,
+}: DataGridProps) => {
   const [columnDefs, setColumnDefs] = useState([] as any[]);
 
   useEffect(() => {
-    getData();
-    return () => {};
+    if (getData) {
+      getData();
+    }
   }, [getData]);
 
   useEffect(() => {
@@ -169,7 +195,7 @@ const DataGrid = ({ columns, rows, onGridReady, getData }: DataGridProps) => {
     <div
       className='ag-theme-alpine'
       style={{
-        height: '75vh',
+        height: `${height}vh`,
         width: '100%',
       }}
     >
@@ -183,9 +209,9 @@ const DataGrid = ({ columns, rows, onGridReady, getData }: DataGridProps) => {
         frameworkComponents={{ dateRangeFilter: DateRangeFilter }}
         sideBar={{
           toolPanels: ['columns', 'filters'],
-          defaultToolPanel: 'columns',
+          defaultToolPanel,
         }}
-      ></AgGridReact>
+      />
     </div>
   );
 };

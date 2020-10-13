@@ -47,7 +47,10 @@ export const MenuList = [
     title: 'EventLink',
     icon: Icons.EMAIL,
     link: Routes.COMMON_EVENT_LINK,
-    children: ['Messaging', 'Schedule Review'],
+    children: [
+      MenuTitles.MESSAGING,
+      MenuTitles.SCHEDULE_REVIEW,
+    ],
   },
   {
     title: MenuTitles.UTILITIES,

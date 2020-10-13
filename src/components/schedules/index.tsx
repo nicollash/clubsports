@@ -1274,8 +1274,8 @@ class Schedules extends Component<Props, State> {
           <section className={styles.tabsContainer}>
             <div className={styles.tabToggle}>
               {(this.isVisualGamesMakerMode() ||
-                scheduleData?.is_matchup_only_YN ||
-                schedule?.is_matchup_only_YN) && (
+                !!scheduleData?.is_matchup_only_YN ||
+                !!schedule?.is_matchup_only_YN) && (
                 <div
                   className={activeTab === 1 ? styles.active : ""}
                   onClick={() => this.setState({ activeTab: 1 })}

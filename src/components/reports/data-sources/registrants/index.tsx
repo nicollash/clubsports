@@ -102,6 +102,8 @@ const RegistrantsReport = ({
       )}
       <div className={styles.dataGrid}>
         <DataGrid
+          defaultToolPanel={'columns'}
+          height={75}
           columns={initialColumns}
           rows={registrants}
           onGridReady={onGridReady}

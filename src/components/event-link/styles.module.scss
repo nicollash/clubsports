@@ -83,13 +83,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .msInfoContent {
-      display: flex;
 
-      & > :first-child {
-        margin-right: 20px;
-      }
-    }
+  }
+  .msInfoContent > p, .msContentMessage {
+    padding: 4px 0;
+  }
+  .msContainer {
+    margin-top: 20px;
   }
 }
 .msTitleContainer {

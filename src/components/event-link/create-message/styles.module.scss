@@ -29,6 +29,10 @@
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+
+  .dateTimeWrpp {
+    display: flex;
+  }
   & > :first-child {
     width: 100%;
     & > div {
@@ -39,6 +43,7 @@
 .recipientWrapper {
   width: 100%;
   margin: 10px 0;
+  margin-top: 45px;
   color: #6a6a6a;
   .title {
     margin: 7px 0;
@@ -51,28 +56,50 @@
 }
 
 .selectContainer {
-  width: 25%;
+  width: 49%;
+
+  & > div {
+    margin-bottom: 10px;
+  }
 }
 .recipientsFilterWrapper {
-  margin: 10px 0;
+  margin-bottom: 10px;
+  margin-top: 40px;
   width: 100%;
 }
 
 .polls {
   width: 100%;
-  margin: 10px 0;
+  margin-top: 10px;
   justify-content: space-between;
   position: relative;
 }
 .pollsWrapper {
-  width: 23%;
+  width: 100%;
   display: flex;
   justify-content: space-between;
-  flex-direction: column;
   align-self: center;
+
+  & > div {
+    width: 23%;
+    margin-bottom: 10px;
+  }
+
+  .response {
+    width: 49%;
+    display: flex;
+
+    & > div:nth-child(2) {
+      width: 100%;
+    }
+  }
+
+  .labelResp {
+    width: 49%;
+  }
 }
 
-.label {
+.label, .labelResp {
   font-size: 16px;
   font-weight: 600;
   color: #6a6a6a;
@@ -80,35 +107,50 @@
   white-space: nowrap;
 }
 
-.response, .polls {
-  display: flex;
+.labelResp {
+  width: 49%;
 }
 
-.response {
-  position: relative;
+.label {
+  width: 23%;
 }
 
 .responseWrapper {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  width: 23%;
+  width: 49%;
+
+  & > div {
+    margin-bottom: 10px;
+  }
+
+  .response {
+    width: 49%;
+    display: flex;
+  }
 }
 
 .recipientsWrapper {
   width: 100%;
 }
 
-.checkboxWrpp {
+.btnsWrapp {
   position: absolute;
-  z-index: 1000;
   right: 0;
-}
+  bottom: -40px;
 
-.additionalWrapp {
-  margin-top: 20px;
+  & > button:first-child {
+    margin-right: 10px;
+  }
 }
 
 .messageTitleWrapper {
-  width: 23%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  & > div {
+    width: 49%;
+  }
 }

@@ -36,6 +36,7 @@ const Navigation = ({ eventId, onAddToLibraryManager }: Props) => (
           variant={ButtonVariant.CONTAINED}
           onClick={() => {}}
           label="+ Create Schedule Review"
+          disabled={true}
         />
         <Link
           to={
