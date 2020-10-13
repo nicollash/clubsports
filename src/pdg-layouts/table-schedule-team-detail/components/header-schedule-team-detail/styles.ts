@@ -51,28 +51,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   mainHeaderDivisionWrapper: {
+    flexDirection: 'column',
     fontSize: 10,
     marginRight: 3,
     width: 50,
     backgroundColor: '#E2EFDA'
   },
   mainHeaderCountsWrapper: {
+    flexDirection: 'column',
     fontSize: 10,
     marginRight: 3,
     width: 96,
     backgroundColor: '#D9FFF2'
   },
-  mainHeaderDate1Wrapper: {
+  mainHeaderGameDate: {
+    flexDirection: 'column',
+    backgroundColor: '#F9EFF2'
+  },
+  mainHeaderDateWrapper: {
     fontSize: 10,
     marginRight: 3,
-    width: 408,
     backgroundColor: '#808080',
     color: '#ffffff',
   },
   mainHeaderDate2Wrapper: {
     fontSize: 10,
     marginRight: 3,
-    width: 246,
     backgroundColor: '#808080',
     color: '#ffffff',
   },
@@ -82,11 +86,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9FFF2'
   },
   mainHeaderCountsIndividualWrapper: {
+    flexDirection: 'row',
     marginRight: 3,
     width: 30,
     backgroundColor: '#D9FFF2'
   },
   mainHeaderGameWrapper: {
+    flexDirection: 'row',
+    marginRight: 3,
+    backgroundColor: '#ffffff',
+    color: '#000000',
+  },
+  mainHeaderGameCellWrapper: {
     marginRight: 3,
     width: 80,
   },

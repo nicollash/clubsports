@@ -106,7 +106,12 @@ const parseJsonGames = (scheduleTeamDetails: IScheduleTeamDetails[]) => {
       const onlyOneTeam = {...detail, ...opposeTeam };
       parsedDetailsList.push(onlyOneTeam);
     } )  
-  })
+  }) 
+  return parsedDetailsList;
+}
+const sortJsonGames = (parsedJsonGames: any[]) => {
+  let parsedDetailsList: any[] = parsedJsonGames;
+  console.log('total parsedDetailsList ->', parsedDetailsList) // 
   const divisionArrangedDetails = getDetailsByKey(parsedDetailsList,'division_name');
   parsedDetailsList = [];
   Object.keys(divisionArrangedDetails).map((divisionKey) => {
@@ -115,27 +120,55 @@ const parseJsonGames = (scheduleTeamDetails: IScheduleTeamDetails[]) => {
     Object.keys(dateArrangedDetails).map((dateKey) => {
       const timeArrangedDetails = getDetailsByKey(dateArrangedDetails[dateKey],'game_time');
       // const timeArrangedDetails = timeArrangedDetails1.sort(GetSortOrderByKeyIndex('game_time'));
-      console.log('timeArrangedDetails ->', timeArrangedDetails) // react.dev216
+      // console.log('timeArrangedDetails ->', timeArrangedDetails) // 
       let timeArrangedList: any[] = [];
       Object.keys(timeArrangedDetails).map((timeKey) => {
         const fieldArrangedDetails = getDetailsByKey(timeArrangedDetails[timeKey],'field');
         const newTimeDetail = new Object();
         newTimeDetail[timeKey]=fieldArrangedDetails;
-        console.log('newTimeDetail ->', newTimeDetail)
+        // console.log('newTimeDetail ->', newTimeDetail)
         timeArrangedList.push(newTimeDetail);
       })
       const newDateDetail = new Object();
       newDateDetail[dateKey]=timeArrangedList;
-      console.log('newDateDetail ->', newDateDetail)
+      // console.log('newDateDetail ->', newDateDetail)
       dateArrangedList.push(newDateDetail);
     })
     const newDivisionDetail = new Object();
     newDivisionDetail[divisionKey]=dateArrangedList;
-    console.log('newDivisionDetail ->', newDivisionDetail)
+    // console.log('newDivisionDetail ->', newDivisionDetail)
     parsedDetailsList.push(newDivisionDetail);
   })
   return parsedDetailsList;
 
+}
+const getUniqueKeyArray = (array: any[], key: string | number ) => {
+  const retArray: string[] = [];
+  array.forEach((element) => {
+    const index = retArray.findIndex(
+      (item) => element[key] === item
+    );
+    if (index === -1) {
+      retArray.push(element[key]);
+    } 
+  });
+  retArray.sort();
+  return retArray;
+}
+
+const getGamesCountForDay = (sortJsonGames: any[], day: string): any => {
+  let countGames = 0;
+  sortJsonGames.forEach((division) => {
+    const divisionKey =  Object.keys(division)[0];
+      division[divisionKey].forEach((date: string) => {
+        const dateKey =  Object.keys(date)[0];
+        if (day === dateKey) {
+          if (date[dateKey].length > countGames ) countGames = date[dateKey].length
+        }
+      })
+  })
+  console.log('day max length =>', countGames);
+  return countGames;
 }
 
 const getScorers = async (eventId: string) => {
@@ -157,4 +190,7 @@ export {
   isEmptyGames,
   getScorers,
   parseJsonGames,
+  getUniqueKeyArray,
+  sortJsonGames,
+  getGamesCountForDay,
 };

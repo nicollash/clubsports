@@ -11,14 +11,12 @@ import { IField } from 'common/models/schedule/fields';
 import ITimeSlot from 'common/models/schedule/timeSlots';
 import { IScheduleFacility } from 'common/models/schedule/facilities';
 import {
-  // getFieldsByFacility,
-  // getGamesByDays,
-  // getGamesByFacility,
-  // getGamesByDivision,
-  // isEmptyGames,
   parseJsonGames,
+  getUniqueKeyArray,
+  sortJsonGames,
+  getGamesCountForDay,
 } from '../helpers';
-import { DEFAUL_COLUMNS_COUNT } from './common';
+import { DEFAULT_COLUMNS_COUNT } from './common';
 import { styles } from './styles';
 import { ITeamCard } from 'common/models/schedule/teams';
 
@@ -41,70 +39,76 @@ interface IPDFProps {
 
 const PDFTableScheduleTeamDetail = ({
   event,
-  // fields,
-  // facilities,
-  // games,
   timeSlots,
   schedule,
   scheduleTeamDetails,
-  // teamCards,
-  // isHeatMap,
-  // byPool,
-  // divisions,
-  // pools,
-  // scorerMobile,
-  // isEmptyListsIncluded,
 }: IPDFProps) => {
 
-  const jsonTeamDetails = scheduleTeamDetails ? parseJsonGames(scheduleTeamDetails) : [];
+  const getTotalGameCountByDay = (sortedTeamDetails: any[], days: string[] ) => {
+    let totalCount = 0;
+    days.forEach((date) => {
+      const gamesCount = getGamesCountForDay(sortedTeamDetails, date);
+      totalCount += gamesCount;
+    })
+    return totalCount;
+  }
 
-  console.log('jsonTeamDetails ->', jsonTeamDetails) // react.dev216
+  const jsonTeamPlainDetails = scheduleTeamDetails ? parseJsonGames(scheduleTeamDetails) : [];
+  const days = getUniqueKeyArray(jsonTeamPlainDetails,'game_date');
+  const jsonTeamDetails = sortJsonGames(jsonTeamPlainDetails);
+  const totalCount = getTotalGameCountByDay(jsonTeamDetails, days);
+  console.log('jsonTeamPlainDetails ->', jsonTeamPlainDetails) // 
+  console.log('sorted jsonTeamDetails ->', jsonTeamDetails) // 
+  console.log('totalCount ->', totalCount) // 
+  console.log('days ->', days) // 
+
+  const makeDocument = () => {
+    const pagesCount = Math.ceil(totalCount/DEFAULT_COLUMNS_COUNT);
+    const pages = [...Array(pagesCount).keys()];
+    return pages.map((idx) => {
+      const splitIdx = idx;
+      return (
+        <Page
+          size="A4"
+          orientation="landscape"
+          style={styles.page}
+          key={idx}
+        >
+          <HeaderSchedule 
+            days={days}
+            event={event} 
+            schedule={schedule}
+            teamDetails={jsonTeamDetails}
+            splitIdx={splitIdx}              
+            />
+          <View style={styles.tableWrapper} key={idx}>
+            <View key={idx}>
+              <TableTbody
+                days={days}
+                teamDetails={jsonTeamDetails}
+                scheduleTeamDetails={scheduleTeamDetails}
+                timeSlots={timeSlots}
+                splitIdx={splitIdx}
+              />
+            </View>
+          </View>
+          <PrintedDate />
+          <Text
+            style={styles.pageNumber}
+            render={({ pageNumber, totalPages }) =>
+              `${pageNumber} / ${totalPages}`
+            }
+            fixed
+          />
+        </Page>  
+      )                   
+    });
+  }
 
   return (
     <Document>
-      {jsonTeamDetails.map((division, idx) => {
-        console.log('division =>', division);
-        let splitIdx = 0;
-
-        if (idx % DEFAUL_COLUMNS_COUNT === 0 || idx === 0) {
-          if (idx > 0) splitIdx += idx;
-          return [
-            <Page
-              size="A4"
-              orientation="landscape"
-              style={styles.page}
-              key={idx}
-            >
-              <HeaderSchedule 
-                event={event} 
-                schedule={schedule}
-                teamDetails={jsonTeamDetails}
-                splitIdx={splitIdx}              
-                />
-              <View style={styles.tableWrapper} key={idx}>
-                <View key={idx}>
-                  <TableTbody
-                    teamDetails={jsonTeamDetails}
-                    scheduleTeamDetails={scheduleTeamDetails}
-                    timeSlots={timeSlots}
-                    splitIdx={splitIdx}
-                  />
-                </View>
-              </View>
-              <PrintedDate />
-              <Text
-                style={styles.pageNumber}
-                render={({ pageNumber, totalPages }) =>
-                  `${pageNumber} / ${totalPages}`
-                }
-                fixed
-              />
-            </Page>,
-          ];
-        } else {
-          return [];
-        }
-      }, [] as JSX.Element[])}
+      { makeDocument() }
+      
     </Document>
   );
 };

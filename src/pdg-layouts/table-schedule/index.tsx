@@ -16,7 +16,7 @@ import {
   getGamesByDivision,
   isEmptyGames,
 } from '../helpers';
-import { DEFAUL_COLUMNS_COUNT } from './common';
+import { DEFAULT_COLUMNS_COUNT } from './common';
 import { styles } from './styles';
 import { ITeamCard } from 'common/models/schedule/teams';
 
@@ -68,7 +68,7 @@ const PDFScheduleTable = ({
             }
             let splitIdx = 0;
 
-            if (idx % DEFAUL_COLUMNS_COUNT === 0 || idx === 0) {
+            if (idx % DEFAULT_COLUMNS_COUNT === 0 || idx === 0) {
               if (idx > 0) splitIdx += idx;
 
               if (byPool && divisions && pools) {

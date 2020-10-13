@@ -10,6 +10,7 @@ interface Props {
   scheduleTeamDetails?: IScheduleTeamDetails[];
   timeSlots: ITimeSlot[];
   splitIdx: number;
+  days: string[];
 }
 
 const TableTbody = ({
@@ -17,18 +18,22 @@ const TableTbody = ({
   scheduleTeamDetails,
   timeSlots,
   splitIdx,
+  days,
 }: Props) => {
 
-console.log('scheduleTeamDetails ->', scheduleTeamDetails ? scheduleTeamDetails.length : 0) // react.dev216
-console.log('teamDetails ->', teamDetails) // react.dev216
-console.log('timeSlots ->', timeSlots) // react.dev216
-console.log('splitIdx ->', splitIdx) // react.dev216
+console.log('scheduleTeamDetails ->', scheduleTeamDetails ? scheduleTeamDetails.length : 0) // 
+console.log('teamDetails ->', teamDetails) // 
+console.log('timeSlots ->', timeSlots) // 
+console.log('splitIdx ->', splitIdx) //
+console.log('days ->', days) //
 
   const timeSlotsWithGames = teamDetails.map((division) => {
     const divisionKey = Object.keys(division)[0];
     return (
       <>
-        <RowDivisionSlot divisionName={divisionKey} />
+        <RowDivisionSlot 
+          divisionName={divisionKey} 
+        />
         {
           division[divisionKey].map((dateItem: any) => {
             const dateKey = Object.keys(dateItem)[0];

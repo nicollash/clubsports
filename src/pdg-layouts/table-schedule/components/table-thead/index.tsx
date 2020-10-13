@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View } from '@react-pdf/renderer';
 import { IScheduleFacility } from 'common/models/schedule/facilities';
 import { IField } from 'common/models/schedule/fields';
-import { DEFAUL_COLUMNS_COUNT } from '../../common';
+import { DEFAULT_COLUMNS_COUNT } from '../../common';
 import { styles } from './styles';
 
 interface Props {
@@ -19,7 +19,7 @@ const TableThead = ({ facility, fields, splitIdx }: Props) => (
           {`${field.name} ${facility.abbr}`}
         </Text>
       ))
-      .slice(splitIdx, splitIdx + DEFAUL_COLUMNS_COUNT)}
+      .slice(splitIdx, splitIdx + DEFAULT_COLUMNS_COUNT)}
   </View>
 );
 

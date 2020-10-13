@@ -18,6 +18,7 @@ import {
 } from 'helpers';
 import { ButtonVariant, ButtonColors, DefaultSelectValues } from 'common/enums';
 import { IEventDetails, ISchedule, IPool, IDivision, ISchedulesGame } from 'common/models';
+import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
 import { getScheduleTableXLSX, TableType } from '../../helpers';
 import { IGame, calculateDays } from 'components/common/matrix-table/helper';
 import { IField } from 'common/models/schedule/fields';
@@ -42,6 +43,7 @@ interface Props {
   games: IGame[];
   fields: IField[];
   schedule: ISchedule;
+  scheduleTeamDetails?: IScheduleTeamDetails[];
   teamCards: ITeamCard[];
   bracketGames: IBracketGame[];
   pools: IPool[];
@@ -59,6 +61,7 @@ const ItemSchedules = (props: Props) => {
     games,
     fields,
     schedule,
+    scheduleTeamDetails,
     teamCards,
     pools,
     bracketGames,
@@ -164,11 +167,12 @@ const ItemSchedules = (props: Props) => {
     onPDFSave(
       <PDFTableScheduleTeamDetail
         event={event}
+        schedule={schedule}
+        scheduleTeamDetails={scheduleTeamDetails}
+        timeSlots={timeSlots}
         games={gamesByDay}
         fields={fields}
-        timeSlots={timeSlots}
         facilities={facilities}
-        schedule={schedule}
         teamCards={teamCards}
         isHeatMap={true}
         // byPool={true}

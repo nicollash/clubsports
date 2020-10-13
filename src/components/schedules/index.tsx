@@ -386,7 +386,7 @@ class Schedules extends Component<Props, State> {
 
     if (scheduleId && !schedule) {
       this.props.fetchSchedulesDetails(scheduleId);
-       if (event) {
+      if (event) {
         fetchScheduleTeamDetails(scheduleId, event.event_id);
       }
     }
