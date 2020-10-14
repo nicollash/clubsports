@@ -1,15 +1,10 @@
 import React from 'react';
 import { View } from '@react-pdf/renderer';
 import { RowDivisionSlot, RowTeamSlot } from '../row-slot';
-import ITimeSlot from 'common/models/schedule/timeSlots';
-// import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
 import { DEFAULT_ROWS_COUNT } from '../../common';
-
 
 interface Props {
   teamDetails: any[],
-  // scheduleTeamDetails?: IScheduleTeamDetails[];
-  timeSlots: ITimeSlot[];
   splitIdx: number;
   pageIdx: number;
   days: string[];
@@ -17,13 +12,10 @@ interface Props {
 
 const TableTbody = ({
   teamDetails,
-  // scheduleTeamDetails,
-  timeSlots,
   splitIdx,
   pageIdx,
   days,
 }: Props) => {
-  console.log('timeSlots ->', timeSlots) // 
   let rowCount = 0;
   const timeSlotsWithGames = teamDetails.map((division) => {    
     let colsView: any[] = [];

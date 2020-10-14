@@ -47,7 +47,7 @@ const RowTeamSlot =({
   let total = 0;    
   console.log(`${teamName} splitIdx =>`, splitIdx);
   const viewGames = () => {
-    return dateGames.map((dateItem: any, index) => {
+    const gamesRow =  dateGames.map((dateItem: any, index) => {
       let rowsView: any[] = [];
       const dateKey = Object.keys(dateItem)[0];
       const dateIdx = days.find(day => day === dateKey);
@@ -67,12 +67,11 @@ const RowTeamSlot =({
           const fieldKey = Object.keys(timeItem[timeKey])[0];
           return timeItem[timeKey][fieldKey].map((detail: any) => {
             
-            withinPool = detail.within_pool_game_count;
-            outsidePool = detail.outside_pool_game_count;
-            if(withinPool !== null && withinPool !== null) total = withinPool + outsidePool;
+            if (detail.within_pool_game_count !== null) withinPool += detail.within_pool_game_count;
+            if (detail.outside_pool_game_count !== null) outsidePool += detail.outside_pool_game_count;
             return (
               <View style={{flexDirection: 'column'}}>
-                <Text style={styles.teamGame} > {detail.opponent_team_name} {detail.field} {detail.facility}</Text> 
+                <Text style={styles.teamGame} > {detail.opponent_team_name} {detail.field} {detail.game_time}</Text> 
               </View>
             )
           })
@@ -88,7 +87,9 @@ const RowTeamSlot =({
         rowsView.push(subRowLeftGames);
       }
       return rowsView;
-    })
+    });
+    total = withinPool + outsidePool;
+    return gamesRow;
   }
   return (
     <View

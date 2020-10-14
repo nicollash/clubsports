@@ -89,7 +89,9 @@ const GetSortOrderByKeyIndex = (index: any, sort = 'ASC') => {
 }
 
 const getDetailsByKey = (details: any[], key: string) => {
+  // console.log(`before getDetailsByKey (${key}) => `, details)
   const sortedArray = details.sort(GetSortOrderByKeyIndex(key));
+  // console.log(`after getDetailsByKey (${key}) => `, details)
   const groupByKey = sortedArray.reduce((acc, detail) => {
     const value = detail[key];
     acc[value!] = acc[value!] ? [...acc[value!], detail] : [detail];

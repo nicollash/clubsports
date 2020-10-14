@@ -169,7 +169,6 @@ const ItemSchedules = (props: Props) => {
         event={event}
         schedule={schedule}
         scheduleTeamDetails={scheduleTeamDetails}
-        timeSlots={timeSlots}
         games={gamesByDay}
         fields={fields}
         facilities={facilities}

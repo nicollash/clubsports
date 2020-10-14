@@ -8,7 +8,6 @@ import { IEventDetails, ISchedule, IDivision, IPool } from 'common/models';
 import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
 import { IGame } from 'components/common/matrix-table/helper';
 import { IField } from 'common/models/schedule/fields';
-import ITimeSlot from 'common/models/schedule/timeSlots';
 import { IScheduleFacility } from 'common/models/schedule/facilities';
 import {
   parseJsonGames,
@@ -30,7 +29,6 @@ interface IPDFProps {
   scheduleTeamDetails?: IScheduleTeamDetails[];
   games: IGame[];
   fields: IField[];
-  timeSlots: ITimeSlot[];
   facilities: IScheduleFacility[];
   teamCards: ITeamCard[];
   isHeatMap?: boolean;
@@ -43,7 +41,6 @@ interface IPDFProps {
 
 const PDFTableScheduleTeamDetail = ({
   event,
-  timeSlots,
   schedule,
   scheduleTeamDetails,
 }: IPDFProps) => {
@@ -94,7 +91,6 @@ const PDFTableScheduleTeamDetail = ({
               <TableTbody
                 days={days}
                 teamDetails={sortedJsonTeamDetails}
-                timeSlots={timeSlots}
                 splitIdx={splitIdx}
                 pageIdx={idx}
               />
