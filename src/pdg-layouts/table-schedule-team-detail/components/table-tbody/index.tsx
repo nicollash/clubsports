@@ -48,7 +48,6 @@ const TableTbody = ({
         }
       })
       colsView.push(teamRows);
-      console.log('rowCount => ', rowCount);
       return colsView;
   });
 

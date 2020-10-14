@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View, Image } from '@react-pdf/renderer';
 import TMLogo from 'assets/logo.png';
+import moment from 'moment';
 import { IEventDetails, ISchedule } from 'common/models';
 import { styles } from './styles';
 import { DEFAULT_COLUMNS_COUNT } from '../../common';
@@ -21,8 +22,7 @@ const HeaderSchedule = ({
   teamDetails,
   splitIdx,
 }: Props) => {
-  // console.log('splitIdx ->', splitIdx) // 
-  // console.log('teamDetails ->', teamDetails) // 
+
   let idx = splitIdx * 0
   const currentPageStartGameIdx = idx * DEFAULT_COLUMNS_COUNT;
   const currentPageEndGameIdx = (idx + 1) * DEFAULT_COLUMNS_COUNT;
@@ -50,7 +50,7 @@ const HeaderSchedule = ({
                   width: gameWidth
                 }}
                 >
-                <Text style={styles.mainHeaderCell}>{`${date}`}</Text>
+                <Text style={styles.mainHeaderCell}>{moment(date).format('MMMM D, YYYY')}</Text>
               </View> 
               <View style={styles.mainHeaderGameWrapper}>
                 { 
@@ -77,8 +77,8 @@ const HeaderSchedule = ({
             {`${event.event_name}`} Team Game List.
         </Text>
         <Text style={styles.scheduleName}>
-          Event : {`${event.event_name}`},
-          Start Date : {`${event.event_startdate}`},
+          Event : {`${event.event_name}`}&nbsp;&nbsp;
+          Start Date : {moment(event.event_startdate).format('MMMM D, YYYY')}&nbsp;&nbsp;
           Schedule : {`${schedule.schedule_name}`}
         </Text>
 

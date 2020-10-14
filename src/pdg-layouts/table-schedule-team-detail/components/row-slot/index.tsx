@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, View } from '@react-pdf/renderer';
+import { formatTimeSlot } from 'helpers';
 import { styles } from './styles';
 import { getGamesCountForDay } from "../../../helpers";
 
@@ -72,7 +73,7 @@ const RowTeamSlot =({
             return (
               <View style={{flexDirection: 'column'}}>
                 <Text style={styles.teamGame} >{detail.opponent_team_name}</Text> 
-                <Text style={styles.teamGame} >{detail.game_time} {detail.field}</Text> 
+                <Text style={styles.teamGame} >{formatTimeSlot(detail.game_time)} {detail.field}</Text> 
               </View>
             )
           })
