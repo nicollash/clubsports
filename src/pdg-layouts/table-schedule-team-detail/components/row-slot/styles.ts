@@ -13,21 +13,21 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontSize: 10,
     alignItems: 'center',
+    paddingTop: 3,
+    paddingBottom: 3,
     backgroundColor: '#DCDCFF',
-    height:15,
+    textIndent: 5,
     width: 180,
   },
   teamSlot: {
     marginRight: 3,
     fontSize: 10,
-    alignItems: 'center',
-    height:25,
+    textIndent: 5,
     width: 80,
   },
   teamCountSlot: {
     flexDirection: 'row',
-    marginRight: 3,
-    fontSize: 10,
+    marginRight: 3,   
     alignItems: 'center',
     height:25,
     width: 96
@@ -35,8 +35,7 @@ const styles = StyleSheet.create({
   teamCountCell: {
     marginRight: 2,
     fontSize: 10,
-    alignItems: 'center',
-    height:25,
+    textAlign: 'center',
     width: 30
   },
   teamGame: {
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
     fontSize: 8,
     alignItems: 'center',
     width: 80,
-    height:12,
+    height: 12,
   },
   teamGameInfo: {
     marginRight: 10,
