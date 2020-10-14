@@ -20,7 +20,7 @@ const TableTbody = ({
   const timeSlotsWithGames = teamDetails.map((division) => {    
     let colsView: any[] = [];
     const divisionKey = Object.keys(division)[0];
-    if (rowCount >= pageIdx * DEFAULT_ROWS_COUNT
+    if (rowCount >= pageIdx * DEFAULT_ROWS_COUNT - 1
     && rowCount < (pageIdx + 1) * DEFAULT_ROWS_COUNT) {
       rowCount ++;
       colsView.push(   
@@ -30,10 +30,10 @@ const TableTbody = ({
       }
 
       const teamRows = division[divisionKey].map((teamItem: any, index: number) => {
-        rowCount ++;
         const teamKey = Object.keys(teamItem)[0];
-        if (rowCount >= pageIdx * DEFAULT_ROWS_COUNT
+        if (rowCount >= pageIdx * DEFAULT_ROWS_COUNT - 1
             && rowCount < (pageIdx + 1) * DEFAULT_ROWS_COUNT) {
+          rowCount ++;
           return <RowTeamSlot 
                     days={days}
                     teamDetails={teamDetails}
@@ -42,9 +42,13 @@ const TableTbody = ({
                     odd={index % 2 === 0} 
                     splitIdx={splitIdx}
                   />
-        } else return null;
+        } else {
+          rowCount ++;
+          return null
+        }
       })
       colsView.push(teamRows);
+      console.log('rowCount => ', rowCount);
       return colsView;
   });
 
