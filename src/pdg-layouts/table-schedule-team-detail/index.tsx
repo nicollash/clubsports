@@ -17,7 +17,10 @@ import {
   getGamesCountForDay,
   getTeamCount,
 } from '../helpers';
-import { DEFAULT_COLUMNS_COUNT } from './common';
+import { 
+  DEFAULT_COLUMNS_COUNT, 
+  DEFAULT_ROWS_COUNT 
+  } from './common';
 import { styles } from './styles';
 import { ITeamCard } from 'common/models/schedule/teams';
 
@@ -65,14 +68,13 @@ const PDFTableScheduleTeamDetail = ({
   console.log('days ->', days) // 
 
   const makeDocument = () => {
-    const pageSize = 18;
+
     const pagesSideCount = Math.ceil(totalCount/DEFAULT_COLUMNS_COUNT);
     console.log('pagesSideCount ->', pagesSideCount) // 
-    const pagesCount = Math.ceil(totalTeamCount/pageSize);
+    const pagesCount = Math.ceil(totalTeamCount/DEFAULT_ROWS_COUNT);
     const pages = [...Array(pagesCount).keys()];
-     console.log('pages ->', pages) // 
     return pages.map((idx) => {
-      const splitIdx = idx;
+      const splitIdx = 0;
       return (
         <Page
           size="A4"
@@ -92,9 +94,9 @@ const PDFTableScheduleTeamDetail = ({
               <TableTbody
                 days={days}
                 teamDetails={sortedJsonTeamDetails}
-                scheduleTeamDetails={scheduleTeamDetails}
                 timeSlots={timeSlots}
                 splitIdx={splitIdx}
+                pageIdx={idx}
               />
             </View>
           </View>

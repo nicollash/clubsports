@@ -90,9 +90,9 @@ const HeaderSchedule = ({
           <View style={styles.mainHeaderCountsWrapper}>
             <Text style={styles.mainHeaderCell}>Game Counts:</Text>
             <View style={styles.mainHeaderCountsIndividualWrapper}>              
-              <Text style={styles.mainHeaderNameCell}>Within Pool</Text>
-              <Text style={styles.mainHeaderNameCell}>Outside Pool</Text>
-              <Text style={styles.mainHeaderNameCell}>Total</Text>
+              <Text style={styles.mainHeaderCountCell}>Within Pool</Text>
+              <Text style={styles.mainHeaderCountCell}>Outside Pool</Text>
+              <Text style={styles.mainHeaderCountCell}>Total</Text>
             </View>                  
           </View>              
           {getHeaderDate()}

@@ -88,6 +88,13 @@ const styles = StyleSheet.create({
     margin: 3,
     textAlign: "center",
   },
+  mainHeaderCountCell: {
+    fontSize: 8,
+    marginRight: 3,
+    marginTop: 1,
+    textAlign: "center",
+    width:30
+  },
   mainHeaderNameCell: {
     fontSize: 10,
     margin: 0,

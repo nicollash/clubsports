@@ -77,26 +77,28 @@ const getGamesByDays = (games: IGame[]) => {
   return gamesByDays;
 };
 
+const GetSortOrderByKeyIndex = (index: any, sort = 'ASC') => {
+  return function (a: any, b: any) {
+    const x = isNaN(index) ? a[index] : a[Object.keys(a)[index]];
+    const y = isNaN(index) ? b[index] : b[Object.keys(b)[index]];
+    const xx = isNaN(x) ? x.toLowerCase() : x;
+    const yy = isNaN(y) ? y.toLowerCase() : y;
+    if (sort === 'ASC') return xx - yy;
+    else return yy - xx;
+  };
+}
+
 const getDetailsByKey = (details: any[], key: string) => {
-  const detailsByDays = details.reduce((acc, detail) => {
+  const sortedArray = details.sort(GetSortOrderByKeyIndex(key));
+  const groupByKey = sortedArray.reduce((acc, detail) => {
     const value = detail[key];
     acc[value!] = acc[value!] ? [...acc[value!], detail] : [detail];
     return acc;
   }, {});
-
-  return detailsByDays;
+  console.log(`${key} groupByKey=>`, groupByKey);
+  return groupByKey;
 };
 
-// const GetSortOrderByKeyIndex = (index: any, sort = 'ASC') => {
-//   return function (a: any, b: any) {
-//     const x = isNaN(index) ? a[index] : a[Object.keys(a)[index]];
-//     const y = isNaN(index) ? b[index] : b[Object.keys(b)[index]];
-//     const xx = isNaN(x) ? x.toLowerCase() : x;
-//     const yy = isNaN(y) ? y.toLowerCase() : y;
-//     if (sort === 'ASC') return xx - yy;
-//     else return yy - xx;
-//   };
-// }
 const parseJsonGames = (scheduleTeamDetails: IScheduleTeamDetails[]) => {
   let parsedDetailsList: any[] = [];
   scheduleTeamDetails.map((detail) => {
@@ -172,7 +174,6 @@ const getGamesCountForDay = (sortJsonGames: any[], day: string): any => {
       })
     })
   })
-  console.log('day max length =>', countGames);
   return countGames;
 }
 const getTeamCount = (sortJsonGames: any[]): any => {
@@ -182,7 +183,6 @@ const getTeamCount = (sortJsonGames: any[]): any => {
       countGames += division[divisionKey].length;
     })
   })
-  console.log('Team Count length =>', countGames);
   return countGames;
 }
 
