@@ -41,10 +41,10 @@ const styles = StyleSheet.create({
   },
   teamGame: {
     marginRight: 3,
-    fontSize: 10,
+    fontSize: 8,
     alignItems: 'center',
     width: 80,
-    height:25,
+    height:12,
   },
   teamGameInfo: {
     marginRight: 10,
@@ -55,9 +55,7 @@ const styles = StyleSheet.create({
   },
   gameWrapper: {
     flexDirection: 'column',
-
     minHeight: 30,
-
     padding: '5px 1px',
   },
   scoreWrapper: {

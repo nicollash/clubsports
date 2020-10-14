@@ -60,7 +60,7 @@ const PDFTableScheduleTeamDetail = ({
   const totalCount = getTotalGameCountByDay(sortedJsonTeamDetails, days);
   const totalTeamCount = getTeamCount(sortedJsonTeamDetails);
   // console.log('jsonTeamPlainDetails ->', jsonTeamPlainDetails) // 
-  // console.log('sortedJsonTeamDetails ->', sortedJsonTeamDetails) // 
+  console.log('sortedJsonTeamDetails ->', sortedJsonTeamDetails) // 
   // console.log('totalCount ->', totalCount) // 
   // console.log('days ->', days) // 
 

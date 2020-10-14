@@ -83,15 +83,27 @@ const GetSortOrderByKeyIndex = (index: any, sort = 'ASC') => {
     const y = isNaN(index) ? b[index] : b[Object.keys(b)[index]];
     const xx = isNaN(x) ? x.toLowerCase() : x;
     const yy = isNaN(y) ? y.toLowerCase() : y;
-    if (sort === 'ASC') return xx - yy;
-    else return yy - xx;
+    let comparison = 0;
+    if (sort === 'ASC') {
+      if (xx > yy) {
+        comparison = 1;
+      } else if (xx < yy) {
+        comparison = -1;
+      }
+    }
+    else {
+      if (xx > yy) {
+        comparison = -1;
+      } else if (xx < yy) {
+        comparison = 1;
+      }
+    }
+    return comparison;
   };
 }
 
 const getDetailsByKey = (details: any[], key: string) => {
-  // console.log(`before getDetailsByKey (${key}) => `, details)
   const sortedArray = details.sort(GetSortOrderByKeyIndex(key));
-  // console.log(`after getDetailsByKey (${key}) => `, details)
   const groupByKey = sortedArray.reduce((acc, detail) => {
     const value = detail[key];
     acc[value!] = acc[value!] ? [...acc[value!], detail] : [detail];

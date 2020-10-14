@@ -71,7 +71,8 @@ const RowTeamSlot =({
             if (detail.outside_pool_game_count !== null) outsidePool += detail.outside_pool_game_count;
             return (
               <View style={{flexDirection: 'column'}}>
-                <Text style={styles.teamGame} > {detail.opponent_team_name} {detail.field} {detail.game_time}</Text> 
+                <Text style={styles.teamGame} >{detail.opponent_team_name}</Text> 
+                <Text style={styles.teamGame} >{detail.game_time} {detail.field}</Text> 
               </View>
             )
           })
