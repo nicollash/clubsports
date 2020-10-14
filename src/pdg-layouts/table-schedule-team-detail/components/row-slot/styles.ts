@@ -2,18 +2,56 @@ import { StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
   timeSlotRow: {
-    borderBottom: 1,
-    borderColor: '#B8B6B0',
+    // borderBottom: 1,
+    // borderColor: '#B8B6B0',
     flexDirection: 'row',
     alignItems: 'center',
-
-    margin: '0 10px',
-    padding: '0 5px',
+    margin: '0 15',
+    padding: '0 0',
   },
-  timeSlot: {
+  divisionSlot: {
     marginRight: 10,
-
     fontSize: 10,
+    alignItems: 'center',
+    backgroundColor: '#DCDCFF',
+    height:15,
+    width: 180,
+  },
+  teamSlot: {
+    marginRight: 3,
+    fontSize: 10,
+    alignItems: 'center',
+    height:25,
+    width: 80,
+  },
+  teamCountSlot: {
+    flexDirection: 'row',
+    marginRight: 3,
+    fontSize: 10,
+    alignItems: 'center',
+    height:25,
+    width: 96
+  },
+  teamCountCell: {
+    marginRight: 2,
+    fontSize: 10,
+    alignItems: 'center',
+    height:25,
+    width: 30
+  },
+  teamGame: {
+    marginRight: 3,
+    fontSize: 10,
+    alignItems: 'center',
+    width: 80,
+    height:25,
+  },
+  teamGameInfo: {
+    marginRight: 10,
+    fontSize: 7,
+    alignItems: 'center',
+    width: 80,
+    height:8,
   },
   gameWrapper: {
     flexDirection: 'column',

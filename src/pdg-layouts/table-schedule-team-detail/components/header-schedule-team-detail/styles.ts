@@ -10,21 +10,12 @@ const styles = StyleSheet.create({
   },
   headerWrapper: {
     flexGrow: 1,
-
-    marginRight: 50,
-  },
-  headerWrapperPool: {
-    flexGrow: 1,
-    width: '100%',
-
     marginRight: 50,
   },
   eventName: {
     marginBottom: 5,
-
     fontSize: 16,
     borderBottom: 2,
-
     borderColor: '#333',
   },
   eventNamePool: {
@@ -33,14 +24,13 @@ const styles = StyleSheet.create({
   },
   scheduleName: {
     marginBottom: 5,
-
     fontSize: 10,
-
     fontWeight: 600,
   },
   divisionName: {
     fontSize: 18,
     textAlign: "center",
+    
   },
   divisionDate: {
     marginTop: 15,
@@ -54,7 +44,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     fontSize: 10,
     marginRight: 3,
-    width: 50,
+    width: 80,
     backgroundColor: '#E2EFDA'
   },
   mainHeaderCountsWrapper: {
@@ -66,15 +56,9 @@ const styles = StyleSheet.create({
   },
   mainHeaderGameDate: {
     flexDirection: 'column',
-    backgroundColor: '#F9EFF2'
+    backgroundColor: '#ffffff'
   },
   mainHeaderDateWrapper: {
-    fontSize: 10,
-    marginRight: 3,
-    backgroundColor: '#808080',
-    color: '#ffffff',
-  },
-  mainHeaderDate2Wrapper: {
     fontSize: 10,
     marginRight: 3,
     backgroundColor: '#808080',
@@ -88,12 +72,10 @@ const styles = StyleSheet.create({
   mainHeaderCountsIndividualWrapper: {
     flexDirection: 'row',
     marginRight: 3,
-    width: 30,
     backgroundColor: '#D9FFF2'
   },
   mainHeaderGameWrapper: {
     flexDirection: 'row',
-    marginRight: 3,
     backgroundColor: '#ffffff',
     color: '#000000',
   },
@@ -107,18 +89,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   mainHeaderNameCell: {
-    fontSize: 7,
-    margin: 1,
-    marginTop: 3,
+    fontSize: 10,
+    margin: 0,
+    marginTop: 1,
     textAlign: "center",
-  },
-
-  mainContact: {
-    marginRight: 5,
-  },
-  logoWrapperPool: {
-    width: 100,
-    marginLeft: -150,
+    width:80
   },
   logoWrapper: {
     width: 100,
@@ -127,9 +102,6 @@ const styles = StyleSheet.create({
     objectFit: "contain",
     height: 100,
     marginLeft: 20,
-  },
-  scoreResult: {
-    marginBottom: 5,
   },
 });
 

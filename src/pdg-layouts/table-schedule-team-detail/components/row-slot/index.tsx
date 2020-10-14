@@ -8,6 +8,7 @@ import { getContrastingColor } from 'components/common/matrix-table/helper';
 import { styles } from './styles';
 import { getDisplayName } from 'components/common/matrix-table/dnd/seed';
 import { IPool } from "common/models";
+import { getGamesCountForDay } from "../../../helpers";
 
 const EVEN_COLOR = '#DCDCDC';
 
@@ -190,32 +191,81 @@ const RowDivisionSlot =({
     <View
       style={{
         ...styles.timeSlotRow,
-        backgroundColor: '#DCDCDC',
+        
       }}
       wrap={false}
     >
-      <Text style={styles.timeSlot}>{divisionName}</Text>      
+      <Text style={styles.divisionSlot}>{divisionName}</Text>      
     </View>
   );
 };
 
 
 interface TeamProps {
-  divisionName: string;
+  dateGames: any[];
+  teamName: string;
+  odd: boolean;
+  days: string[];
+  teamDetails: any[];
 }
 
 const RowTeamSlot =({
-  divisionName,
+  dateGames,
+  teamName,
+  odd,
+  days,
+  teamDetails,
 }: TeamProps) => {
+  let withinPool = 0;
+  let outsidePool = 0;
+  let total = 0;    
+  const viewGames = () => {
+    let count = 0
+    return dateGames.map((dateItem: any) => {
+      // console.log(`${teamName} dateItem =>`, dateItem);
+      const dateKey = Object.keys(dateItem)[0];
+      if (days[count] !== dateKey) {
+        const gamesCountForDay = getGamesCountForDay(teamDetails, dateKey);
+        const emptyGameNames = [...Array(gamesCountForDay).keys()];
+        return emptyGameNames.map(index => {
+          return <View style={{flexDirection: 'column'}} key={index}>
+                  <Text style={styles.teamGame} ></Text> 
+                </View>
+        })
+      }
+      return dateItem[dateKey].map((timeItem: any) => {
+        const timeKey = Object.keys(timeItem)[0];
+        const fieldKey = Object.keys(timeItem[timeKey])[0];
+        return timeItem[timeKey][fieldKey].map((detail: any) => {
+          
+          withinPool = detail.within_pool_game_count;
+          outsidePool = detail.outside_pool_game_count;
+          if(withinPool !== null && withinPool !== null) total = withinPool + outsidePool;
+          return (
+            <View style={{flexDirection: 'column'}}>
+              <Text style={styles.teamGame} > {detail.opponent_team_name} {detail.field} {detail.facility}</Text> 
+            </View>
+          )
+        })
+      })
+      count ++;
+    })
+  }
   return (
     <View
       style={{
         ...styles.timeSlotRow,
-        backgroundColor: '#DCDCDC',
+        backgroundColor: odd? '#DCDCDC': '#FFFFFF',
       }}
       wrap={false}
     >
-      <Text style={styles.timeSlot}>{divisionName}</Text>      
+      <Text style={styles.teamSlot}>{teamName}</Text>
+      <View style={styles.teamCountSlot}>  
+        <Text style={styles.teamCountCell}>{withinPool}</Text>
+        <Text style={styles.teamCountCell}>{outsidePool}</Text>
+        <Text style={styles.teamCountCell}>{total}</Text>
+      </View>  
+      {viewGames()}    
     </View>
   );
 };

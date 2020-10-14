@@ -15,6 +15,7 @@ import {
   getUniqueKeyArray,
   sortJsonGames,
   getGamesCountForDay,
+  getTeamCount,
 } from '../helpers';
 import { DEFAULT_COLUMNS_COUNT } from './common';
 import { styles } from './styles';
@@ -55,16 +56,21 @@ const PDFTableScheduleTeamDetail = ({
 
   const jsonTeamPlainDetails = scheduleTeamDetails ? parseJsonGames(scheduleTeamDetails) : [];
   const days = getUniqueKeyArray(jsonTeamPlainDetails,'game_date');
-  const jsonTeamDetails = sortJsonGames(jsonTeamPlainDetails);
-  const totalCount = getTotalGameCountByDay(jsonTeamDetails, days);
+  const sortedJsonTeamDetails = sortJsonGames(jsonTeamPlainDetails);
+  const totalCount = getTotalGameCountByDay(sortedJsonTeamDetails, days);
+  const totalTeamCount = getTeamCount(sortedJsonTeamDetails);
   console.log('jsonTeamPlainDetails ->', jsonTeamPlainDetails) // 
-  console.log('sorted jsonTeamDetails ->', jsonTeamDetails) // 
+  console.log('sortedJsonTeamDetails ->', sortedJsonTeamDetails) // 
   console.log('totalCount ->', totalCount) // 
   console.log('days ->', days) // 
 
   const makeDocument = () => {
-    const pagesCount = Math.ceil(totalCount/DEFAULT_COLUMNS_COUNT);
+    const pageSize = 18;
+    const pagesSideCount = Math.ceil(totalCount/DEFAULT_COLUMNS_COUNT);
+    console.log('pagesSideCount ->', pagesSideCount) // 
+    const pagesCount = Math.ceil(totalTeamCount/pageSize);
     const pages = [...Array(pagesCount).keys()];
+     console.log('pages ->', pages) // 
     return pages.map((idx) => {
       const splitIdx = idx;
       return (
@@ -78,14 +84,14 @@ const PDFTableScheduleTeamDetail = ({
             days={days}
             event={event} 
             schedule={schedule}
-            teamDetails={jsonTeamDetails}
+            teamDetails={sortedJsonTeamDetails}
             splitIdx={splitIdx}              
             />
           <View style={styles.tableWrapper} key={idx}>
             <View key={idx}>
               <TableTbody
                 days={days}
-                teamDetails={jsonTeamDetails}
+                teamDetails={sortedJsonTeamDetails}
                 scheduleTeamDetails={scheduleTeamDetails}
                 timeSlots={timeSlots}
                 splitIdx={splitIdx}

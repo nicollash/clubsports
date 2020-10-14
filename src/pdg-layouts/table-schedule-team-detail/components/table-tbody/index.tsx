@@ -35,9 +35,15 @@ console.log('days ->', days) //
           divisionName={divisionKey} 
         />
         {
-          division[divisionKey].map((dateItem: any) => {
-            const dateKey = Object.keys(dateItem)[0];
-            return <RowTeamSlot divisionName={dateKey} />
+          division[divisionKey].map((teamItem: any, index: number) => {
+            const teamKey = Object.keys(teamItem)[0];
+            return <RowTeamSlot 
+                      days={days}
+                      teamDetails={teamDetails}
+                      teamName={teamKey}
+                      dateGames={teamItem[teamKey]} 
+                      odd={index % 2 === 0} 
+                    />
           })
         }
       </>

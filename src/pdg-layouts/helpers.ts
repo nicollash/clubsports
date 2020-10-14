@@ -115,28 +115,30 @@ const sortJsonGames = (parsedJsonGames: any[]) => {
   const divisionArrangedDetails = getDetailsByKey(parsedDetailsList,'division_name');
   parsedDetailsList = [];
   Object.keys(divisionArrangedDetails).map((divisionKey) => {
-    const dateArrangedDetails = getDetailsByKey(divisionArrangedDetails[divisionKey],'game_date');
-    let dateArrangedList: any[] = [];
-    Object.keys(dateArrangedDetails).map((dateKey) => {
-      const timeArrangedDetails = getDetailsByKey(dateArrangedDetails[dateKey],'game_time');
-      // const timeArrangedDetails = timeArrangedDetails1.sort(GetSortOrderByKeyIndex('game_time'));
-      // console.log('timeArrangedDetails ->', timeArrangedDetails) // 
-      let timeArrangedList: any[] = [];
-      Object.keys(timeArrangedDetails).map((timeKey) => {
-        const fieldArrangedDetails = getDetailsByKey(timeArrangedDetails[timeKey],'field');
-        const newTimeDetail = new Object();
-        newTimeDetail[timeKey]=fieldArrangedDetails;
-        // console.log('newTimeDetail ->', newTimeDetail)
-        timeArrangedList.push(newTimeDetail);
+    const teamArrangedDetails = getDetailsByKey(divisionArrangedDetails[divisionKey],'team_name');
+    let teamArrangedList: any[] = [];
+    Object.keys(teamArrangedDetails).map((teamKey) => {
+      const dateArrangedDetails = getDetailsByKey(teamArrangedDetails[teamKey],'game_date');
+      let dateArrangedList: any[] = [];
+      Object.keys(dateArrangedDetails).map((dateKey) => {
+        const timeArrangedDetails = getDetailsByKey(dateArrangedDetails[dateKey],'game_time');
+        let timeArrangedList: any[] = [];
+        Object.keys(timeArrangedDetails).map((timeKey) => {
+          const fieldArrangedDetails = getDetailsByKey(timeArrangedDetails[timeKey],'field');
+          const newTimeDetail = new Object();
+          newTimeDetail[timeKey]=fieldArrangedDetails;
+          timeArrangedList.push(newTimeDetail);
+        })
+        const newDateDetail = new Object();
+        newDateDetail[dateKey]=timeArrangedList;
+        dateArrangedList.push(newDateDetail);
       })
-      const newDateDetail = new Object();
-      newDateDetail[dateKey]=timeArrangedList;
-      // console.log('newDateDetail ->', newDateDetail)
-      dateArrangedList.push(newDateDetail);
+      const newTeamDetail = new Object();
+      newTeamDetail[teamKey]=dateArrangedList;
+      teamArrangedList.push(newTeamDetail);
     })
     const newDivisionDetail = new Object();
-    newDivisionDetail[divisionKey]=dateArrangedList;
-    // console.log('newDivisionDetail ->', newDivisionDetail)
+    newDivisionDetail[divisionKey]=teamArrangedList;
     parsedDetailsList.push(newDivisionDetail);
   })
   return parsedDetailsList;
@@ -160,14 +162,27 @@ const getGamesCountForDay = (sortJsonGames: any[], day: string): any => {
   let countGames = 0;
   sortJsonGames.forEach((division) => {
     const divisionKey =  Object.keys(division)[0];
-      division[divisionKey].forEach((date: string) => {
+    division[divisionKey].forEach((team: string) => {
+      const teamKey =  Object.keys(team)[0];
+      team[teamKey].forEach((date: string) => {
         const dateKey =  Object.keys(date)[0];
         if (day === dateKey) {
           if (date[dateKey].length > countGames ) countGames = date[dateKey].length
         }
       })
+    })
   })
   console.log('day max length =>', countGames);
+  return countGames;
+}
+const getTeamCount = (sortJsonGames: any[]): any => {
+  let countGames = 0;
+  sortJsonGames.forEach((division) => {
+    Object.keys(division).map(divisionKey => {
+      countGames += division[divisionKey].length;
+    })
+  })
+  console.log('Team Count length =>', countGames);
   return countGames;
 }
 
@@ -193,4 +208,5 @@ export {
   getUniqueKeyArray,
   sortJsonGames,
   getGamesCountForDay,
+  getTeamCount,
 };

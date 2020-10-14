@@ -21,11 +21,11 @@ const HeaderSchedule = ({
   teamDetails,
   splitIdx,
 }: Props) => {
-  console.log('splitIdx ->', splitIdx) // 
-  console.log('teamDetails ->', teamDetails) // 
-
-  const currentPageStartGameIdx = splitIdx * DEFAULT_COLUMNS_COUNT;
-  const currentPageEndGameIdx = (splitIdx + 1) * DEFAULT_COLUMNS_COUNT;
+  // console.log('splitIdx ->', splitIdx) // 
+  // console.log('teamDetails ->', teamDetails) // 
+  let idx = splitIdx * 0
+  const currentPageStartGameIdx = idx * DEFAULT_COLUMNS_COUNT;
+  const currentPageEndGameIdx = (idx + 1) * DEFAULT_COLUMNS_COUNT;
 
   const getHeaderDate = () => {
     const retView: any[] = [];
@@ -40,7 +40,7 @@ const HeaderSchedule = ({
 
           if (gameCellCount > DEFAULT_COLUMNS_COUNT) gameCellCount = DEFAULT_COLUMNS_COUNT;
           startGameIdx += gameCellCount;
-          const gameWidth = gameCellCount * 80 + gameCellCount;
+          const gameWidth = gameCellCount * 80 + (gameCellCount - 1) * 3;
           const gameNames = [...Array(gameCellCount).keys()];
           retView.push(
             <View style={styles.mainHeaderGameDate}>
@@ -57,7 +57,7 @@ const HeaderSchedule = ({
                   gameNames.map((index) =>{                    
                     return (
                     <View style={styles.mainHeaderGameCellWrapper}>
-                      <Text style={styles.mainHeaderNameCell}>{`Game ${index}`}</Text>
+                      <Text style={styles.mainHeaderNameCell}>{`Game ${index + 1}`}</Text>
                     </View>
                     )
                   })
@@ -74,7 +74,7 @@ const HeaderSchedule = ({
     <View style={styles.headerWrapper}>
       <>
         <Text style={styles.eventName}>
-            {`<<Title>>`} Team Game List.
+            {`${event.event_name}`} Team Game List.
         </Text>
         <Text style={styles.scheduleName}>
           Event : {`${event.event_name}`},
@@ -85,7 +85,7 @@ const HeaderSchedule = ({
         <View style={styles.mainHeaderWrapper}>
           <View style={styles.mainHeaderDivisionWrapper}>
             <Text style={styles.mainHeaderCell}>Division</Text>
-            <Text style={styles.mainHeaderNameCell}>Division Name</Text>
+            <Text style={styles.mainHeaderCell}>Division Name</Text>
           </View>
           <View style={styles.mainHeaderCountsWrapper}>
             <Text style={styles.mainHeaderCell}>Game Counts:</Text>
