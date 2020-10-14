@@ -95,7 +95,6 @@ const getDetailsByKey = (details: any[], key: string) => {
     acc[value!] = acc[value!] ? [...acc[value!], detail] : [detail];
     return acc;
   }, {});
-  console.log(`${key} groupByKey=>`, groupByKey);
   return groupByKey;
 };
 
@@ -113,7 +112,7 @@ const parseJsonGames = (scheduleTeamDetails: IScheduleTeamDetails[]) => {
 }
 const sortJsonGames = (parsedJsonGames: any[]) => {
   let parsedDetailsList: any[] = parsedJsonGames;
-  console.log('total parsedDetailsList ->', parsedDetailsList) // 
+  // console.log('total parsedDetailsList ->', parsedDetailsList) // 
   const divisionArrangedDetails = getDetailsByKey(parsedDetailsList,'division_name');
   parsedDetailsList = [];
   Object.keys(divisionArrangedDetails).map((divisionKey) => {

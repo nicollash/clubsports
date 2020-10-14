@@ -50,8 +50,9 @@ const RowTeamSlot =({
     return dateGames.map((dateItem: any, index) => {
       let rowsView: any[] = [];
       const dateKey = Object.keys(dateItem)[0];
-      const gamesCountForDay = getGamesCountForDay(teamDetails, days[index]);
-      if (days[index] !== dateKey) {
+      const dateIdx = days.find(day => day === dateKey);
+      if (dateIdx === null ) {
+        const gamesCountForDay = getGamesCountForDay(teamDetails, days[index]);
         const emptyGameNames = [...Array(gamesCountForDay).keys()];
         const emptySubRow =  emptyGameNames.map(index => {
           return <View style={{flexDirection: 'column'}} key={index}>
@@ -60,6 +61,7 @@ const RowTeamSlot =({
         })
         rowsView.push(emptySubRow);
       } else {
+        const gamesCountForDay = getGamesCountForDay(teamDetails, dateKey);
         const subRowDateGames =  dateItem[dateKey].map((timeItem: any) => {
           const timeKey = Object.keys(timeItem)[0];
           const fieldKey = Object.keys(timeItem[timeKey])[0];
