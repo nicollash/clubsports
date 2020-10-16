@@ -23,6 +23,7 @@ import {
   ISchedule,
   ISchedulesDetails,
   ScheduleCreationType,
+  INormalizedGame,
 } from "common/models";
 import { IField } from "common/models/schedule/fields";
 import ITimeSlot from "common/models/schedule/timeSlots";
@@ -90,6 +91,7 @@ interface Props {
   scheduleData: ISchedule;
   schedulesDetails?: ISchedulesDetails[];
   scheduleTeamDetails?: IScheduleTeamDetails[];
+  normalizedGames?: INormalizedGame[];
   eventSummary: IEventSummary[];
   isEnterScores?: boolean;
   historyLength?: number;
@@ -145,6 +147,7 @@ const TableSchedule = ({
   scheduleData,
   schedulesDetails,
   scheduleTeamDetails,
+  normalizedGames,
   timeSlots,
   timeValues,
   eventSummary,
@@ -1002,6 +1005,7 @@ const TableSchedule = ({
               facilities={facilities}
               schedule={scheduleData}
               scheduleTeamDetails={scheduleTeamDetails}
+              normalizedGames={normalizedGames}
               eventDays={days}
               isOpen={isPopupSaveReportOpen}
               teamCards={teamCards}

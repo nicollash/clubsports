@@ -1,5 +1,5 @@
 import React from "react";
-// import { CSVLink } from "react-csv";
+import { CSVLink } from "react-csv";
 import PDFTableSchedule from "pdg-layouts/table-schedule";
 import PDFTableFieldsSchedule from "pdg-layouts/table-fields-schedule";
 import PDFTableScheduleTeamDetail from "pdg-layouts/table-schedule-team-detail";
@@ -18,14 +18,19 @@ import {
   getGamesByDays,
   onXLSXSave,
 } from "helpers";
-import { BindingAction, IPool } from "common/models";
+import { 
+  BindingAction, 
+  IPool, 
+  IEventDetails, 
+  ISchedule,
+  INormalizedGame,
+  } from "common/models";
 import {
   ButtonColors,
   ButtonVariant,
   DefaultSelectValues,
   TableScheduleTypes,
 } from "common/enums";
-import { IEventDetails, ISchedule } from "common/models";
 import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 import {
   IGame,
@@ -49,7 +54,7 @@ interface Props {
   event: IEventDetails;
   schedule: ISchedule;
   scheduleTeamDetails?: IScheduleTeamDetails[];
-  // gamesListData:
+  normalizedGames?: INormalizedGame[];
   timeSlots: ITimeSlot[];
   pools?: IPool[];
   tableType?: string;
@@ -66,7 +71,7 @@ const PopupSaveReporting = ({
   event,
   schedule,
   scheduleTeamDetails,
-  // gamesListData,
+  normalizedGames,
   timeSlots,
   pools,
   facilities,
@@ -104,6 +109,8 @@ const PopupSaveReporting = ({
       changeActiveDay(avtiveDay as string[]);
     }
   };
+
+  const csvData = normalizedGames ? normalizedGames : [];
 
   let scorerMobile = "";
   getScorers(event.event_id).then((res) => (scorerMobile = res));
@@ -198,11 +205,9 @@ const PopupSaveReporting = ({
         : "TeamDetail"
     );
 
-  // const onScheduleGamesListSave = (event, done) => {
-  //   axios.post("/spy/user").then(() => {
-  //     done(); // REQUIRED to invoke the logic of component
-  //   });
-  // }
+  const onScheduleGamesListSave = (event: any) => {
+    console.log('event=>', event)
+  }
 
   const onScoringTableXLSXSave = async () => {
     const { header, body } = await getScheduleTableXLSX(
@@ -324,20 +329,17 @@ const PopupSaveReporting = ({
                     label="Download"
                   />
                 </li>
-                <li>
-                  {/* <CSVLink
-                    data={gamesListData}
+                <li className={styles.dowloadLinkWrapper}>
+                  <b> Division-Games List</b>
+                  <CSVLink
+                    style={{color:'#00A3EA', margin: 10}}
+                    data={csvData}
+                    filename={"Division Games List.csv"}
                     asyncOnClick={true}
                     onClick={onScheduleGamesListSave}
                   >
-                    Schedule - Games list - CSV
-                  </CSVLink>; */}
-                  {/* <ButtonLoad
-                    loadFunc={onScheduleGamesListSave}
-                    variant={ButtonVariant.TEXT}
-                    color={ButtonColors.SECONDARY}
-                    label="Schedule - Team Details - PDF"
-                  /> */}
+                    Download
+                  </CSVLink>                  
                 </li>
               </ul>
             </li>

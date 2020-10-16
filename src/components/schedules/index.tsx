@@ -59,6 +59,7 @@ import {
   updateDraft,
   fetchSchedulesDetails,
   fetchScheduleTeamDetails,
+  fetchNormalizedGames,
   publishSchedulesGames,
   updatePublishedSchedulesDetails,
   schedulesSavingInProgress,
@@ -148,6 +149,7 @@ interface IMapDispatchToProps {
   onScheduleUndo: () => void;
   fetchSchedulesDetails: (scheduleId: string) => void;
   fetchScheduleTeamDetails: (scheduleId: string, eventId: string) => void;
+  fetchNormalizedGames: (scheduleId: string) => void;
   publishSchedulesGames: (schedulesGames: ISchedulesGame[]) => void;
   publishedClear: () => void;
   publishedSuccess: () => void;
@@ -264,6 +266,7 @@ class Schedules extends Component<Props, State> {
       fetchEventSummary,
       fetchSchedulesDetails,
       fetchScheduleTeamDetails,
+      fetchNormalizedGames,
       setIsAlreadyDraftSaveStatus,
     } = this.props;
     setIsAlreadyDraftSaveStatus(false);
@@ -324,6 +327,7 @@ class Schedules extends Component<Props, State> {
     if (scheduleId) {
       this.setState({ scheduleId });
       fetchSchedulesDetails(scheduleId);
+      fetchNormalizedGames(scheduleId);
       if (event) {
         fetchScheduleTeamDetails(scheduleId, event.event_id);
       }
@@ -361,6 +365,7 @@ class Schedules extends Component<Props, State> {
       schedule,
       schedulesDetails,
       fetchScheduleTeamDetails,
+      fetchNormalizedGames,
       schedulesTeamCards,
       draftSaved,
       divisions,
@@ -386,6 +391,7 @@ class Schedules extends Component<Props, State> {
 
     if (scheduleId && !schedule) {
       this.props.fetchSchedulesDetails(scheduleId);
+      fetchNormalizedGames(scheduleId);
       if (event) {
         fetchScheduleTeamDetails(scheduleId, event.event_id);
       }
@@ -1213,6 +1219,7 @@ class Schedules extends Component<Props, State> {
       updateSchedulesDetails,
       schedulesDetails,
       scheduleTeamDetails,
+      normalizedGames,
       addTeams,
       addNewPool,
     } = this.props;
@@ -1315,6 +1322,7 @@ class Schedules extends Component<Props, State> {
                 }
                 schedulesDetails={schedulesDetails}
                 scheduleTeamDetails={scheduleTeamDetails}
+                normalizedGames={normalizedGames}
                 historyLength={schedulesHistoryLength}
                 teamsDiagnostics={teamsDiagnostics}
                 divisionsDiagnostics={divisionsDiagnostics}
@@ -1378,6 +1386,7 @@ const mapStateToProps = ({
   schedule: schedules?.schedule,
   schedulesDetails: schedules?.schedulesDetails,
   scheduleTeamDetails: schedules?.scheduleTeamDetails,
+  normalizedGames: schedules?.normalizedGames,
   pools: divisions?.pools,
   gamesAlreadyExist: schedules?.gamesAlreadyExist,
 });
@@ -1399,6 +1408,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       onScheduleUndo,
       fetchSchedulesDetails,
       fetchScheduleTeamDetails,
+      fetchNormalizedGames,
       schedulesSavingInProgress,
       clearSchedulesTable,
       getAllPools,

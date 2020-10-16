@@ -1,4 +1,4 @@
-import { IField, ISchedule } from "common/models";
+import { IField, ISchedule, INormalizedGame } from "common/models";
 import { IEventSummary } from "common/models/event-summary";
 import { ISchedulesDetails } from "common/models/schedule/schedules-details";
 import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
@@ -19,6 +19,10 @@ export const FETCH_SCHEDULE_TEAM_DETAILS_SUCCESS =
   "FETCH_SCHEDULE_TEAM_DETAILS_SUCCESS";
 export const FETCH_SCHEDULE_TEAM_DETAILS_FAILURE =
   "FETCH_SCHEDULE_TEAM_DETAILS_FAILURE";
+export const FETCH_SCHEDULE_NORMALIZED_GAMES_SUCCESS =
+  "FETCH_SCHEDULE_NORMALIZED_GAMES_SUCCESS";
+export const FETCH_SCHEDULE_NORMALIZED_GAMES_FAILURE =
+  "FETCH_SCHEDULE_NORMALIZED_GAMES_FAILURE";
 
 export const SCHEDULES_PUBLISHED_FAILURE = "SCHEDULES_PUBLISHED_SUCCESS";
 export const SCHEDULES_PUBLISHED_SUCCESS = "SCHEDULES_PUBLISHED_FAILURE";
@@ -97,6 +101,21 @@ interface FetchScheduleTeamDetailsSuccess {
   };
 }
 
+interface FetchScheduleTeamDetailsFailure {
+  type: "FETCH_SCHEDULE_TEAM_DETAILS_FAILURE";
+}
+
+interface FetchScheduleNormalizedGamesSuccess {
+  type: "FETCH_SCHEDULE_NORMALIZED_GAMES_SUCCESS";
+  payload: {
+    normalizedGames: INormalizedGame[];
+  };
+}
+
+interface FetchScheduleNormalizedGamesFailure {
+  type: "FETCH_SCHEDULE_NORMALIZED_GAMES_FAILURE";
+}
+
 interface SchedulesPublishedSuccess {
   type: "SCHEDULES_PUBLISHED_SUCCESS";
 }
@@ -111,10 +130,6 @@ interface SchedulesPublishedClear {
 
 interface FetchSchedulesDetailsFailure {
   type: "FETCH_SCHEDULES_DETAILS_FAILURE";
-}
-
-interface FetchScheduleTeamDetailsFailure {
-  type: "FETCH_SCHEDULE_TEAM_DETAILS_FAILURE";
 }
 
 interface AnotherSchedulePublished {
@@ -182,6 +197,8 @@ export type IScheduleAction =
   | FetchSchedulesDetailsFailure
   | FetchScheduleTeamDetailsSuccess
   | FetchScheduleTeamDetailsFailure
+  | FetchScheduleNormalizedGamesSuccess
+  | FetchScheduleNormalizedGamesFailure
   | SchedulesSavingInProgress
   | SchedulesDraftSavedSuccess
   | SchedulesDraftSavedFailure
