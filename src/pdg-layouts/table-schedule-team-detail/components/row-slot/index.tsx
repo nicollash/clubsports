@@ -15,8 +15,7 @@ const RowDivisionSlot =({
   return (
     <View
       style={{
-        ...styles.timeSlotRow,
-        
+        ...styles.gameSlotRow,        
       }}
       wrap={false}
     >
@@ -46,7 +45,6 @@ const RowTeamSlot =({
   let withinPool = 0;
   let outsidePool = 0;
   let total = 0;    
-  console.log(`${teamName} splitIdx =>`, splitIdx);
   const viewGames = () => {
     const gamesRow =  dateGames.map((dateItem: any, index) => {
       let rowsView: any[] = [];
@@ -67,7 +65,6 @@ const RowTeamSlot =({
           const timeKey = Object.keys(timeItem)[0];
           const fieldKey = Object.keys(timeItem[timeKey])[0];
           return timeItem[timeKey][fieldKey].map((detail: any) => {
-            
             if (detail.within_pool_game_count !== null) withinPool += detail.within_pool_game_count;
             if (detail.outside_pool_game_count !== null) outsidePool += detail.outside_pool_game_count;
             return (
@@ -93,13 +90,15 @@ const RowTeamSlot =({
     total = withinPool + outsidePool;
     return gamesRow;
   }
+  const games = viewGames();
   return (
     <View
       style={{
-        ...styles.timeSlotRow,
+        ...styles.gameSlotRow,
         backgroundColor: odd? EVEN_COLOR: '#FFFFFF',
       }}
       wrap={false}
+      key={splitIdx}
     >
       <Text style={styles.teamSlot}>{teamName}</Text>
       <View style={styles.teamCountSlot}>  
@@ -107,7 +106,7 @@ const RowTeamSlot =({
         <Text style={styles.teamCountCell}>{outsidePool}</Text>
         <Text style={styles.teamCountCell}>{total}</Text>
       </View>  
-      {viewGames()}    
+      {games}    
     </View>
   );
 };

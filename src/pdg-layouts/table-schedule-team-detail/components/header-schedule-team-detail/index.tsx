@@ -50,7 +50,7 @@ const HeaderSchedule = ({
                   width: gameWidth
                 }}
                 >
-                <Text style={styles.mainHeaderCell}>{moment(date).format('MMMM D, YYYY')}</Text>
+                <Text style={styles.mainHeaderCell}>{moment(date).format('MMMM D')}</Text>
               </View> 
               <View style={styles.mainHeaderGameWrapper}>
                 { 
@@ -74,10 +74,9 @@ const HeaderSchedule = ({
     <View style={styles.headerWrapper}>
       <>
         <Text style={styles.eventName}>
-            {`${event.event_name}`} Team Game List.
+          Division and Team Game Detail:{`${event.event_name}`}
         </Text>
         <Text style={styles.scheduleName}>
-          Event : {`${event.event_name}`}&nbsp;&nbsp;
           Start Date : {moment(event.event_startdate).format('MMMM D, YYYY')}&nbsp;&nbsp;
           Schedule : {`${schedule.schedule_name}`}
         </Text>
@@ -85,7 +84,6 @@ const HeaderSchedule = ({
         <View style={styles.mainHeaderWrapper}>
           <View style={styles.mainHeaderDivisionWrapper}>
             <Text style={styles.mainHeaderCell}>Division</Text>
-            <Text style={styles.mainHeaderCell}>Division Name</Text>
           </View>
           <View style={styles.mainHeaderCountsWrapper}>
             <Text style={styles.mainHeaderCell}>Game Counts:</Text>
