@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
   },
   mainHeaderDivisionWrapper: {
     flexDirection: "column",
+    textAlign: "center",
     fontSize: 10,
     marginRight: 3,
     width: 80,

@@ -1,7 +1,7 @@
 import { StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
-  timeSlotRow: {
+  gameSlotRow: {
     // borderBottom: 1,
     // borderColor: '#B8B6B0',
     flexDirection: "row",
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
     backgroundColor: "#DCDCFF",
     textIndent: 5,
-    width: 180,
+    width: '100%',
   },
   teamSlot: {
     marginRight: 3,
