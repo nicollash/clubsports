@@ -1,4 +1,5 @@
 import React from "react";
+// import { CSVLink } from "react-csv";
 import PDFTableSchedule from "pdg-layouts/table-schedule";
 import PDFTableFieldsSchedule from "pdg-layouts/table-fields-schedule";
 import PDFTableScheduleTeamDetail from "pdg-layouts/table-schedule-team-detail";
@@ -48,6 +49,7 @@ interface Props {
   event: IEventDetails;
   schedule: ISchedule;
   scheduleTeamDetails?: IScheduleTeamDetails[];
+  // gamesListData:
   timeSlots: ITimeSlot[];
   pools?: IPool[];
   tableType?: string;
@@ -64,6 +66,7 @@ const PopupSaveReporting = ({
   event,
   schedule,
   scheduleTeamDetails,
+  // gamesListData,
   timeSlots,
   pools,
   facilities,
@@ -195,6 +198,12 @@ const PopupSaveReporting = ({
         : "TeamDetail"
     );
 
+  // const onScheduleGamesListSave = (event, done) => {
+  //   axios.post("/spy/user").then(() => {
+  //     done(); // REQUIRED to invoke the logic of component
+  //   });
+  // }
+
   const onScoringTableXLSXSave = async () => {
     const { header, body } = await getScheduleTableXLSX(
       event,
@@ -314,6 +323,21 @@ const PopupSaveReporting = ({
                     isDisabled={!isAllowDownload}
                     label="Download"
                   />
+                </li>
+                <li>
+                  {/* <CSVLink
+                    data={gamesListData}
+                    asyncOnClick={true}
+                    onClick={onScheduleGamesListSave}
+                  >
+                    Schedule - Games list - CSV
+                  </CSVLink>; */}
+                  {/* <ButtonLoad
+                    loadFunc={onScheduleGamesListSave}
+                    variant={ButtonVariant.TEXT}
+                    color={ButtonColors.SECONDARY}
+                    label="Schedule - Team Details - PDF"
+                  /> */}
                 </li>
               </ul>
             </li>
