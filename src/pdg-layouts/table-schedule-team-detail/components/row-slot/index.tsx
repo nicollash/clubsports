@@ -13,7 +13,7 @@ const RowDivisionSlot = ({ divisionName }: DivisionProps) => {
   return (
     <View
       style={{
-        ...styles.timeSlotRow,
+        ...styles.gameSlotRow,
       }}
       wrap={false}
     >
@@ -42,7 +42,6 @@ const RowTeamSlot = ({
   let withinPool = 0;
   let outsidePool = 0;
   let total = 0;
-  console.log(`${teamName} splitIdx =>`, splitIdx);
   const viewGames = () => {
     const gamesRow = dateGames.map((dateItem: any, index) => {
       let rowsView: any[] = [];
@@ -99,13 +98,15 @@ const RowTeamSlot = ({
     total = withinPool + outsidePool;
     return gamesRow;
   };
+  const games = viewGames();
   return (
     <View
       style={{
-        ...styles.timeSlotRow,
+        ...styles.gameSlotRow,
         backgroundColor: odd ? EVEN_COLOR : "#FFFFFF",
       }}
       wrap={false}
+      key={splitIdx}
     >
       <Text style={styles.teamSlot}>{teamName}</Text>
       <View style={styles.teamCountSlot}>
@@ -113,7 +114,7 @@ const RowTeamSlot = ({
         <Text style={styles.teamCountCell}>{outsidePool}</Text>
         <Text style={styles.teamCountCell}>{total}</Text>
       </View>
-      {viewGames()}
+      {games}
     </View>
   );
 };
