@@ -19,15 +19,17 @@ import {
   Button,
 } from "components/common";
 import { getIcon } from "helpers/get-icon.helper";
-import { EventMenuTitles, Icons } from "common/enums";
+import { EventMenuTitles, Icons, ButtonVariant, ButtonColors } from "common/enums";
 import Api from "api/api";
+import { IEventDetails } from "common/models";
+import { BindingAction } from 'common/models';
 
 import styles from "../styles.module.scss";
-import { IEventDetails } from "common/models";
 
 interface IProps {
   isSectionExpand: boolean;
   onChange: any;
+  onCsvLoaderBtn: BindingAction;
   eventData: Partial<IEventDetails>;
 }
 
@@ -43,7 +45,7 @@ export interface AuthorizedReporter {
 type InputTargetValue = React.ChangeEvent<HTMLInputElement>;
 
 const GameDayScoring: React.FC<IProps> = (props) => {
-  const { isSectionExpand, eventData, onChange } = props;
+  const { isSectionExpand, eventData, onChange, onCsvLoaderBtn } = props;
   const [isEditing, setEditing] = useState(-1);
   const [reporters, setReporters] = useState<AuthorizedReporter[]>([]);
 
@@ -212,23 +214,33 @@ const GameDayScoring: React.FC<IProps> = (props) => {
         <span className={styles.blockHeading}>Field Manager Management</span>
       </HeadingLevelThree>
       <div>
-        <CardMessage
-            style={CARD_MESSAGE_STYLES}
-            type={CardMessageTypes.EMODJI_OBJECTS}
-          >
-            Enable two way transactional texting with your team! Authorizing them to txt final scores is faster, more efficient, and has fewer errors.
-          </CardMessage>
+        <div style={{ display: "flex", justifyContent: "space-between", width: '100%' }}>
+          <CardMessage
+              style={CARD_MESSAGE_STYLES}
+              type={CardMessageTypes.EMODJI_OBJECTS}
+            >
+              Enable two way transactional texting with your team! Authorizing them to txt final scores is faster, more efficient, and has fewer errors.
+            </CardMessage>
+          <div style={{ marginTop: '-8px', width: 170 }} >
+            <Button
+                onClick={onCsvLoaderBtn}
+                variant={ButtonVariant.TEXT}
+                color={ButtonColors.SECONDARY}              
+                label="Import from CSV"
+              />
+            </div>
+          </div>
 
-      <div className={styles.gdscoringDetails}>
-        <div className={styles.heading}>
-          <a
-            href="https://tourneymaster.s3.amazonaws.com/public/Quickstarts/Tourney+Master+SMS+Scoring+Quick+Start+Guide.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Quickstart Guide to SMS Scoring
-          </a>
-        </div>
+        <div className={styles.gdscoringDetails}>
+          <div className={styles.heading}>
+            <a
+              href="https://tourneymaster.s3.amazonaws.com/public/Quickstarts/Tourney+Master+SMS+Scoring+Quick+Start+Guide.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Quickstart Guide to SMS Scoring
+            </a>
+          </div>
         </div>
 
         <Checkbox

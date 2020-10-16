@@ -1,107 +1,113 @@
-import React from "react";
-import { Page, Text, View, Document } from "@react-pdf/renderer";
-// import moment from 'moment';
-import TableTbody from "./components/table-tbody";
-import { PrintedDate } from "../common";
-import HeaderSchedule from "./components/header-schedule-team-detail";
-import { IEventDetails, ISchedule, IDivision, IPool } from "common/models";
-import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
-import { IGame } from "components/common/matrix-table/helper";
-import { IField } from "common/models/schedule/fields";
-import { IScheduleFacility } from "common/models/schedule/facilities";
-import {
-  parseJsonGames,
-  getUniqueKeyArray,
-  sortJsonGames,
-  getGamesCountForDay,
-  getTeamCount,
-} from "../helpers";
-import { DEFAULT_COLUMNS_COUNT, DEFAULT_ROWS_COUNT } from "./common";
-import { styles } from "./styles";
-import { ITeamCard } from "common/models/schedule/teams";
+import React from 'react';
+import { Text, View, Image } from '@react-pdf/renderer';
+import TMLogo from 'assets/logo.png';
+import moment from 'moment';
+import { IEventDetails, ISchedule } from 'common/models';
+import { styles } from './styles';
+import { DEFAULT_COLUMNS_COUNT } from '../../common';
+import { getGamesCountForDay } from '../../../helpers';
 
-interface IPDFProps {
+interface Props {
   event: IEventDetails;
   schedule: ISchedule;
-  scheduleTeamDetails?: IScheduleTeamDetails[];
-  games: IGame[];
-  fields: IField[];
-  facilities: IScheduleFacility[];
-  teamCards: ITeamCard[];
-  isHeatMap?: boolean;
-  byPool?: boolean;
-  divisions?: IDivision[];
-  pools?: IPool[];
-  isEmptyListsIncluded?: boolean;
-  scorerMobile: string;
+  teamDetails: any[];
+  splitIdx: number;
+  days: string[];
 }
 
-const PDFTableScheduleTeamDetail = ({
+const HeaderSchedule = ({
+  days,
   event,
   schedule,
-  scheduleTeamDetails,
-}: IPDFProps) => {
-  const getTotalGameCountByDay = (sortedTeamDetails: any[], days: string[]) => {
-    let totalCount = 0;
+  teamDetails,
+  splitIdx,
+}: Props) => {
+
+  let idx = splitIdx * 0
+  const currentPageStartGameIdx = idx * DEFAULT_COLUMNS_COUNT;
+  const currentPageEndGameIdx = (idx + 1) * DEFAULT_COLUMNS_COUNT;
+
+  const getHeaderDate = () => {
+    const retView: any[] = [];
+    let startGameIdx = 0;
+
     days.forEach((date) => {
-      const gamesCount = getGamesCountForDay(sortedTeamDetails, date);
-      totalCount += gamesCount;
-    });
-    return totalCount;
-  };
+      const gamesCount = getGamesCountForDay(teamDetails, date)
+      const endGameIdx = startGameIdx + gamesCount; 
+      if( startGameIdx >= currentPageStartGameIdx 
+        && startGameIdx < currentPageEndGameIdx) {
+          let gameCellCount = endGameIdx - startGameIdx;
 
-  const jsonTeamPlainDetails = scheduleTeamDetails
-    ? parseJsonGames(scheduleTeamDetails)
-    : [];
-  const days = getUniqueKeyArray(jsonTeamPlainDetails, "game_date");
-  const sortedJsonTeamDetails = sortJsonGames(jsonTeamPlainDetails);
-  const totalCount = getTotalGameCountByDay(sortedJsonTeamDetails, days);
-  const totalTeamCount = getTeamCount(sortedJsonTeamDetails);
-  // console.log('jsonTeamPlainDetails ->', jsonTeamPlainDetails) //
-  console.log("sortedJsonTeamDetails ->", sortedJsonTeamDetails); //
-  // console.log('totalCount ->', totalCount) //
-  // console.log('days ->', days) //
+          if (gameCellCount > DEFAULT_COLUMNS_COUNT) gameCellCount = DEFAULT_COLUMNS_COUNT;
+          startGameIdx += gameCellCount;
+          const gameWidth = gameCellCount * 80 + (gameCellCount - 1) * 3;
+          const gameNames = [...Array(gameCellCount).keys()];
+          retView.push(
+            <View style={styles.mainHeaderGameDate}>
+              <View 
+                style={{
+                  ...styles.mainHeaderDateWrapper,
+                  width: gameWidth
+                }}
+                >
+                <Text style={styles.mainHeaderCell}>{moment(date).format('MMMM D')}</Text>
+              </View> 
+              <View style={styles.mainHeaderGameWrapper}>
+                { 
+                  gameNames.map((index) =>{                    
+                    return (
+                    <View style={styles.mainHeaderGameCellWrapper}>
+                      <Text style={styles.mainHeaderNameCell}>{`Game ${index + 1}`}</Text>
+                    </View>
+                    )
+                  })
+                }
+              </View> 
+          </View> 
+          ) 
+      }
+    })
+    return retView;
+  }
+  return (
+  <View style={styles.header} fixed>
+    <View style={styles.headerWrapper}>
+      <>
+        <Text style={styles.eventName}>
+          Division and Team Game Detail:{`${event.event_name}`}
+        </Text>
+        <Text style={styles.scheduleName}>
+          Start Date : {moment(event.event_startdate).format('MMMM D, YYYY')}&nbsp;&nbsp;
+          Schedule : {`${schedule.schedule_name}`}
+        </Text>
 
-  const makeDocument = () => {
-    const pagesSideCount = Math.ceil(totalCount / DEFAULT_COLUMNS_COUNT);
-    console.log("pagesSideCount ->", pagesSideCount); //
-    const pagesCount = Math.ceil(totalTeamCount / DEFAULT_ROWS_COUNT);
-    const pages = [...Array(pagesCount).keys()];
-    return pages.map((idx) => {
-      const splitIdx = 0;
-      return (
-        <Page size="A4" orientation="landscape" style={styles.page} key={idx}>
-          <HeaderSchedule
-            days={days}
-            event={event}
-            schedule={schedule}
-            teamDetails={sortedJsonTeamDetails}
-            splitIdx={splitIdx}
-          />
-          <View style={styles.tableWrapper} key={idx}>
-            <View key={idx}>
-              <TableTbody
-                days={days}
-                teamDetails={sortedJsonTeamDetails}
-                splitIdx={splitIdx}
-                pageIdx={idx}
-              />
-            </View>
+        <View style={styles.mainHeaderWrapper}>
+          <View style={styles.mainHeaderDivisionWrapper}>
+            <Text style={styles.mainHeaderCell}>Division</Text>
           </View>
-          <PrintedDate />
-          <Text
-            style={styles.pageNumber}
-            render={({ pageNumber, totalPages }) =>
-              `${pageNumber} / ${totalPages}`
-            }
-            fixed
-          />
-        </Page>
-      );
-    });
-  };
+          <View style={styles.mainHeaderCountsWrapper}>
+            <Text style={styles.mainHeaderCell}>Game Counts:</Text>
+            <View style={styles.mainHeaderCountsIndividualWrapper}>              
+              <Text style={styles.mainHeaderCountCell}>Within Pool</Text>
+              <Text style={styles.mainHeaderCountCell}>Outside Pool</Text>
+              <Text style={styles.mainHeaderCountCell}>Total</Text>
+            </View>                  
+          </View>              
+          {getHeaderDate()}
+        </View>        
+      </>
+    </View>
+    <View style={styles.logoWrapper}>
+      <Image
+        src={
+          event.desktop_icon_URL
+            ? `https://tourneymaster.s3.amazonaws.com/public/${event.desktop_icon_URL}`
+            : TMLogo
+        }
+        style={styles.logo}
+      />
+    </View>
+  </View>
+)};
 
-  return <Document>{makeDocument()}</Document>;
-};
-
-export default PDFTableScheduleTeamDetail;
+export default HeaderSchedule;

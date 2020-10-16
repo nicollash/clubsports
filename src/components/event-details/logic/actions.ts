@@ -14,7 +14,7 @@ import {
   ORGANIZATIONS_FETCH_FAILURE,
   OrganizationsAction,
 } from './actionTypes';
-import { eventDetailsSchema } from 'validations';
+import { eventDetailsSchema, teamSchema } from 'validations';
 import { IIconFile } from './model';
 import history from 'browserhistory';
 import { ICalendarEvent } from 'common/models/calendar';
@@ -592,5 +592,218 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
     } catch {
       Toasts.errorToast("Couldn't import data");
     }
+  }
+};
+
+export const createFieldManagerDataFromCSV: ActionCreator<ThunkAction<
+  void,
+  {},
+  null,
+  { type: string }
+// >> = (teams: Partial<ITeam>[], cb: (param?: object) => void) => async (
+>> = (teams: any, cb: (param?: object) => void) => async (
+  dispatch: Dispatch
+) => {
+  const allDivisions = await api.get(
+    `/divisions?event_id=${teams[0].event_id}`
+  );
+  const allTeams = await api.get(`/teams?event_id=${teams[0].event_id}`);
+
+  let poolsPerDivision: any = {};
+  for await (const division of allDivisions) {
+    const pools = await api.get(`/pools?division_id=${division.division_id}`);
+    poolsPerDivision = {
+      ...poolsPerDivision,
+      [division.division_id]: pools,
+    };
+  }
+
+  for (const [index, team] of teams.entries()) {
+    if (!team.division_id) {
+      return Toasts.errorToast(
+        `Record ${index + 1}: Division Name is required to fill!`
+      );
+    }
+  }
+
+  // const data = teams.map((team) => {
+  const data = teams.map((team: any) => {
+    const divisionId = allDivisions.find(
+      (div: IDivision) =>
+        div.long_name.toLowerCase() === team.division_id?.toLowerCase()
+    )?.division_id;
+
+    let poolId = null;
+    if (poolsPerDivision[divisionId]) {
+      poolId = poolsPerDivision[divisionId].find(
+        // (it: IPool) => it.pool_name === team.pool_id
+        (it: any) => it.pool_name === team.pool_id
+      )?.pool_id;
+    }
+
+    if (team.phone_num) {
+      const orgin: any = team.phone_num;
+      const regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
+      let str = orgin.replace(regex, "");
+      str = str.replace(/\s/g, "");
+
+      if (str && str.indexOf("1") === 0) {
+        str = str.substring(1);
+      }
+
+      team.phone_num = str;
+    } else {
+      team.phone_num = "";
+    }
+
+    return { ...team, division_id: divisionId, pool_id: poolId };
+  });
+
+  const dupList = [];
+
+  for (const [index, team] of data.entries()) {
+    if (!team.division_id) {
+      return Toasts.errorToast(
+        `Record ${
+          index + 1
+        }: There is no division with the supplied "long name". Please, create a division first or address the data issue.`
+      );
+    }
+    const teamsInDivision = allTeams.filter(
+      // (t: ITeam) => t.division_id === team.division_id
+      (t: any) => t.division_id === team.division_id
+    );
+    console.log("teamsInDivision: ", team, teamsInDivision);
+
+    try {
+      await Yup.array()
+        .of(teamSchema)
+        .unique(
+          (t) => t.long_name,
+          "Within a division, Long Names must be unique."
+        )
+        .validate([...teamsInDivision, team]);
+    } catch (err) {
+      if (err.value) {
+        const invalidTeam = err.value[err.value.length - 1];
+        const index = teams.findIndex(
+          // (team) => team.team_id === invalidTeam.team_id
+          (team: any) => team.team_id === invalidTeam.team_id
+        );
+
+        dupList.push({
+          index,
+          msg: err.message,
+        });
+      }
+    }
+
+    try {
+      await Yup.array()
+        .of(teamSchema)
+        .unique(
+          (t) => t.long_name,
+          "Within a division, Long Names must be unique."
+        )
+        .validate([...data, team]);
+    } catch (err) {
+      const invalidTeam = err.value[err.value.length - 1];
+      const index = teams.findIndex(
+        // (team) => team.team_id === invalidTeam.team_id
+        (team: any) => team.team_id === invalidTeam.team_id
+      );
+
+      dupList.push({
+        index,
+        msg: err.message,
+      });
+    }
+  }
+
+  if (dupList.length !== 0) {
+    cb({ type: "error", data: dupList });
+  } else {
+    let progress = 0;
+    for (const team of data) {
+      const postData = {
+        event_id: team.event_id,
+        division_id: team.division_id,
+        pool_id: team.pool_id,
+        long_name: team.long_name,
+        short_name: team.short_name,
+        team_tag: team.team_tag,
+        team_id: team.team_id,
+        contact_first_name: team.contact_first_name,
+        contact_last_name: team.contact_last_name,
+        phone_num: team.phone_num,
+        contact_email: team.contact_email,
+        city: team.city,
+        state: team.state,
+        level: team.level,
+        org_id: team.org_id,
+        schedule_restrictions: team.schedule_restrictions,
+        is_active_YN: team.is_active_YN,
+        is_library_YN: team.is_library_YN,
+      };
+
+      const response = await api.post(`/teams`, postData);
+      if (response?.errorType === "Error" || response?.message === false) {
+        return Toasts.errorToast("Couldn't create a team");
+      }
+      progress += 1;
+
+      cb({
+        type: "progress",
+        data: [
+          {
+            status: "Importing New Data...",
+            msg: `${progress / data.length}`,
+          },
+        ],
+      });
+    }
+
+    dispatch({
+      // type: CREATE_TEAMS_SUCCESS,
+      type: 'CREATE_TEAMS_SUCCESS',
+      payload: {
+        data,
+      },
+    });
+
+    if (!teams[0].pool_id) {
+      cb({
+        type: "info",
+        data: [
+          {
+            index: 0,
+            msg: `Import Summary; Of the ${teams.length} teams you imported, ${data.length} rows mapped to existing divisions. No pool were mapped. Be sure to map them under "Division & Pools"`,
+          },
+        ],
+      });
+    } else {
+      let poolTeamCount = 0;
+      data.forEach((it: any) => {
+        if (it.pool_id) {
+          poolTeamCount += 1;
+        }
+      });
+      cb({
+        type: "info",
+        data: [
+          {
+            index: 0,
+            msg: `Import Summary; Of the ${teams.length} teams you imported, ${
+              data.length
+            } rows mapped successfully to existing divisions and ${poolTeamCount} rows successfully mapped to existing Pools. Map them under "Division & Pools" ${
+              data.length - poolTeamCount
+            } were unassigned and need assignment.`,
+          },
+        ],
+      });
+    }
+
+    const successMsg = `(${data.length}) teams were successfully imported.`;
+    Toasts.successToast(successMsg);
   }
 };
