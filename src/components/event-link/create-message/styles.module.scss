@@ -81,7 +81,7 @@
   align-self: center;
 
   & > div {
-    width: 23%;
+    width: 15%;
     margin-bottom: 10px;
   }
 
@@ -145,6 +145,10 @@
   }
 }
 
+.deleteBttn {
+  margin: 5px 5px 5px 15px;
+}
+
 .messageTitleWrapper {
   width: 100%;
   display: flex;
@@ -152,5 +156,22 @@
 
   & > div {
     width: 49%;
+  }
+}
+
+.messageWrapp {
+  display: flex;
+  justify-content: space-between;
+  height: 206px;
+
+  & > div {
+    width: 49%;
+  }
+
+  .messageBody > div {
+    width: 100%;
+  }
+  button {
+    margin: 3px;
   }
 }

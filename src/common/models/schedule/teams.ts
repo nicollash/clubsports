@@ -53,6 +53,8 @@ export interface ITeamCard extends ITeam {
     teamScore?: string | number | null;
     date?: string;
     startTime?: string;
+    awayPoolId?: string;
+    homePoolId?: string;
   }[];
   fieldId?: string;
   state?: string;

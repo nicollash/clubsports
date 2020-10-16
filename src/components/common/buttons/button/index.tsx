@@ -53,7 +53,7 @@ const Button: React.FC<IButtonProps> = ({
         {icon}
       </div>
     )}
-    {label}
+    {label ? label : null}
     {icon && isIconRightSide && (
       <div
         className={type === 'icon' ? styles.icon : icon && styles.iconWrapper}

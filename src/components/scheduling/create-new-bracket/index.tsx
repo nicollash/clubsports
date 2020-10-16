@@ -29,8 +29,8 @@ enum ModalPageEnum {
 }
 
 enum ModeOptionEnum {
-  "Use Scheduler" = 0,
-  "Create Manually" = 1,
+  "Use Scheduling Algorithm" = 0,
+  "Create Custom Brackets" = 1,
 }
 
 export interface ICreateBracketModalOutput {
@@ -83,7 +83,7 @@ const CreateNewBracket = (props: IProps) => {
     event,
     selectedMode,
   } = props;
-  const ModeOptions = ["Use Scheduler", "Create Manually"];
+  const ModeOptions = ["Use Scheduling Algorithm", "Create Custom Brackets"];
 
   const [bracketName, setBracketName] = useState("");
   const [selectedSchedule, setSelectedSchedule] = useState("");
@@ -93,7 +93,7 @@ const CreateNewBracket = (props: IProps) => {
   const [localWarmup, setLocalWarmup] = useState(
     getWarmupFromSchedule(schedules, selectedSchedule)
   );
-  const [mode, setModeOptions] = useState(ModeOptionEnum["Use Scheduler"]);
+  const [mode, setModeOptions] = useState(ModeOptionEnum["Use Scheduling Algorithm"]);
   const [selectedTimeSlotsNum] = useState("0");
   const [playoffTimeSlots, setPlayoffTimeSlots] = useState<
     ITimeSlot[] | undefined
@@ -130,7 +130,7 @@ const CreateNewBracket = (props: IProps) => {
 
   const onClosePressed = () => {
     setModalPage(ModalPageEnum[selectedMode]);
-    setModeOptions(ModeOptionEnum["Use Scheduler"]);
+    setModeOptions(ModeOptionEnum["Use Scheduling Algorithm"]);
     setBracketName("");
     setSelectedSchedule("");
     setAlignItems(false);
@@ -177,10 +177,10 @@ const CreateNewBracket = (props: IProps) => {
       ),
       warmup: localWarmup || "00:00:00",
       createDate: new Date().toISOString(),
-      isManualCreation: mode === ModeOptionEnum["Create Manually"],
+      isManualCreation: mode === ModeOptionEnum["Create Custom Brackets"],
       multiDay:
         event?.multiday_playoffs_YN === 1 &&
-        mode === ModeOptionEnum["Create Manually"],
+        mode === ModeOptionEnum["Create Custom Brackets"],
       bracketLevel: Number(event?.bracket_level) || 1,
     };
     onCreateBracket(scheduleData);

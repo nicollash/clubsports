@@ -10,6 +10,7 @@ import {
   getData,
   getMessages,
   deleteMessages,
+  refreshMessage,
 } from './logic/actions';
 import { BindingCbWithOne, IDivision, IPool, ITeam } from 'common/models';
 import { IMessage } from 'common/models/event-link';
@@ -17,11 +18,12 @@ import { RouteComponentProps } from "react-router-dom";
 
 export interface IResponse {
   answerText: string;
-  messageRecipient: string;
   messageStatus: string;
   receivedDatetime: string | Date;
   sendDatetime: string | Date;
   messageId: string;
+  recipientTarget: string;
+  statusMessage: string;
 };
 
 interface MatchParams {
@@ -46,6 +48,7 @@ interface IProps {
   getMessages: (eventId: string) => void;
   getData: () => void;
   deleteMessages: BindingCbWithOne<string>;
+  refreshMessage: (messageId: string) => void;
   messages: IMessage[];
   messagesAreLoading: boolean;
   responses: IResponse[];
@@ -61,6 +64,7 @@ const EventLink = ({
   messages,
   messagesAreLoading,
   deleteMessages,
+  refreshMessage,
   getData,
 }: IProps & RouteComponentProps<MatchParams>) => {
   const eventId = match.params.eventId;
@@ -79,7 +83,7 @@ const EventLink = ({
     <section className={styles.container}>
       <Navigation eventId={eventId} onAddToLibraryManager={() => {}} />
       <div className={styles.headingContainer}>
-        <HeadingLevelTwo margin="24px 0">Event Link</HeadingLevelTwo>
+        <HeadingLevelTwo margin="24px 0">EventLink</HeadingLevelTwo>
         <Button
           onClick={onToggleSectionCollapse}
           variant="text"
@@ -93,6 +97,7 @@ const EventLink = ({
           data={messages}
           messagesAreLoading={messagesAreLoading}
           deleteMessages={deleteMessages}
+          refreshMessage={refreshMessage}
           responses={responses}
           divisions={divisions}
           pools={pools}
@@ -130,6 +135,7 @@ const mapDispatchToProps = {
   getData,
   getMessages,
   deleteMessages,
+  refreshMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventLink);

@@ -22,6 +22,7 @@ import {
   FETCH_BRACKETS_SUCCESS,
   UPDATE_EXISTING_BRACKET,
   CHECK_SAME_COACH_RESULT,
+  CHECK_UNASSIGNED_GAMES,
 } from "./actionTypes";
 import { EMPTY_SCHEDULE } from "./constants";
 import { scheduleSchema, updatedScheduleSchema } from "validations";
@@ -555,7 +556,8 @@ export const deleteBracket = (bracketId: string) => async (
 
 export const updateBracketStatus = (
   bracketId: string,
-  isDraft: boolean
+  isDraft: boolean,
+  publishWithUnassignedGames?: boolean,
 ) => async (dispatch: Dispatch, getState: GetState) => {
   const { pageEvent } = getState();
   const { tournamentData } = pageEvent;
@@ -572,7 +574,7 @@ export const updateBracketStatus = (
     (item) => item?.field_id && item.start_time
   );
 
-  if (!allGamesAssigned && !isDraft) {
+  if (!allGamesAssigned && !isDraft && !publishWithUnassignedGames) {
     return showError("All bracket games should be assigned before publishing");
   }
 
@@ -599,6 +601,22 @@ export const updateBracketStatus = (
   const name = isDraft ? "unpublished" : "published";
 
   successToast(`Bracket was successfully ${name}`);
+};
+
+export const checkUnassignedGames = (
+  bracketId: string,
+  ) => async (dispatch: Dispatch) => {
+  const bracketGames: (
+    | IPlayoffGame
+    | undefined
+  )[] = await api.get("/brackets_details", { bracket_id: bracketId });
+
+  const unassignedGames = bracketGames.filter((item) => !item?.field_id && !item?.start_time);
+
+  dispatch({
+    type: CHECK_UNASSIGNED_GAMES,
+    payload: unassignedGames.length,
+  });
 };
 
 export const checkSameCoachWarning = (
@@ -745,3 +763,5 @@ export const saveCheckSameCoachResult = (payload: object) => ({
   type: CHECK_SAME_COACH_RESULT,
   payload,
 });
+
+

@@ -175,7 +175,8 @@ const updateEventStatus = (isDraft: boolean) => async (
 const publishEventData = (
   publishType: EventPublishTypes,
   modifyModValue: EventModifyTypes,
-  publishSettings: IPublishSettings
+  publishSettings: IPublishSettings,
+  publishWithUnassignedGames?: boolean,
 ) => async (dispatch: Dispatch, getState: () => IAppState) => {
   const { tournamentData } = getState().pageEvent;
   const { event, schedules } = tournamentData;
@@ -237,7 +238,7 @@ const publishEventData = (
         );
       }
 
-      dispatch<any>(updateBracketStatus(publishedBracket.bracket_id, isDraft));
+      dispatch<any>(updateBracketStatus(publishedBracket.bracket_id, isDraft, publishWithUnassignedGames));
 
       await updateMobileEventStatus(
         event!.event_id,

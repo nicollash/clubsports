@@ -12,7 +12,7 @@ const mapScheduleCreationTypeToOption = (t: ScheduleCreationType) => {
     case ScheduleCreationType.Visual:
       return 'Use Visual Games Maker';
     case ScheduleCreationType.Scheduler:
-      return 'Use Scheduler';
+      return 'Use Scheduling Algorithm';
     default:
       return '';
   }
@@ -24,7 +24,7 @@ const mapScheduleCreationOptionToType = (o: string): ScheduleCreationType => {
       return ScheduleCreationType.Manual;
     case 'Use Visual Games Maker':
       return ScheduleCreationType.Visual;
-    case 'Use Scheduler':
+    case 'Use Scheduling Algorithm':
     default:
       return ScheduleCreationType.Scheduler;
   }

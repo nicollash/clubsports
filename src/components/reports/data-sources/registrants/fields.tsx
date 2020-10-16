@@ -378,7 +378,7 @@ export const columnsForMessages: ColDef[] = [
     field: 'recipientTarget',
   },
   {
-    headerName: 'Send On',
+    headerName: 'Sent On',
     field: 'sendDatetime',
     type: ['dateColumnWithTimeFilter', 'rightAligned'],
     width: 200,
@@ -397,10 +397,15 @@ export const columnsForMessages: ColDef[] = [
   {
     headerName: 'Status',
     field: 'messageStatus',
+    rowGroupIndex: 1,
   },
   {
     headerName: 'Message ID',
     field: 'messageId',
     hide: true,
+  },
+  {
+    headerName: 'Status Details',
+    field: 'statusMessage',
   },
 ];

@@ -1,6 +1,6 @@
 import { IField } from "common/models/schedule/fields";
 import { IScheduleFacility } from "common/models/schedule/facilities";
-import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
+import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 import { IGame } from "components/common/matrix-table/helper";
 import { IDivision } from "common/models";
 import { formatPhoneNumber } from "helpers/formatPhoneNumber";
@@ -77,21 +77,20 @@ const getGamesByDays = (games: IGame[]) => {
   return gamesByDays;
 };
 
-const GetSortOrderByKeyIndex = (index: any, sort = 'ASC') => {
+const GetSortOrderByKeyIndex = (index: any, sort = "ASC") => {
   return function (a: any, b: any) {
     const x = isNaN(index) ? a[index] : a[Object.keys(a)[index]];
     const y = isNaN(index) ? b[index] : b[Object.keys(b)[index]];
     const xx = isNaN(x) ? x.toLowerCase() : x;
     const yy = isNaN(y) ? y.toLowerCase() : y;
     let comparison = 0;
-    if (sort === 'ASC') {
+    if (sort === "ASC") {
       if (xx > yy) {
         comparison = 1;
       } else if (xx < yy) {
         comparison = -1;
       }
-    }
-    else {
+    } else {
       if (xx > yy) {
         comparison = -1;
       } else if (xx < yy) {
@@ -100,7 +99,7 @@ const GetSortOrderByKeyIndex = (index: any, sort = 'ASC') => {
     }
     return comparison;
   };
-}
+};
 
 const getDetailsByKey = (details: any[], key: string) => {
   const sortedArray = details.sort(GetSortOrderByKeyIndex(key));
@@ -118,86 +117,102 @@ const parseJsonGames = (scheduleTeamDetails: IScheduleTeamDetails[]) => {
     const jsonGames = JSON.parse(detail.json_games);
     delete detail.json_games;
     jsonGames.map((opposeTeam: any) => {
-      const onlyOneTeam = {...detail, ...opposeTeam };
+      const onlyOneTeam = { ...detail, ...opposeTeam };
       parsedDetailsList.push(onlyOneTeam);
-    } )  
-  }) 
+    });
+  });
   return parsedDetailsList;
-}
+};
+
 const sortJsonGames = (parsedJsonGames: any[]) => {
   let parsedDetailsList: any[] = parsedJsonGames;
-  // console.log('total parsedDetailsList ->', parsedDetailsList) // 
-  const divisionArrangedDetails = getDetailsByKey(parsedDetailsList,'division_name');
+  // console.log('total parsedDetailsList ->', parsedDetailsList) //
+  const divisionArrangedDetails = getDetailsByKey(
+    parsedDetailsList,
+    "division_name"
+  );
   parsedDetailsList = [];
   Object.keys(divisionArrangedDetails).map((divisionKey) => {
-    const teamArrangedDetails = getDetailsByKey(divisionArrangedDetails[divisionKey],'team_name');
+    const teamArrangedDetails = getDetailsByKey(
+      divisionArrangedDetails[divisionKey],
+      "team_name"
+    );
     let teamArrangedList: any[] = [];
     Object.keys(teamArrangedDetails).map((teamKey) => {
-      const dateArrangedDetails = getDetailsByKey(teamArrangedDetails[teamKey],'game_date');
+      const dateArrangedDetails = getDetailsByKey(
+        teamArrangedDetails[teamKey],
+        "game_date"
+      );
       let dateArrangedList: any[] = [];
       Object.keys(dateArrangedDetails).map((dateKey) => {
-        const timeArrangedDetails = getDetailsByKey(dateArrangedDetails[dateKey],'game_time');
+        const timeArrangedDetails = getDetailsByKey(
+          dateArrangedDetails[dateKey],
+          "game_time"
+        );
         let timeArrangedList: any[] = [];
         Object.keys(timeArrangedDetails).map((timeKey) => {
-          const fieldArrangedDetails = getDetailsByKey(timeArrangedDetails[timeKey],'field');
+          const fieldArrangedDetails = getDetailsByKey(
+            timeArrangedDetails[timeKey],
+            "field"
+          );
           const newTimeDetail = new Object();
-          newTimeDetail[timeKey]=fieldArrangedDetails;
+          newTimeDetail[timeKey] = fieldArrangedDetails;
           timeArrangedList.push(newTimeDetail);
-        })
+        });
         const newDateDetail = new Object();
-        newDateDetail[dateKey]=timeArrangedList;
+        newDateDetail[dateKey] = timeArrangedList;
         dateArrangedList.push(newDateDetail);
-      })
+      });
       const newTeamDetail = new Object();
-      newTeamDetail[teamKey]=dateArrangedList;
+      newTeamDetail[teamKey] = dateArrangedList;
       teamArrangedList.push(newTeamDetail);
-    })
+    });
     const newDivisionDetail = new Object();
-    newDivisionDetail[divisionKey]=teamArrangedList;
+    newDivisionDetail[divisionKey] = teamArrangedList;
     parsedDetailsList.push(newDivisionDetail);
-  })
+  });
   return parsedDetailsList;
+};
 
-}
-const getUniqueKeyArray = (array: any[], key: string | number ) => {
+const getUniqueKeyArray = (array: any[], key: string | number) => {
   const retArray: string[] = [];
   array.forEach((element) => {
-    const index = retArray.findIndex(
-      (item) => element[key] === item
-    );
+    const index = retArray.findIndex((item) => element[key] === item);
     if (index === -1) {
       retArray.push(element[key]);
-    } 
+    }
   });
   retArray.sort();
   return retArray;
-}
+};
 
 const getGamesCountForDay = (sortJsonGames: any[], day: string): any => {
   let countGames = 0;
   sortJsonGames.forEach((division) => {
-    const divisionKey =  Object.keys(division)[0];
+    const divisionKey = Object.keys(division)[0];
     division[divisionKey].forEach((team: string) => {
-      const teamKey =  Object.keys(team)[0];
+      const teamKey = Object.keys(team)[0];
       team[teamKey].forEach((date: string) => {
-        const dateKey =  Object.keys(date)[0];
+        const dateKey = Object.keys(date)[0];
         if (day === dateKey) {
-          if (date[dateKey].length > countGames ) countGames = date[dateKey].length
+          if (date[dateKey].length > countGames)
+            countGames = date[dateKey].length;
         }
-      })
-    })
-  })
+      });
+    });
+  });
   return countGames;
-}
+};
+
 const getTeamCount = (sortJsonGames: any[]): any => {
   let countGames = 0;
   sortJsonGames.forEach((division) => {
-    Object.keys(division).map(divisionKey => {
+    Object.keys(division).map((divisionKey) => {
       countGames += division[divisionKey].length;
-    })
-  })
+    });
+  });
   return countGames;
-}
+};
 
 const getScorers = async (eventId: string) => {
   const scorers = (await api.get(

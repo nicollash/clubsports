@@ -5,6 +5,7 @@ import {
   DELETE_MESSAGES_SUCCESS,
   RESPONSES_FETCH_SUCCESS,
   OPTIONS_FETCH_SUCCESS,
+  REFRESH_MESSAGE_SUCCESS,
 } from './actionTypes';
 import { IDivision, IEventDetails, IPool, ITeam } from 'common/models';
 import { IResponse } from "..";
@@ -70,6 +71,14 @@ export default (
     }
     case OPTIONS_FETCH_SUCCESS: {
       return { ...state, options: action.payload };
+    }
+    case REFRESH_MESSAGE_SUCCESS: {
+      const updatedResponses = state.responses.map((resp: IResponse) => {
+        return resp.messageId === action.payload.messageId
+          ? action.payload
+          : resp;
+      })
+      return { ...state, responses: updatedResponses };
     }
     default:
       return state;

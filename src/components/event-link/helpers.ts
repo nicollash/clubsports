@@ -1,6 +1,8 @@
+import api from "api/api";
 import { IPool, IDivision, ITeam } from 'common/models';
 import { IMultiSelectOption } from 'components/common/multi-select';
 import { findIndex, find } from 'lodash-es';
+import { IResponse } from ".";
 import { IRecipientDetails } from "./create-message";
 import { IScheduleFilter } from "./create-message/filter";
 
@@ -10,8 +12,8 @@ export enum Type {
 };
 
 export enum MessageType {
-  ONE_WAY = 'Notification (one way)',
-  TWO_WAY = 'Poll (two way)',
+  ONE_WAY = 'Notification (1 Way)',
+  TWO_WAY = 'Poll (2 Way Q & A)',
 };
 
 export enum Recipient {
@@ -34,41 +36,76 @@ export enum GroupLabels {
 export const typeOptions = [Type.TEXT, Type.EMAIL];
 export const messageTypeOptions = [MessageType.ONE_WAY, MessageType.TWO_WAY];
 export const recipientOptions = [Recipient.ONE, Recipient.MANY];
+export const insertFormFieldButtonsLabels = [
+  "First Name",
+  "Last Name",
+  "Division Name",
+  "Pool Name",
+  "Team Name",
+  "Link to division schedule",
+  "Download app link",
+];
+
+export const sortBySendDatetime = (arr: any[]) => {
+  return arr.sort((a: any, b: any) =>
+    new Date(a.send_datetime).getTime() < new Date(b.send_datetime).getTime()
+      ? 1
+      : -1
+  );
+};
 
 const mapDivisionsToOptions = (values: IDivision[], checked = true) =>
-  values.map(item => ({
-    label: item.short_name,
-    value: item.division_id,
-    checked,
-  }));
+  values
+    .map((item) => ({
+      label: item.short_name,
+      value: item.division_id,
+      checked,
+    }))
+    .sort((a, b) => {
+      if (a.label > b.label) return 1;
+      if (a.label < b.label) return -1;
+      return 0;
+    });
 
 const mapPoolsToOptions = (values: IPool[], checked = true) =>
-  values.map(item => ({
-    label: item.pool_name,
-    value: item.pool_id,
-    checked,
-  }));
+  values
+    .map(item => ({
+      label: item.pool_name,
+      value: item.pool_id,
+      checked,
+    }))
+    .sort((a, b) => {
+      if (a.label > b.label) return 1;
+      if (a.label < b.label) return -1;
+      return 0;
+    });
 
 const mapTeamsToOptions = (values: ITeam[], checked = true) =>
-  values.map(item => ({
-    label: item.long_name!,
-    value: item.team_id!,
-    checked,
-  }));
+  values
+    .map(item => ({
+      label: item.long_name!,
+      value: item.team_id!,
+      checked,
+    }))
+    .sort((a, b) => {
+      if (a.label > b.label) return 1;
+      if (a.label < b.label) return -1;
+      return 0;
+    });
 
 export const applyFilters = (params: any, event?: string) => {
   const { divisions, pools, teams } = params;
 
-  const filteredDivisions = divisions.filter(
+  const filteredDivisions = divisions?.filter(
     (division: IDivision) => division.event_id === event
   );
-  const filteredDivisionsIds = filteredDivisions.map(
+  const filteredDivisionsIds = filteredDivisions?.map(
     (division: IDivision) => division.division_id
   );
-  const filteredPools = pools.filter((pool: IPool) =>
+  const filteredPools = pools?.filter((pool: IPool) =>
     filteredDivisionsIds.includes(pool.division_id)
   );
-  const filteredTeams = teams.filter((team: ITeam) => team.event_id === event);
+  const filteredTeams = teams?.filter((team: ITeam) => team.event_id === event);
 
   const divisionsOptions: IMultiSelectOption[] = mapDivisionsToOptions(
     filteredDivisions
@@ -263,7 +300,7 @@ export const getAnswerText = (answerOptionId: string, options: any[]) => {
   const currentOption = options.find(
     (opt: any) => opt.answer_option_id === answerOptionId
   );
-  return currentOption?.answer_text;
+  return currentOption?.answer_text ? currentOption?.answer_text : "No Response";
 };
 
 export const getRecipient = (
@@ -278,28 +315,19 @@ export const getRecipient = (
   };
 };
 
-//do one function
-
-export const getDivisions = (ids: string[], divisions: IDivision[]) => {
-  const names = divisions
-    .filter((div: IDivision) => ids.includes(div.division_id))
-    .map((div: IDivision) => div.short_name).join(', ');
-  console.log(names);
-  return names;
+export const getListOfNames = (
+  ids: string[],
+  items: any[],
+  fieldName: string,
+  fieldID: string
+) => {
+  return items
+    .filter((item: any) => ids.includes(item[fieldID]))
+    .map((item: ITeam | IPool | IDivision) => item[fieldName])
+    .sort((a, b) => a.localeCompare(b))
+    .join(", ");
 };
 
-export const getPools = (ids: string[], pools: IPool[]) => {
-  const names = pools
-    .filter((pool: IPool) => ids.includes(pool.pool_id))
-    .map((pool: IPool) => pool.pool_name).join(', ');
-  console.log(names);
-  return names;
-};
-
-export const getTeams = (ids: string[], teams: ITeam[]) => {
-  const names = teams
-    .filter((team: ITeam) => ids.includes(team.team_id))
-    .map((team: ITeam) => team.short_name).join(', ');
-  console.log(names);
-  return names;
+export const refreshMessage = async (messageId: string) => {
+  return (await api.get(`/messaging?message_id=${messageId}`)) as IResponse[];
 };

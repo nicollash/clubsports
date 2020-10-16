@@ -1,7 +1,7 @@
-import { Dispatch } from 'redux';
-import { ThunkAction } from 'redux-thunk';
-import { chunk } from 'lodash-es';
-import api from 'api/api';
+import { Dispatch } from "redux";
+import { ThunkAction } from "redux-thunk";
+import { chunk } from "lodash-es";
+import api from "api/api";
 import {
   FETCH_FIELDS_SUCCESS,
   FETCH_FIELDS_FAILURE,
@@ -29,15 +29,19 @@ import {
   ADD_SCHEDULES_DETAILS_SUCCESS,
   ADD_SCHEDULES_DETAILS_FAILURE,
   SET_IS_DRAFT_ALREADY_SAVED_STATUS,
-} from './actionTypes';
-import { IField, ISchedule } from 'common/models';
-import { IEventSummary } from 'common/models/event-summary';
-import { IAppState } from 'reducers/root-reducer.types';
-import { ISchedulesDetails } from 'common/models/schedule/schedules-details';
-import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
-import { successToast, errorToast, infoToast } from 'components/common/toastr/showToasts';
-import { ISchedulesGame } from 'common/models/schedule/game';
-import { ScheduleStatuses } from 'common/enums';
+} from "./actionTypes";
+import { IField, ISchedule } from "common/models";
+import { IEventSummary } from "common/models/event-summary";
+import { IAppState } from "reducers/root-reducer.types";
+import { ISchedulesDetails } from "common/models/schedule/schedules-details";
+import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
+import {
+  successToast,
+  errorToast,
+  infoToast,
+} from "components/common/toastr/showToasts";
+import { ISchedulesGame } from "common/models/schedule/game";
+import { ScheduleStatuses } from "common/enums";
 // import { getVarcharEight } from 'helpers';
 
 type ThunkActionType<R> = ThunkAction<R, IAppState, undefined, any>;
@@ -103,6 +107,7 @@ const publishFailure = () => ({
 const fetchSchedulesDetailsFailure = () => ({
   type: FETCH_SCHEDULES_DETAILS_FAILURE,
 });
+
 const fetchScheduleTeamDetailsFailure = () => ({
   type: FETCH_SCHEDULE_TEAM_DETAILS_FAILURE,
 });
@@ -119,9 +124,11 @@ export const gamesAlreadyExist = (payload: boolean) => ({
 
 export const updateSchedulesDetailsInProgress = () => ({
   type: UPDATE_SCHEDULES_DETAILS_IN_PROGRESS,
-})
+});
 
-export const updateSchedulesDetailsSuccess = (payload: ISchedulesDetails[]) => ({
+export const updateSchedulesDetailsSuccess = (
+  payload: ISchedulesDetails[]
+) => ({
   type: UPDATE_SCHEDULES_DETAILS_SUCCESS,
   payload,
 });
@@ -134,7 +141,9 @@ export const deleteSchedulesDetailsInProgress = () => ({
   type: DELETE_SCHEDULES_DETAILS_IN_PROGRESS,
 });
 
-export const deleteSchedulesDetailsSuccess = (payload: ISchedulesDetails[]) => ({
+export const deleteSchedulesDetailsSuccess = (
+  payload: ISchedulesDetails[]
+) => ({
   type: DELETE_SCHEDULES_DETAILS_SUCCESS,
   payload,
 });
@@ -166,8 +175,8 @@ export const fetchFields = (
 ): ThunkActionType<void> => async (dispatch: Dispatch) => {
   const response: IField[] = [];
   await Promise.all(
-    facilitiesIds.map(async id => {
-      const fields = await api.get('/fields', { facilities_id: id });
+    facilitiesIds.map(async (id) => {
+      const fields = await api.get("/fields", { facilities_id: id });
       if (fields?.length) response.push(...fields);
     })
   );
@@ -183,7 +192,7 @@ export const fetchFields = (
 export const fetchEventSummary = (
   eventId: string
 ): ThunkActionType<void> => async (dispatch: Dispatch) => {
-  const response = await api.get('/event_summary', { event_id: eventId });
+  const response = await api.get("/event_summary", { event_id: eventId });
 
   if (response?.length) {
     dispatch(fetchEventSummarySuccess(response));
@@ -199,22 +208,22 @@ export const saveDraft = (
 
   try {
     if (scheduleCondition) {
-      await api.post('/schedules', scheduleData);
+      await api.post("/schedules", scheduleData);
     }
 
     const scheduleDetailsChunk = chunk(scheduleDetails, 50);
 
     await Promise.all(
-      scheduleDetailsChunk.map(async arr => {
-        await api.post('/schedules_details', arr);
+      scheduleDetailsChunk.map(async (arr) => {
+        await api.post("/schedules_details", arr);
       })
     );
 
     dispatch(draftSavedSuccess());
-    successToast('Schedules data successfully saved');
+    successToast("Schedules data successfully saved");
   } catch {
     dispatch(draftSavedFailure());
-    errorToast('Something happened during the saving process');
+    errorToast("Something happened during the saving process");
   }
 };
 
@@ -227,19 +236,19 @@ export const updateDraft = (
 
   const responses = await Promise.all(
     schedulesDetailsChunk.map(
-      async arr => await api.put('/schedules_details', arr)
+      async (arr) => await api.put("/schedules_details", arr)
     )
   );
-  const responseOk = responses.every(item => item);
+  const responseOk = responses.every((item) => item);
 
   if (responseOk) {
     dispatch(draftSavedSuccess());
-    successToast('Schedules data successfully saved');
+    successToast("Schedules data successfully saved");
     return;
   }
 
   dispatch(draftSavedFailure());
-  errorToast('Something happened during the saving process');
+  errorToast("Something happened during the saving process");
 };
 
 export const publishSchedulesGames = (_: ISchedulesGame[]) => async (
@@ -294,39 +303,39 @@ export const updatePublishedSchedulesDetails = (
   const schedulesDetailsChunk = chunk(schedulesDetails, 50);
   const schedulesResponses = await Promise.all(
     schedulesDetailsChunk.map(
-      async arr => await api.put('/schedules_details', arr)
+      async (arr) => await api.put("/schedules_details", arr)
     )
   );
-  const schedulesResponseOk = schedulesResponses.every(item => item);
+  const schedulesResponseOk = schedulesResponses.every((item) => item);
 
   if (!schedulesResponseOk) {
-    return errorToast('Something happened during the publishing process');
+    return errorToast("Something happened during the publishing process");
   }
 
   const schedulesGamesChunk = chunk(schedulesGames, 50);
   const gamesResponses = await Promise.all(
-    schedulesGamesChunk.map(async arr => await api.put('/games', arr))
+    schedulesGamesChunk.map(async (arr) => await api.put("/games", arr))
   );
-  const gamesResponseOk = gamesResponses.every(item => item);
+  const gamesResponseOk = gamesResponses.every((item) => item);
 
   if (schedulesResponseOk && gamesResponseOk) {
     dispatch(publishedSuccess());
-    successToast('Schedules data successfully saved and published!');
+    successToast("Schedules data successfully saved and published!");
     return;
   }
 
   dispatch(publishFailure());
-  errorToast('Something happened during the saving process');
+  errorToast("Something happened during the saving process");
 };
 
 export const fetchSchedulesDetails = (scheduleId: string) => async (
   dispatch: Dispatch
 ) => {
-  const schedules: ISchedule = await api.get('schedules', {
+  const schedules: ISchedule = await api.get("schedules", {
     schedule_id: scheduleId,
   });
   const schedulesDetails: ISchedulesDetails[] = await api.get(
-    'schedules_details',
+    "schedules_details",
     {
       schedule_id: scheduleId,
     }
@@ -346,13 +355,17 @@ export const fetchSchedulesDetails = (scheduleId: string) => async (
   }
 };
 
-export const fetchScheduleTeamDetails = (scheduleId: string, eventId: string) => async (
-  dispatch: Dispatch
-) => {
-  const scheduleTeamDetails: IScheduleTeamDetails[] = await api.get('games_normalized_summary', {
-    schedule_id: scheduleId,
-    event_id: eventId,
-  });
+export const fetchScheduleTeamDetails = (
+  scheduleId: string,
+  eventId: string
+) => async (dispatch: Dispatch) => {
+  const scheduleTeamDetails: IScheduleTeamDetails[] = await api.get(
+    "games_normalized_summary",
+    {
+      schedule_id: scheduleId,
+      event_id: eventId,
+    }
+  );
 
   if (scheduleTeamDetails && scheduleTeamDetails[0]) {
     dispatch(
@@ -369,14 +382,14 @@ export const getPublishedGames = (
   eventId: string,
   scheduleId?: string
 ) => async (dispatch: Dispatch) => {
-  const schedulesResponse: ISchedule[] = await api.get('/schedules', {
+  const schedulesResponse: ISchedule[] = await api.get("/schedules", {
     event_id: eventId,
   });
 
   if (!scheduleId) {
     if (
       schedulesResponse?.find(
-        item => item.is_published_YN === ScheduleStatuses.Published
+        (item) => item.is_published_YN === ScheduleStatuses.Published
       )
     ) {
       dispatch(anotherSchedulePublished(true));
@@ -386,7 +399,7 @@ export const getPublishedGames = (
     return;
   }
 
-  const gamesResponse = await api.get('/games', { schedule_id: scheduleId });
+  const gamesResponse = await api.get("/games", { schedule_id: scheduleId });
 
   if (gamesResponse?.length) {
     dispatch(gamesAlreadyExist(true));
@@ -396,7 +409,7 @@ export const getPublishedGames = (
 
   if (
     schedulesResponse?.find(
-      item =>
+      (item) =>
         item.is_published_YN === ScheduleStatuses.Published &&
         item.schedule_id === scheduleId
     )
@@ -404,7 +417,7 @@ export const getPublishedGames = (
     dispatch(publishedSuccess());
   } else if (
     schedulesResponse?.find(
-      item =>
+      (item) =>
         item.is_published_YN === ScheduleStatuses.Published &&
         item.schedule_id !== scheduleId
     )
@@ -420,7 +433,7 @@ const callPostPut = (uri: string, data: any, isUpdate: boolean) =>
   isUpdate ? api.put(uri, data) : api.post(uri, data);
 
 const showError = () => {
-  errorToast('Something happened during the saving process');
+  errorToast("Something happened during the saving process");
 };
 
 const saveSchedule = (
@@ -430,22 +443,22 @@ const saveSchedule = (
 ) => async (dispatch: Dispatch) => {
   dispatch(schedulesSavingInProgress(true));
   /* POST/PUT Schedule */
-  const scheduleResp = await callPostPut('/schedules', schedule, !isCreate);
+  const scheduleResp = await callPostPut("/schedules", schedule, !isCreate);
 
   /* POST/PUT SchedulesDetails */
   const schedulesDetailsChunk = chunk(schedulesDetails, 50);
 
   const schedulesDetailsResp = await Promise.all(
     schedulesDetailsChunk.map(
-      async arr => await callPostPut('/schedules_details', arr, !isCreate)
+      async (arr) => await callPostPut("/schedules_details", arr, !isCreate)
     )
   );
 
-  const schedulesDetailsRespOk = schedulesDetailsResp?.every(v => v);
+  const schedulesDetailsRespOk = schedulesDetailsResp?.every((v) => v);
 
   if (scheduleResp && schedulesDetailsRespOk) {
     dispatch(draftSavedSuccess());
-    successToast('Schedule data was successfully saved');
+    successToast("Schedule data was successfully saved");
   } else {
     dispatch(draftSavedFailure());
     showError();
@@ -471,25 +484,25 @@ export const updateSchedulesDetails = (
   schedulesDetailsToModify: ISchedulesDetails[]
 ) => async (dispatch: Dispatch) => {
   dispatch(updateSchedulesDetailsInProgress());
-  infoToast('Schedules details update in progress');
+  infoToast("Schedules details update in progress");
 
   const schedulesDetailsChunk = chunk(schedulesDetailsToModify, 50);
   const schedulesResponses = await Promise.all(
     schedulesDetailsChunk.map(
-      async arr => await api.put('/schedules_details', arr)
+      async (arr) => await api.put("/schedules_details", arr)
     )
   );
 
-  const schedulesResponseOk = schedulesResponses.every(item => item);
+  const schedulesResponseOk = schedulesResponses.every((item) => item);
 
   if (schedulesResponseOk) {
     dispatch(updateSchedulesDetailsSuccess(modifiedSchedulesDetails));
-    successToast('Schedules details successfully updated');
+    successToast("Schedules details successfully updated");
     return;
   }
 
   dispatch(updateSchedulesDetailsFailure());
-  errorToast('Something happened during updating schedules');
+  errorToast("Something happened during updating schedules");
 };
 
 export const deleteSchedulesDetails = (
@@ -501,11 +514,11 @@ export const deleteSchedulesDetails = (
   const schedulesDetailsChunk = chunk(schedulesDetailsToDelete, 50);
   const schedulesResponses = await Promise.all(
     schedulesDetailsChunk.map(
-      async arr => await api.delete(`/schedules_details`, arr)
+      async (arr) => await api.delete(`/schedules_details`, arr)
     )
   );
 
-  const schedulesResponseOk = schedulesResponses.every(item => item);
+  const schedulesResponseOk = schedulesResponses.every((item) => item);
 
   if (schedulesResponseOk) {
     dispatch(deleteSchedulesDetailsSuccess(modifiedScheduleDetails));
@@ -524,11 +537,11 @@ export const addSchedulesDetails = (
   const schedulesDetailsChunk = chunk(schedulesDetailsToAdd, 50);
   const schedulesResponses = await Promise.all(
     schedulesDetailsChunk.map(
-      async arr => await api.post('/schedules_details', arr)
+      async (arr) => await api.post("/schedules_details", arr)
     )
   );
 
-  const schedulesResponseOk = schedulesResponses.every(item => item);
+  const schedulesResponseOk = schedulesResponses.every((item) => item);
 
   if (schedulesResponseOk) {
     dispatch(addSchedulesDetailsSuccess(modifiedSchedulesDetails));
@@ -538,6 +551,8 @@ export const addSchedulesDetails = (
   dispatch(addScheduleDetailsFailure());
 };
 
-export const setIsAlreadyDraftSaveStatus = (isDraftAlreadySaved: boolean) => async (dispatch: Dispatch) => {
+export const setIsAlreadyDraftSaveStatus = (
+  isDraftAlreadySaved: boolean
+) => async (dispatch: Dispatch) => {
   dispatch(setIsDraftAlreadySaveStatusAction(isDraftAlreadySaved));
 };

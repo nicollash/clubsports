@@ -1,17 +1,17 @@
-import React from 'react';
-import { Dispatch, bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
-import { loadReportingData } from './logic/actions';
-import Navigation from './components/navigation';
-import ItemSchedules from './components/item-schedules';
+import React from "react";
+import { Dispatch, bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import { loadReportingData } from "./logic/actions";
+import Navigation from "./components/navigation";
+import ItemSchedules from "./components/item-schedules";
 import {
   stringToLink,
   getTimeValuesFromEventSchedule,
   calculateTimeSlots,
   calculateTournamentDays,
-} from 'helpers';
-import { HeadingLevelTwo, Loader, HazardList } from 'components/common';
+} from "helpers";
+import { HeadingLevelTwo, Loader, HazardList } from "components/common";
 import {
   IDivision,
   ITeam,
@@ -23,39 +23,39 @@ import {
   IPool,
   BindingAction,
   ISchedulesGame,
-} from 'common/models';
-import { EventMenuTitles, TimeSlotsEntityTypes } from 'common/enums';
-import { IAppState } from 'reducers/root-reducer.types';
-import styles from './styles.module.scss';
+} from "common/models";
+import { EventMenuTitles, TimeSlotsEntityTypes } from "common/enums";
+import { IAppState } from "reducers/root-reducer.types";
+import styles from "./styles.module.scss";
 import {
   mapFieldsData,
   mapTeamsData,
   mapFacilitiesData,
   mapDivisionsData,
-} from 'components/schedules/mapTournamentData';
+} from "components/schedules/mapTournamentData";
 import {
   defineGames,
   sortFieldsByPremier,
   IGame,
-} from 'components/common/matrix-table/helper';
+} from "components/common/matrix-table/helper";
 import {
   ITeam as IScheduleTeam,
   ITeamCard,
-} from 'common/models/schedule/teams';
-import { mapTeamsFromShedulesGames } from 'components/schedules/mapScheduleData';
+} from "common/models/schedule/teams";
+import { mapTeamsFromShedulesGames } from "components/schedules/mapScheduleData";
 import {
   fillSchedulesTable,
   clearSchedulesTable,
-} from 'components/schedules/logic/schedules-table/actions';
-import { fetchScheduleTeamDetails } from 'components/schedules/logic/actions';
-import ITimeSlot from 'common/models/schedule/timeSlots';
-import { IScheduleFacility } from 'common/models/schedule/facilities';
-import { IScheduleDivision } from 'common/models/schedule/divisions';
-import { IField as IScheduleField } from 'common/models/schedule/fields';
-import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
+} from "components/schedules/logic/schedules-table/actions";
+import { fetchScheduleTeamDetails } from "components/schedules/logic/actions";
+import ITimeSlot from "common/models/schedule/timeSlots";
+import { IScheduleFacility } from "common/models/schedule/facilities";
+import { IScheduleDivision } from "common/models/schedule/divisions";
+import { IField as IScheduleField } from "common/models/schedule/fields";
+import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 // import { mapGamesWithSchedulesGames } from 'components/scoring/helpers';
-import { adjustPlayoffTimeOnLoadScoring } from 'components/schedules/definePlayoffs';
-import { IBracketGame } from 'components/playoffs/bracketGames';
+import { adjustPlayoffTimeOnLoadScoring } from "components/schedules/definePlayoffs";
+import { IBracketGame } from "components/playoffs/bracketGames";
 
 interface MatchParams {
   eventId: string;
@@ -110,14 +110,21 @@ class Reporting extends React.Component<
     const eventId = this.props.match.params.eventId;
     const schedule = this.props.schedule;
     this.props.clearSchedulesTable();
+
     this.props.loadReportingData(eventId);
-    if(schedule) {
+    if (schedule) {
       this.props.fetchScheduleTeamDetails(schedule.schedule_id, eventId);
     }
   }
 
   componentDidUpdate() {
-    const { schedule, schedulesGames, schedulesTeamCards, event, fetchScheduleTeamDetails } = this.props;
+    const {
+      schedule,
+      schedulesGames,
+      schedulesTeamCards,
+      event,
+      fetchScheduleTeamDetails,
+    } = this.props;
     const { teams, games, timeSlots, neccessaryDataCalculated } = this.state;
 
     if (!neccessaryDataCalculated && schedule) {
@@ -231,11 +238,11 @@ class Reporting extends React.Component<
       divisions,
       event,
       schedule,
-      scheduleTeamDetails,    
       schedulesTeamCards,
       pools,
       bracketGames,
       schedulesGames,
+      scheduleTeamDetails,
     } = this.props;
 
     const {
@@ -311,12 +318,12 @@ export default connect(
   }),
   (dispatch: Dispatch) =>
     bindActionCreators(
-      { 
-        loadReportingData, 
-        fillSchedulesTable, 
+      {
+        loadReportingData,
+        fillSchedulesTable,
         clearSchedulesTable,
         fetchScheduleTeamDetails,
-        },
+      },
       dispatch
     )
 )(Reporting);

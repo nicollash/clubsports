@@ -209,7 +209,7 @@ const ReportView: React.SFC<ReportViewProps> = ({
                 action: () => gridApi?.exportDataAsExcel(),
               },
             ]}
-          ></MenuButton>
+          />
         </div>
       </div>
       {getReportComponent(report?.data_source_id)}

@@ -40,6 +40,7 @@ const MenuButton: React.FC<IProps> = ({ label, menuItems, variant, color }) => {
         color={color}
         aria-controls='simple-menu'
         aria-haspopup='true'
+        size="large"
         onClick={handleClick}
       >
         {label}

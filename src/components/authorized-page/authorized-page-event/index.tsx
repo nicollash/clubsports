@@ -9,6 +9,7 @@ import {
   clearAuthPageData,
   publishEventData,
 } from './logic/actions';
+import { checkUnassignedGames } from "components/scheduling/logic/actions";
 import PopupPublishEvent from './components/popup-publish-event';
 import { IAppState } from 'reducers/root-reducer.types';
 import Header from 'components/header';
@@ -37,7 +38,7 @@ import {
   ITournamentData,
   ICalendarEvent,
   IPublishSettings,
-  BindingCbWithThree,
+  BindingCbWithFour,
 } from 'common/models';
 import {
   Routes,
@@ -71,16 +72,19 @@ interface Props {
   };
   menuList: IMenuItem[];
   tournamentData: ITournamentData;
+  calendarEvents: ICalendarEvent[] | null | undefined;
+  countUnassignedGames: number | null;
   loadAuthPageData: (eventId: string) => void;
   loadGameCount: (eventId: string) => void;
   clearAuthPageData: BindingAction;
   getCalendarEvents: BindingAction;
-  calendarEvents: ICalendarEvent[] | null | undefined;
   updateCalendarEvent: BindingAction;
-  publishEventData: BindingCbWithThree<
+  checkUnassignedGames: (bracketId: string) => void;
+  publishEventData: BindingCbWithFour<
     EventPublishTypes,
     EventModifyTypes,
-    IPublishSettings
+    IPublishSettings,
+    boolean
   >;
 }
 
@@ -93,14 +97,16 @@ const AuthorizedPageEvent = ({
   isLoaded,
   menuList,
   tournamentData,
-  loadAuthPageData,
-  loadGameCount,
   gameCount,
+  calendarEvents,
+  countUnassignedGames,
+  loadGameCount,
+  loadAuthPageData,
   clearAuthPageData,
   getCalendarEvents,
-  calendarEvents,
   updateCalendarEvent,
   publishEventData,
+  checkUnassignedGames,
 }: Props & RouteComponentProps<MatchParams>) => {
   const [isPublishPopupOpen, togglePublishPopup] = React.useState<boolean>(
     false
@@ -273,13 +279,15 @@ const AuthorizedPageEvent = ({
         <>
           <PopupPublishEvent
             event={event}
+            gameCount={gameCount}
+            teamCount={teams.length || 0}
             schedules={schedules}
             brackets={brackets}
             isOpen={isPublishPopupOpen}
+            countUnassignedGames={countUnassignedGames}
             onClose={onTogglePublishPopup}
             publishEventData={publishEventData}
-            gameCount={gameCount}
-            teamCount={teams.length || 0}
+            checkUnassignedGames={checkUnassignedGames}
           />
         </>
       )}
@@ -288,13 +296,14 @@ const AuthorizedPageEvent = ({
 };
 
 export default connect(
-  ({ pageEvent, calendar }: IAppState) => ({
+  ({ pageEvent, calendar, scheduling }: IAppState) => ({
     tournamentData: pageEvent.tournamentData,
     isLoading: pageEvent.isLoading,
     isLoaded: pageEvent.isLoaded,
     menuList: pageEvent.menuList,
     calendarEvents: calendar.events,
     gameCount: pageEvent.gameCount,
+    countUnassignedGames: scheduling.countUnassignedGames,
   }),
   (dispatch: Dispatch) =>
     bindActionCreators(
@@ -305,6 +314,7 @@ export default connect(
         getCalendarEvents,
         updateCalendarEvent,
         publishEventData,
+        checkUnassignedGames,
       },
       dispatch
     )

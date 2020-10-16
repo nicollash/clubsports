@@ -8,6 +8,7 @@ import {
   DELETE_MESSAGES_SUCCESS,
   RESPONSES_FETCH_SUCCESS,
   OPTIONS_FETCH_SUCCESS,
+  REFRESH_MESSAGE_SUCCESS,
 } from './actionTypes';
 import { Toasts } from 'components/common';
 import { IMessageToSend, IPollOption, IRecipientDetails } from '../create-message';
@@ -17,7 +18,8 @@ import { Auth } from 'aws-amplify';
 import { IMember, IEventDetails, IDivision, IPool, ITeam } from 'common/models';
 import { chunk } from 'lodash-es';
 import { IMessage } from 'common/models/event-link';
-import { getAnswerText } from "../helpers";
+import { getAnswerText, sortBySendDatetime } from "../helpers";
+import { IResponse } from "..";
 
 interface IExtendedMessage extends IMessageToSend {
   unique_id: string;
@@ -46,9 +48,16 @@ export const getMessagesSuccess = (
   payload,
 });
 
+export const refreshMessageSuccess = (
+  payload: IResponse
+): { type: string; payload: IResponse } => ({
+  type: REFRESH_MESSAGE_SUCCESS,
+  payload,
+});
+
 export const getResponsesSuccess = (
-  payload: any[]
-): { type: string; payload: IMessage[] } => ({
+  payload: IResponse[]
+): { type: string; payload: IResponse[] } => ({
   type: RESPONSES_FETCH_SUCCESS,
   payload,
 });
@@ -79,11 +88,22 @@ export const getData: ActionCreator<ThunkAction<
   {},
   null,
   { type: string }
->> = () => async (dispatch: Dispatch) => {
+>> = (eventId?: string) => async (dispatch: Dispatch) => {
+
   const events = await api.get('/events');
-  const divisions = await api.get('/divisions');
-  const pools = await api.get('/pools');
-  const teams = await api.get('/teams');
+  const divisions = await api.get(
+    `/divisions${eventId ? `?event_id=${eventId}` : ``}`
+  );
+  const teams = await api.get(`/teams${eventId ? `?event_id=${eventId}` : ``}`);
+
+  const serverPools: any[] = [];
+  await Promise.all(
+    divisions.map(async (div: IDivision) => {
+      const response = await api.get(`/pools?division_id=${div.division_id}`);
+      serverPools.push(response);
+    })
+  );
+  const pools = serverPools.flat();
 
   dispatch(getDataSuccess({ events, divisions, pools, teams }));
 };
@@ -114,17 +134,18 @@ export const saveMessages: ActionCreator<ThunkAction<
     message_type: data.type,
     message_title: data.title,
     message_body: data.message,
-    status: 0,
     email_from_name: data.senderName,
     event_id: data.eventId,
     recipient_details: JSON.stringify(recipientDetails),
     send_datetime: data.sendDatetime,
+    one_way_two_way: pollOptions ? 2 : 1,
+    status: 'new',
   };
 
   try {
     await api.post('/messaging', messageToSave);
   } catch (e) {
-    Toasts.errorToast("Couldn't save messages");
+    Toasts.errorToast("Sorry, we could not save the EventLink message.");
   }
 
   if (pollOptions) {
@@ -148,13 +169,13 @@ export const saveMessages: ActionCreator<ThunkAction<
         })
       );
     } catch (e) {
-      Toasts.errorToast("Couldn't save messages");
+      Toasts.errorToast("Sorry, we could not save this message.");
     }
   }
 
   history.push(`/event/event-link/${data.eventId}`);
 
-  return Toasts.successToast('Messages are successfully saved');
+  return Toasts.successToast('Messages are successfully saved.');
 };
 
 export const deleteMessages: ActionCreator<ThunkAction<
@@ -167,7 +188,7 @@ export const deleteMessages: ActionCreator<ThunkAction<
 
   dispatch(deleteMessagesSuccess(messageId));
 
-  return Toasts.successToast('Messages are successfully deleted');
+  return Toasts.successToast('Messages were successfully deleted.');
 };
 
 export const getMessages: ActionCreator<ThunkAction<
@@ -176,17 +197,17 @@ export const getMessages: ActionCreator<ThunkAction<
   null,
   { type: string }
 >> = (eventId: string) => async (dispatch: Dispatch) => {
-  const messages = await api.get(`/messaging`);
+  const messages = await api.get(
+    `/messaging${eventId ? `?event_id=${eventId}` : ``}`
+  );
   const responses = await api.get(`/messaging_recipients`);
   const options = await api.get(`/messaging_response_options`);
 
   if (!messages) {
-    return Toasts.errorToast("Couldn't load the messages.");
+    return Toasts.errorToast("We are sorry, but we could not load the messages.");
   }
 
-  const filterMesssages = eventId
-    ? messages.filter((mes: IMessage) => mes.event_id === eventId)
-    : messages;
+  const filterMesssages = sortBySendDatetime(messages);
 
   const mappedResponses = await Promise.all(
     responses.map(async (mess: any) => {
@@ -197,10 +218,39 @@ export const getMessages: ActionCreator<ThunkAction<
         answerText: getAnswerText(mess.answer_option_id, options),
         messageStatus: mess.message_status,
         messageId: mess.message_id,
-      };
+        statusMessage: mess.status_message,
+      } as IResponse;
     })
   );
 
   dispatch(getMessagesSuccess(filterMesssages));
-  dispatch(getResponsesSuccess(mappedResponses));
+  dispatch(getResponsesSuccess(mappedResponses as IResponse[]));
+};
+
+export const refreshMessage: ActionCreator<ThunkAction<
+  void,
+  {},
+  null,
+  { type: string }
+>> = (messageId?: string) => async (dispatch: Dispatch) => {
+  const options = await api.get(
+    `/messaging_response_options?message_id=${messageId}`
+  );
+  const newResponse = await api.get(`/messaging?message_id=${messageId}`);
+
+  if (!newResponse) {
+    return Toasts.errorToast("Could not load the responses.");
+  }
+
+  dispatch(
+    refreshMessageSuccess({
+      recipientTarget: newResponse.recipient_target,
+      sendDatetime: newResponse.send_datetime,
+      receivedDatetime: newResponse.received_datetime,
+      answerText: getAnswerText(newResponse.answer_option_id, options),
+      messageStatus: newResponse.message_status,
+      messageId: newResponse.message_id,
+      statusMessage: newResponse.status_message,
+    })
+  );
 };

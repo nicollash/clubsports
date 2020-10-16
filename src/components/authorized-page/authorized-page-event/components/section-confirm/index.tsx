@@ -1,12 +1,12 @@
-import React from 'react';
-import { Button, Input } from 'components/common';
+import React, { useState, useEffect } from 'react';
+import { Button, Input, PopupConfirm } from 'components/common';
 import {
   BindingAction,
   IEventDetails,
   ISchedule,
   IFetchedBracket,
   IPublishSettings,
-  BindingCbWithThree,
+  BindingCbWithFour
 } from 'common/models';
 import {
   ButtonColors,
@@ -30,12 +30,15 @@ interface Props {
   brackets: IFetchedBracket[];
   publishType: EventPublishTypes;
   modifyModValue: EventModifyTypes;
+  countUnassignedGames: number | null;
   onClose: BindingAction;
-  publishEventData: BindingCbWithThree<
+  publishEventData: BindingCbWithFour<
     EventPublishTypes,
     EventModifyTypes,
-    IPublishSettings
+    IPublishSettings,
+    boolean
   >;
+  checkUnassignedGames: (bracketId: string) => void;
 }
 
 const ConfirmSection = ({
@@ -44,9 +47,12 @@ const ConfirmSection = ({
   brackets,
   publishType,
   modifyModValue,
+  countUnassignedGames,
   onClose,
+  checkUnassignedGames,
   publishEventData,
 }: Props) => {
+
   const DEFAULT_SELECTED_SCHEDULE =
     getPublishedSchedule(schedules) || schedules[0] || null;
   const DEFAULT_SELECTED_BRACKET =
@@ -54,15 +60,25 @@ const ConfirmSection = ({
       ? getPublishedBracket(brackets)
       : brackets[0] || null;
 
-  const [publishSettings, changePublishSettings] = React.useState<
+  const [publishSettings, changePublishSettings] = useState<
     IPublishSettings
   >({
     [PublishSettingFields.ACTIVE_SCHEDULE]: DEFAULT_SELECTED_SCHEDULE,
     [PublishSettingFields.ACTIVE_BRACKET]: DEFAULT_SELECTED_BRACKET,
   });
-  const [confirmValue, changeConfirmValues] = React.useState('');
+  const [confirmValue, changeConfirmValues] = useState('');
+  const [isOpenWarningPopup, setIsOpenWarningPopup] = useState<boolean>(false);
 
   const trimmedEventName = event.event_name.trim();
+
+  useEffect(()=>{
+    onCheckUnassignedGames();
+  }, [publishSettings.activeBracket?.bracket_id]);
+
+  const onCheckUnassignedGames = async () => {
+    if(publishSettings.activeBracket) 
+      await checkUnassignedGames(publishSettings.activeBracket.bracket_id);
+  };
 
   const onChangeConfirmValue = ({ target }: IInputEvent) => {
     changeConfirmValues(target.value);
@@ -82,11 +98,41 @@ const ConfirmSection = ({
     });
   };
 
-  const onPublishEvent = () => {
-    publishEventData(publishType, modifyModValue, publishSettings);
+  const onCheckStatus = () => {
+    if(
+      countUnassignedGames &&
+      countUnassignedGames > 0 &&
+      modifyModValue === EventModifyTypes.PUBLISH &&
+      ( publishType === EventPublishTypes.DETAILS_AND_TOURNAMENT_PLAY_AND_BRACKETS ||
+        publishType === EventPublishTypes.BRACKETS)
+    ) {
+      setIsOpenWarningPopup(true);
+    } else {
+      onPublishEvent();
+    }
+  };
 
+  const onPublishEvent = () => {
+    publishEventData(publishType, modifyModValue, publishSettings, false);
     onClose();
   };
+
+  const onReturnToScheduler = () => {
+    onClose();
+    onCloseWarningPopup();
+  };
+
+  const onPublishEventWithUnassignedGames = () => {
+    publishEventData(publishType, modifyModValue, publishSettings, true);
+    onClose();
+    onCloseWarningPopup();
+  }
+
+  const onCloseWarningPopup = () => setIsOpenWarningPopup(false);
+
+  const warningMessage = 
+    `You have ${countUnassignedGames} game(s) that are not assigned to a field or timeslot. 
+    Select to either ignore these games or exit to fix them within the schedule.`
 
   return (
     <>
@@ -118,7 +164,7 @@ const ConfirmSection = ({
         />
         <span className={styles.btnWrapper}>
           <Button
-            onClick={onPublishEvent}
+            onClick={onCheckStatus}
             variant={ButtonVariant.CONTAINED}
             color={ButtonColors.PRIMARY}
             btnStyles={BUTTON_STYLES}
@@ -127,6 +173,18 @@ const ConfirmSection = ({
           />
         </span>
       </p>
+      <PopupConfirm
+        type="warning"
+        showNo={true}
+        showYes={true}
+        message={warningMessage}
+        customNo="Ignore Games"
+        customYes="Return to Scheduler"
+        isOpen={isOpenWarningPopup}
+        onClose={onCloseWarningPopup}
+        onCanceClick={onPublishEventWithUnassignedGames}
+        onYesClick={onReturnToScheduler}
+      />
     </>
   );
 };

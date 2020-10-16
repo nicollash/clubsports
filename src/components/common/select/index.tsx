@@ -64,7 +64,7 @@ const Select: React.FC<ISelectProps> = ({
           }}
         >
           <MenuItem value={""} disabled={true}>
-            {`No ${label} Currently Exist`}
+            {`No ${label} currently exist.`}
           </MenuItem>
         </TextField>
       </div>

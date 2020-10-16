@@ -28,7 +28,7 @@ import { IField } from "common/models/schedule/fields";
 import ITimeSlot from "common/models/schedule/timeSlots";
 import { IScheduleFacility } from "common/models/schedule/facilities";
 import { ITeam, ITeamCard } from "common/models/schedule/teams";
-import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
+import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 import { Button, CardMessage, MatrixTable, Checkbox } from "components/common";
 import PopupConfirm from "components/common/popup-confirm";
 import Filter from "./components/filter";
@@ -187,7 +187,7 @@ const TableSchedule = ({
 
   const [isHiddenIncompleteGames, setIsHiddenIncompleteGames] = useState(false);
   const [isHighlightSameState, setIsHighlightSameState] = useState(false);
-  const [noTransparentGameId, setNoTransparentGameId] = useState<string>('');
+  const [noTransparentGameId, setNoTransparentGameId] = useState<string>("");
 
   let filterDepArray;
 
@@ -768,7 +768,7 @@ const TableSchedule = ({
 
   const onDrag = (id: string) => {
     setNoTransparentGameId(id);
-  }
+  };
 
   const onShowUnscoredGames = () =>
     setHighlightUnscoredGames(!highlightUnscoredGames);

@@ -26,7 +26,7 @@ const CreateBracketStepOne = ({
     return (
         <div>
             <p className={styles.message}>
-                Do you want to use 'Brackets Algorithm' or create brackets manually?
+                Do you want to use our Bracket Scheduling Algorithm or create your own custom brackets?
             </p>
             <div className={styles.radioBtnsWrapper}>
                 <Radio

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import {
   HeadingLevelTwo,
@@ -13,17 +13,12 @@ import {
 import styles from './styles.module.scss';
 import history from 'browserhistory';
 import { getData, saveMessages } from '../logic/actions';
-import {
-  BindingAction,
-  IEventDetails,
-  IDivision,
-  IPool,
-  ITeam,
-} from 'common/models';
+import { IEventDetails, IDivision, IPool, ITeam } from "common/models";
 import Filter from './filter';
 import { IScheduleFilter } from './filter';
 import {
   applyFilters,
+  insertFormFieldButtonsLabels,
   mapFilterValues,
   mapValuesByFilter,
   MessageType,
@@ -38,6 +33,8 @@ import 'react-phone-input-2/lib/style.css';
 import { RouteComponentProps } from "react-router-dom";
 import PollOptions from "./poll-options";
 import Navigation from "./navigation";
+import { TextField } from "@material-ui/core";
+import { InsertFormFieldButton } from "./insert-form-button-field";
 import { CardMessageTypes } from "components/common/card-message/types";
 
 interface MatchParams {
@@ -71,7 +68,7 @@ export interface IPollOption {
 }
 
 interface Props {
-  getData: BindingAction;
+  getData: (eventId?: string) => void;
   saveMessages: (
     data: IMessageToSend,
     recipientDetails: IRecipientDetails,
@@ -95,8 +92,14 @@ const CreateMessage = ({
   const currentEventId = match.params.eventId;
 
   useEffect(() => {
-    getData();
+    getData(currentEventId);
   }, []);
+
+  useEffect(() => {
+    changeFilterValues(
+      applyFilters({ divisions, pools, teams }, currentEventId)
+    );
+  }, [divisions, pools, teams]);
 
   const [dataForServer, setDataForServer] = useState<IMessageToSend>({
     type: 'Text',
@@ -137,6 +140,8 @@ const CreateMessage = ({
   const [messageType, setMessageType] = useState<string>(MessageType.ONE_WAY);
   const [isSendLater, setIsSendLater] = useState<boolean>(false);
 
+  const messageInput = useRef<HTMLInputElement | null>(null);
+
   const eventOptions = events.length
     ? events.map((e: IEventDetails) => ({
         label: e.event_name,
@@ -150,7 +155,6 @@ const CreateMessage = ({
       ...dataForServer,
       eventId,
     });
-    changeFilterValues(applyFilters({ divisions, pools, teams }, eventId));
   }, [eventId]);
 
   const [filterValues, changeFilterValues] = useState<IScheduleFilter>(
@@ -196,8 +200,6 @@ const CreateMessage = ({
       },
     ]);
 
-  const onDeleteOption = () => setPollOptions(pollOptions.slice(0, pollOptions.length - 1));
-
   const onSave = () => {
     messageType === MessageType.TWO_WAY
       ? saveMessages(dataForServer, recipientDetails, pollOptions)
@@ -219,6 +221,16 @@ const CreateMessage = ({
     });
   };
 
+  const insertFormField = (value: string) => {
+    setDataForServer({
+      ...dataForServer,
+      message:
+        dataForServer.message.slice(0, Number(messageInput.current?.selectionStart)) +
+        value +
+        dataForServer.message.slice(Number(messageInput.current?.selectionStart)),
+    });
+  };
+
   const onMessageTypeChange = (e: IInputEvent) =>
     setMessageType(e.target.value);
 
@@ -226,7 +238,7 @@ const CreateMessage = ({
     return (
       <div className={styles.recipientWrapper}>
         <div className={styles.title}>
-          {dataForServer.type === 'Text' ? 'Number:' : 'Email:'}{' '}
+          {dataForServer.type === 'Text' ? 'Mobile Number:' : 'Email:'}{' '}
         </div>
         {dataForServer.type === 'Text' ? (
           <PhoneInput
@@ -301,7 +313,7 @@ const CreateMessage = ({
           <CardMessage
             style={CARD_MESSAGE_STYLES}
             type={CardMessageTypes.EMODJI_OBJECTS}
-          > Please note; Messaging rates are billed monthly at a rate $10 per 1,000 messages.
+          > Please note; SMS messaging rates are $.01 per message and invoiced monthly. "Polls" are only enabled for SMS texting right now.
           </CardMessage>
           </div>
         <div className={styles.radioBtns}>
@@ -328,11 +340,11 @@ const CreateMessage = ({
             }
           />
           <div className={styles.dateTimeWrpp}>
-            <div className={styles.label}>Time</div>
+            <div className={styles.label}>Timing</div>
             <Checkbox
               options={[
                 {
-                  label: 'Send this message later.',
+                  label: 'Specify Send Date/Time',
                   checked: isSendLater,
                 },
               ]}
@@ -355,7 +367,6 @@ const CreateMessage = ({
             options={pollOptions}
             onChangeValue={onChangePollOption}
             onAddAdditionalOption={onAddAdditionalOption}
-            onDeleteOption={onDeleteOption}
           />
         )}
       </div>
@@ -385,22 +396,39 @@ const CreateMessage = ({
           {dataForServer.type === 'Text' && (
             <div className={styles.messageTitleWrapper}>
               <Input
-                label="Subject"
-                placeholder = "Helps you will remember this message"
+                label="EventLink Subject"
+                placeholder = "Helps you remember what the message is"
                 fullWidth={true}
                 onChange={(e: IInputEvent) => onDataChange("title", e.target.value)}
                 value={dataForServer.title}
               />
             </div>
           )}
-          <Input
-            label="Message"
-            placeholder="Type the contents of your message here..."
-            multiline={true}
-            rows="10"
-            onChange={(e: IInputEvent) => onDataChange("message", e.target.value)}
-            value={dataForServer.message}
-          />
+          <div className={styles.messageWrapp}>
+            <div className={styles.messageBody}>
+              <div className={styles.label}>Body of Message:</div>
+              <TextField
+                inputRef={messageInput}
+                placeholder="Type the contents of your message here... Do not include poll options if the message is a poll. They are included automatically."
+                multiline={true}
+                variant='outlined'
+                size='small'
+                rows="10"
+                onChange={(e: IInputEvent) => onDataChange("message", e.target.value)}
+                value={dataForServer.message}
+              />
+            </div>
+            <div>
+              <div className={styles.label}>Insert From Fields:</div>
+              {insertFormFieldButtonsLabels.map((name: string) => (
+                <InsertFormFieldButton
+                  key={name}
+                  formName={name}
+                  insertFormField={insertFormField}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

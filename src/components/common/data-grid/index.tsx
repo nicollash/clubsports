@@ -38,7 +38,7 @@ const dateValueFormatter = (params: any) => {
 
 const dateTimeValueFormatter = (params: any) => {
   try {
-    return params.value ? moment(params.value).format('MMM d, hh:ss a') : '';
+    return params.value ? moment(params.value).format('MMM D, hh:mm A') : '';
   } catch (err) {
     return params.value;
   }

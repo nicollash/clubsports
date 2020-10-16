@@ -16,6 +16,8 @@ export interface ISchedulesDetails {
   facilities_id: string | null;
   away_team_id: string | null;
   home_team_id: string | null;
+  away_pool_id?: string | null;
+  home_pool_id?: string | null;
   game_locked_YN: 1 | 0 | null;
   away_team_locked: 1 | 0 | null;
   home_team_locked: 1 | 0 | null;

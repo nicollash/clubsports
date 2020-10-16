@@ -26,6 +26,7 @@ export const UPDATE_EXISTING_BRACKET = 'UPDATE_EXISTING_BRACKET';
 export const FETCH_BRACKETS_SUCCESS = 'FETCH_BRACKETS_SUCCESS';
 
 export const CHECK_SAME_COACH_RESULT = 'CHECK_SAME_COACH_RESULT';
+export const CHECK_UNASSIGNED_GAMES = 'CHECK_UNASSIGNED_GAMES';
 
 interface IScheduleFetchInProgress {
   type: 'SCHEDULE_FETCH_IN_PROGRESS';
@@ -95,6 +96,11 @@ interface ISaveSameCoachResult {
   payload: object;
 }
 
+interface ICheckUnassignedGames {
+  type: 'CHECK_UNASSIGNED_GAMES',
+  payload: number,
+}
+
 export type ScheduleActionType =
   | IScheduleFetchInProgress
   | IScheduleFetchSuccess
@@ -107,4 +113,5 @@ export type ScheduleActionType =
   | IFetchEventBrackets
   | IFetchBracketsSuccess
   | ISaveSameCoachResult
-  | IUpdateExistingBracket;
+  | IUpdateExistingBracket
+  | ICheckUnassignedGames;

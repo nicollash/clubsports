@@ -16,7 +16,9 @@ interface Props {
   messagesAreLoading: boolean;
   responses: IResponse[];
   deleteMessages: BindingCbWithOne<string>;
-}
+  refreshMessage: (messageId: string) => void;
+};
+
 const Messaging = ({
   divisions,
   pools,
@@ -26,8 +28,9 @@ const Messaging = ({
   responses,
   messagesAreLoading,
   deleteMessages,
+  refreshMessage
 }: Props) => {
-  const [areMessagesExpand, toggleMessagesExpand] = useState<boolean>(true);
+  const [areMessagesExpand, toggleMessagesExpand] = useState<boolean>(false);
   const [currentMessages, setCurrentMessages] = useState<number>(3);
 
   const onToggleMessagesCollapse = (e: React.MouseEvent) => {
@@ -71,6 +74,7 @@ const Messaging = ({
                       pools={pools}
                       teams={teams}
                       deleteMessages={deleteMessages}
+                      refreshMessage={refreshMessage}
                       responses={responses.filter(
                         (resp) => resp.messageId === message.message_id
                       )}

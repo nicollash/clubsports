@@ -1,63 +1,57 @@
-import React from 'react';
-import { View } from '@react-pdf/renderer';
-import { RowDivisionSlot, RowTeamSlot } from '../row-slot';
-import { DEFAULT_ROWS_COUNT } from '../../common';
+import React from "react";
+import { View } from "@react-pdf/renderer";
+import { RowDivisionSlot, RowTeamSlot } from "../row-slot";
+import { DEFAULT_ROWS_COUNT } from "../../common";
 
 interface Props {
-  teamDetails: any[],
+  teamDetails: any[];
   splitIdx: number;
   pageIdx: number;
   days: string[];
 }
 
-const TableTbody = ({
-  teamDetails,
-  splitIdx,
-  pageIdx,
-  days,
-}: Props) => {
+const TableTbody = ({ teamDetails, splitIdx, pageIdx, days }: Props) => {
   let rowCount = 0;
-  const timeSlotsWithGames = teamDetails.map((division) => {    
+  const timeSlotsWithGames = teamDetails.map((division) => {
     let colsView: any[] = [];
     const divisionKey = Object.keys(division)[0];
-    if (rowCount >= pageIdx * DEFAULT_ROWS_COUNT - 1
-    && rowCount < (pageIdx + 1) * DEFAULT_ROWS_COUNT) {
-      rowCount ++;
-      colsView.push(   
-        <RowDivisionSlot 
-          divisionName={divisionKey} 
-        />)
-      }
+    if (
+      rowCount >= pageIdx * DEFAULT_ROWS_COUNT - 1 &&
+      rowCount < (pageIdx + 1) * DEFAULT_ROWS_COUNT
+    ) {
+      rowCount++;
+      colsView.push(<RowDivisionSlot divisionName={divisionKey} />);
+    }
 
-      const teamRows = division[divisionKey].map((teamItem: any, index: number) => {
+    const teamRows = division[divisionKey].map(
+      (teamItem: any, index: number) => {
         const teamKey = Object.keys(teamItem)[0];
-        if (rowCount >= pageIdx * DEFAULT_ROWS_COUNT - 1
-            && rowCount < (pageIdx + 1) * DEFAULT_ROWS_COUNT) {
-          rowCount ++;
-          return <RowTeamSlot 
-                    days={days}
-                    teamDetails={teamDetails}
-                    teamName={teamKey}
-                    dateGames={teamItem[teamKey]} 
-                    odd={index % 2 === 0} 
-                    splitIdx={splitIdx}
-                  />
+        if (
+          rowCount >= pageIdx * DEFAULT_ROWS_COUNT - 1 &&
+          rowCount < (pageIdx + 1) * DEFAULT_ROWS_COUNT
+        ) {
+          rowCount++;
+          return (
+            <RowTeamSlot
+              days={days}
+              teamDetails={teamDetails}
+              teamName={teamKey}
+              dateGames={teamItem[teamKey]}
+              odd={index % 2 === 0}
+              splitIdx={splitIdx}
+            />
+          );
         } else {
-          rowCount ++;
-          return null
+          rowCount++;
+          return null;
         }
-      })
-      colsView.push(teamRows);
-      return colsView;
+      }
+    );
+    colsView.push(teamRows);
+    return colsView;
   });
 
-  return (
-  <>
-    {teamDetails &&
-    <View>{timeSlotsWithGames}</View>
-    }
-  </>
-  );
+  return <>{teamDetails && <View>{timeSlotsWithGames}</View>}</>;
 };
 
 export default TableTbody;

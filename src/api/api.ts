@@ -20,7 +20,7 @@ class Api {
 
   async get(url: string, params?: any) {
     await this.checkAuthToken();
-    console.log('token=> ', await getToken());
+
     return await this.instance
       .get(url, {
         headers: {

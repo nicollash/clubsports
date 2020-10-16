@@ -25,6 +25,8 @@ import {
 } from '../../helpers';
 import styles from './styles.module.scss';
 import { ComponentType } from "components/common/popup-team-edit";
+import { sortByField } from 'helpers';
+import { SortByFilesTypes } from 'common/enums';
 
 const deleteMessage =
   'You are about to delete this team and this cannot be undone. Please, enter the name of the team to continue.';
@@ -264,6 +266,8 @@ const PoolsDetails = ({
 
   const unassignedTeams = notDeletedTeams.filter(it => !it.pool_id);
 
+  const sortedPools = sortByField(pools, SortByFilesTypes.POOLS);
+
   return (
     <>
       <div>
@@ -295,7 +299,7 @@ const PoolsDetails = ({
                 onEditPopupOpen={onEditPopupOpen}
                 toggleChangesAreMade={toggleChangesAreMade}
               />
-              {pools.map(pool => (
+              {sortedPools.map(pool => (
                 <Pool
                   division={division}
                   pool={pool}
@@ -360,7 +364,7 @@ const PoolsDetails = ({
         onSaveClick={onSaveClick}
       />
       <PopupPoolEdit
-        pools={pools}
+        pools={sortedPools}
         isOpen={isEditPoolPoupOpen}
         onClose={onToggleEditPoolPoup}
         onEdit={onEditPool}

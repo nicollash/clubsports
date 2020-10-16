@@ -25,11 +25,11 @@ import {
   ADD_SCHEDULES_DETAILS_SUCCESS,
   ADD_SCHEDULES_DETAILS_FAILURE,
   SET_IS_DRAFT_ALREADY_SAVED_STATUS,
-} from './actionTypes';
-import { IEventSummary } from 'common/models/event-summary';
-import { ISchedule } from 'common/models';
-import { ISchedulesDetails } from 'common/models/schedule/schedules-details';
-import { IScheduleTeamDetails } from 'common/models/schedule/schedule-team-details';
+} from "./actionTypes";
+import { IEventSummary } from "common/models/event-summary";
+import { ISchedule } from "common/models";
+import { ISchedulesDetails } from "common/models/schedule/schedules-details";
+import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 
 export interface ISchedulesState {
   schedule?: ISchedule;
@@ -103,7 +103,7 @@ const SchedulesReducer = (state = initialState, action: IScheduleAction) => {
       };
     case FETCH_SCHEDULE_TEAM_DETAILS_SUCCESS:
       return {
-         ...state,
+        ...state,
         fetchError: false,
         ...action.payload,
       };
@@ -111,7 +111,7 @@ const SchedulesReducer = (state = initialState, action: IScheduleAction) => {
       return {
         ...state,
         fetchError: true,
-      };      
+      };
     case SCHEDULES_PUBLISHED_SUCCESS:
       return {
         ...state,
@@ -196,7 +196,7 @@ const SchedulesReducer = (state = initialState, action: IScheduleAction) => {
       return {
         ...state,
         draftIsAlreadySaved: action.payload,
-      }
+      };
     default:
       return state;
   }

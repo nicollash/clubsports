@@ -120,12 +120,13 @@ export default forwardRef((props: DateRangeFilterProps, ref) => {
           scroll={{ enabled: false }}
           ranges={[range]}
         />
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
           <Button
             label='Apply'
             color='primary'
             variant='outlined'
             onClick={onApplyClick}
+            btnStyles={{ marginRight: 10 }}
           />
           <Button
             label='Reset'

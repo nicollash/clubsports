@@ -1,24 +1,24 @@
-import React from 'react';
-import { Page, Text, View, Document } from '@react-pdf/renderer';
-import moment from 'moment';
-import TableThead from './components/table-thead';
-import TableTbody from './components/table-tbody';
-import { HeaderSchedule, PrintedDate } from '../common';
-import { IEventDetails, ISchedule, IDivision, IPool } from 'common/models';
-import { IGame } from 'components/common/matrix-table/helper';
-import { IField } from 'common/models/schedule/fields';
-import ITimeSlot from 'common/models/schedule/timeSlots';
-import { IScheduleFacility } from 'common/models/schedule/facilities';
+import React from "react";
+import { Page, Text, View, Document } from "@react-pdf/renderer";
+import moment from "moment";
+import TableThead from "./components/table-thead";
+import TableTbody from "./components/table-tbody";
+import { HeaderSchedule, PrintedDate } from "../common";
+import { IEventDetails, ISchedule, IDivision, IPool } from "common/models";
+import { IGame } from "components/common/matrix-table/helper";
+import { IField } from "common/models/schedule/fields";
+import ITimeSlot from "common/models/schedule/timeSlots";
+import { IScheduleFacility } from "common/models/schedule/facilities";
 import {
   getFieldsByFacility,
   getGamesByDays,
   getGamesByFacility,
   getGamesByDivision,
   isEmptyGames,
-} from '../helpers';
-import { DEFAULT_COLUMNS_COUNT } from './common';
-import { styles } from './styles';
-import { ITeamCard } from 'common/models/schedule/teams';
+} from "../helpers";
+import { DEFAULT_COLUMNS_COUNT } from "./common";
+import { styles } from "./styles";
+import { ITeamCard } from "common/models/schedule/teams";
 
 interface IPDFProps {
   event: IEventDetails;
@@ -34,7 +34,7 @@ interface IPDFProps {
   pools?: IPool[];
   isEmptyListsIncluded?: boolean;
   scorerMobile: string;
-};
+}
 
 const PDFScheduleTable = ({
   event,
@@ -55,10 +55,10 @@ const PDFScheduleTable = ({
 
   return (
     <Document>
-      {Object.keys(gamesByDays).map(day => {
+      {Object.keys(gamesByDays).map((day) => {
         const gamesByDay = gamesByDays[day];
 
-        return facilities.map(facility => {
+        return facilities.map((facility) => {
           const fieldsByFacility = getFieldsByFacility(fields, facility);
           const gamesByFacility = getGamesByFacility(gamesByDay, facility);
 
@@ -73,7 +73,6 @@ const PDFScheduleTable = ({
 
               if (byPool && divisions && pools) {
                 return divisions.reduce((acc, division) => {
-
                   const gamesByFacilityAndDivision = getGamesByDivision(
                     gamesByFacility,
                     division
@@ -99,7 +98,7 @@ const PDFScheduleTable = ({
                         schedule={schedule}
                         byPool={byPool}
                         divisionName={division.long_name}
-                        date={moment(day).format('dddd - MMMM D, YYYY')}
+                        date={moment(day).format("dddd - MMMM D, YYYY")}
                         facilitiesName={facility.name}
                         scorerMobile={scorerMobile}
                       />
@@ -141,11 +140,15 @@ const PDFScheduleTable = ({
                     style={styles.page}
                     key={field.id}
                   >
-                    <HeaderSchedule event={event} schedule={schedule} scorerMobile={scorerMobile} />
+                    <HeaderSchedule
+                      event={event}
+                      schedule={schedule}
+                      scorerMobile={scorerMobile}
+                    />
                     <View style={styles.tableWrapper} key={facility.id}>
                       <View style={styles.facilityTitle}>
                         <Text style={styles.scheduleDate}>
-                          {moment(day).format('l')}
+                          {moment(day).format("l")}
                         </Text>
                         <Text style={styles.scheduleFacility}>
                           {facility.name}

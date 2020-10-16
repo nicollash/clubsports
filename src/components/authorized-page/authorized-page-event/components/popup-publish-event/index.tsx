@@ -10,7 +10,7 @@ import {
   ISchedule,
   IFetchedBracket,
   IPublishSettings,
-  BindingCbWithThree,
+  BindingCbWithFour,
 } from "common/models";
 import {
   ButtonVariant,
@@ -38,12 +38,15 @@ interface Props {
     bracketLength: number;
   };
   teamCount: number;
+  countUnassignedGames: number | null;
   onClose: BindingAction;
-  publishEventData: BindingCbWithThree<
+  publishEventData: BindingCbWithFour<
     EventPublishTypes,
     EventModifyTypes,
-    IPublishSettings
+    IPublishSettings,
+    boolean
   >;
+  checkUnassignedGames: (bracketId: string) => void;
 }
 
 const PopupPublishEvent = ({
@@ -53,8 +56,10 @@ const PopupPublishEvent = ({
   isOpen,
   gameCount,
   teamCount,
+  countUnassignedGames,
   onClose,
   publishEventData,
+  checkUnassignedGames,
 }: Props) => {
   const [isConfrimOpen, toggleConfrim] = React.useState<boolean>(false);
   const [
@@ -119,12 +124,14 @@ const PopupPublishEvent = ({
         {isConfrimOpen && publishType ? (
           <SectionConfirm
             event={event}
-            schedules={sortByDate(schedules)}
-            brackets={sortByDate(brackets)}
             publishType={publishType}
             modifyModValue={modifyModValue}
+            countUnassignedGames={countUnassignedGames}
+            schedules={sortByDate(schedules)}
+            brackets={sortByDate(brackets)}
             onClose={onClose}
             publishEventData={publishEventData}
+            checkUnassignedGames={checkUnassignedGames}
           />
         ) : (
           <>

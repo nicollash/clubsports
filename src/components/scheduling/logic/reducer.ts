@@ -10,6 +10,7 @@ import {
   ADD_NEW_BRACKET,
   FETCH_EVENT_BRACKETS,
   UPDATE_EXISTING_BRACKET,
+  CHECK_UNASSIGNED_GAMES,
   CHECK_SAME_COACH_RESULT,
 } from './actionTypes';
 import {
@@ -30,12 +31,14 @@ export interface ISchedulingState {
   error: boolean;
   bracket: IBracket | null;
   brackets: ISchedulingBracket[] | null;
+  countUnassignedGames: number | null;
 }
 
 const appState: ISchedulingState = {
   schedule: null,
   schedules: [],
   sameCoachResult: [],
+  countUnassignedGames: null,
   isLoading: false,
   isLoaded: false,
   error: false,
@@ -136,6 +139,11 @@ export default (
         ...state,
         sameCoachResult: action.payload,
       };
+    case CHECK_UNASSIGNED_GAMES:
+      return {
+        ...state,
+        countUnassignedGames: action.payload,
+      }
     case ADD_ENTITIES_TO_LIBRARY_SUCCESS: {
       const { entities, entryPoint } = action.payload;
 

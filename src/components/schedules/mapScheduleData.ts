@@ -98,6 +98,8 @@ export const mapSchedulesTeamCards = async (
     facilities_id: game.facilityId || null,
     away_team_id: game.awayTeamId || game.awayTeam?.id || null,
     home_team_id: game.homeTeamId || game.homeTeam?.id || null,
+    away_pool_id: game.awayTeam?.poolId || game.poolId,
+    home_pool_id: game.homeTeam?.poolId || game.poolId,
     game_locked_YN: null,
     away_team_locked: getLockedValue(game.awayTeam, game),
     home_team_locked: getLockedValue(game.homeTeam, game),
@@ -107,7 +109,7 @@ export const mapSchedulesTeamCards = async (
     updated_by: memberId,
     updated_datetime: new Date().toISOString(),
   }));
-
+  
   return scheduleDetails;
 };
 
@@ -211,6 +213,8 @@ export const mapTeamsFromSchedulesDetails = (
     matrixGameId: item.matrix_game_id,
     awayTeamId: item.away_team_id,
     homeTeamId: item.home_team_id,
+    awayPoolId: item.pool_id,
+    homePoolId: item.pool_id,
     date: dateToShortString(item.game_date) || undefined,
     awayTeamLocked: item.away_team_locked,
     homeTeamLocked: item.home_team_locked,

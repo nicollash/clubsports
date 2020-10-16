@@ -13,6 +13,8 @@ interface Props {
   type?: string;
   showYes?: boolean;
   showNo?: boolean;
+  customNo?: string;
+  customYes?: string;
   showCancelByLeft?: boolean;
 }
 
@@ -25,6 +27,8 @@ const PopupConfirm = ({
   type,
   showYes,
   showNo,
+  customNo,
+  customYes,
   showCancelByLeft,
 }: Props) => (
   <Modal isOpen={isOpen} onClose={onClose}>
@@ -52,7 +56,12 @@ const PopupConfirm = ({
         <span className={styles.exitBtnWrapper}>
           <Button
             onClick={onCanceClick}
-            label={showNo || showCancelByLeft ? "No" : "Cancel"}
+            label={customNo 
+               ? customNo
+               : showNo || showCancelByLeft 
+                ? "No" 
+                : "Cancel"
+              }
             variant="text"
             color="secondary"
           />
@@ -60,7 +69,7 @@ const PopupConfirm = ({
         {showYes && (
           <Button
             onClick={onYesClick}
-            label="Yes"
+            label={customYes ? customYes : "Yes"}
             variant="contained"
             color="primary"
           />

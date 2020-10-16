@@ -1,11 +1,11 @@
-import React from 'react';
-import { View } from '@react-pdf/renderer';
-import RowTimeSlot from '../row-time-slot';
-import ITimeSlot from 'common/models/schedule/timeSlots';
-import { IGame } from 'components/common/matrix-table/helper';
-import { selectProperGamesPerTimeSlot } from 'components/common/matrix-table/helper';
-import { DEFAULT_COLUMNS_COUNT } from '../../common';
-import { ITeamCard } from 'common/models/schedule/teams';
+import React from "react";
+import { View } from "@react-pdf/renderer";
+import RowTimeSlot from "../row-time-slot";
+import ITimeSlot from "common/models/schedule/timeSlots";
+import { IGame } from "components/common/matrix-table/helper";
+import { selectProperGamesPerTimeSlot } from "components/common/matrix-table/helper";
+import { DEFAULT_COLUMNS_COUNT } from "../../common";
+import { ITeamCard } from "common/models/schedule/teams";
 import { IPool } from "common/models";
 
 interface Props {

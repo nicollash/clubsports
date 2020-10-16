@@ -1,12 +1,12 @@
-import { StyleSheet } from '@react-pdf/renderer';
+import { StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 0,
-    padding: '0 15px',
+    padding: "0 15px",
   },
   headerWrapper: {
     flexGrow: 1,
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 16,
     borderBottom: 2,
-    borderColor: '#333',
+    borderColor: "#333",
   },
   eventNamePool: {
     textAlign: "center",
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
   divisionName: {
     fontSize: 18,
     textAlign: "center",
-    
   },
   divisionDate: {
     marginTop: 15,
@@ -38,47 +37,46 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   mainHeaderWrapper: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   mainHeaderDivisionWrapper: {
-    flexDirection: 'column',
-    textAlign: "center",
+    flexDirection: "column",
     fontSize: 10,
     marginRight: 3,
     width: 80,
-    backgroundColor: '#E2EFDA'
+    backgroundColor: "#E2EFDA",
   },
   mainHeaderCountsWrapper: {
-    flexDirection: 'column',
+    flexDirection: "column",
     fontSize: 10,
     marginRight: 3,
     width: 96,
-    backgroundColor: '#D9FFF2'
+    backgroundColor: "#D9FFF2",
   },
   mainHeaderGameDate: {
-    flexDirection: 'column',
-    backgroundColor: '#ffffff'
+    flexDirection: "column",
+    backgroundColor: "#ffffff",
   },
   mainHeaderDateWrapper: {
     fontSize: 10,
     marginRight: 3,
-    backgroundColor: '#808080',
-    color: '#ffffff',
+    backgroundColor: "#808080",
+    color: "#ffffff",
   },
   mainHeaderDivisionNameWrapper: {
     marginRight: 3,
     width: 50,
-    backgroundColor: '#D9FFF2'
+    backgroundColor: "#D9FFF2",
   },
   mainHeaderCountsIndividualWrapper: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginRight: 3,
-    backgroundColor: '#D9FFF2'
+    backgroundColor: "#D9FFF2",
   },
   mainHeaderGameWrapper: {
-    flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    color: '#000000',
+    flexDirection: "row",
+    backgroundColor: "#ffffff",
+    color: "#000000",
   },
   mainHeaderGameCellWrapper: {
     marginRight: 3,
@@ -94,14 +92,14 @@ const styles = StyleSheet.create({
     marginRight: 3,
     marginTop: 1,
     textAlign: "center",
-    width:30
+    width: 30,
   },
   mainHeaderNameCell: {
     fontSize: 10,
     margin: 0,
     marginTop: 1,
     textAlign: "center",
-    width:80
+    width: 80,
   },
   logoWrapper: {
     width: 100,

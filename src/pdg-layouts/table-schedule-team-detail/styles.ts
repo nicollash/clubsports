@@ -1,8 +1,8 @@
-import { StyleSheet } from '@react-pdf/renderer';
+import { StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: {
-    padding: '15px 0',
+    padding: "15px 0",
 
     fontSize: 9,
   },
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   facilityTitle: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
     marginBottom: 5,
     paddingLeft: 18,
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   pageNumber: {
-    position: 'absolute',
+    position: "absolute",
     right: 15,
     bottom: 10,
   },
