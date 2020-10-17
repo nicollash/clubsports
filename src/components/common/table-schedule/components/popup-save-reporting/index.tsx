@@ -1,5 +1,6 @@
 import React from "react";
 import { CSVLink } from "react-csv";
+// import moment from "moment";
 import PDFTableSchedule from "pdg-layouts/table-schedule";
 import PDFTableFieldsSchedule from "pdg-layouts/table-fields-schedule";
 import PDFTableScheduleTeamDetail from "pdg-layouts/table-schedule-team-detail";
@@ -111,6 +112,16 @@ const PopupSaveReporting = ({
   };
 
   const csvData = normalizedGames ? normalizedGames : [];
+  // const csvData = (): any[] => {
+  //   if( normalizedGames ) {
+  //     return normalizedGames.map((gameInfo) => {
+  //       const date = moment(gameInfo.Game_Date ? gameInfo.Game_Date : '').format('MMM D YYYY');
+  //       const time = moment(gameInfo.Game_Time ? gameInfo.Game_Time : '').format('hh:mm A');
+  //       const obj ={ ...gameInfo, Game_Date: date, Game_Time: time }
+  //       return obj;
+  //     });
+  //   } else return [];
+  // } 
 
   let scorerMobile = "";
   getScorers(event.event_id).then((res) => (scorerMobile = res));
