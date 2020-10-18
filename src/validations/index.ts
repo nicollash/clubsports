@@ -10,3 +10,4 @@ export * from './facility-schema';
 export * from './field-schema';
 export * from './member-schema';
 export * from './schedule-schema';
+export * from './scorer-schema';
