@@ -216,10 +216,6 @@ const PopupSaveReporting = ({
         : "TeamDetail"
     );
 
-  const onScheduleGamesListSave = (event: any) => {
-    console.log('event=>', event)
-  }
-
   const onScoringTableXLSXSave = async () => {
     const { header, body } = await getScheduleTableXLSX(
       event,
@@ -347,7 +343,6 @@ const PopupSaveReporting = ({
                     data={csvData}
                     filename={"Division Games List.csv"}
                     asyncOnClick={true}
-                    onClick={onScheduleGamesListSave}
                   >
                     Download
                   </CSVLink>                  
