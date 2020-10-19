@@ -28,3 +28,4 @@ export * from './pinch';
 export * from './states';
 export * from './players';
 export * from './reports';
+export * from './normalized-game';

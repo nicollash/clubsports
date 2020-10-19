@@ -1,4 +1,5 @@
 import React from "react";
+import { CSVLink } from "react-csv";
 import PDFTableSchedule from "pdg-layouts/table-schedule";
 import PDFTableScheduleTeamDetail from "pdg-layouts/table-schedule-team-detail";
 import PDFTableFieldsSchedule from "pdg-layouts/table-fields-schedule";
@@ -23,6 +24,7 @@ import {
   IPool,
   IDivision,
   ISchedulesGame,
+  INormalizedGame,
 } from "common/models";
 import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 import { getScheduleTableXLSX, TableType } from "../../helpers";
@@ -50,6 +52,7 @@ interface Props {
   fields: IField[];
   schedule: ISchedule;
   scheduleTeamDetails?: IScheduleTeamDetails[];
+  normalizedGames?: INormalizedGame[];
   teamCards: ITeamCard[];
   bracketGames: IBracketGame[];
   pools: IPool[];
@@ -68,6 +71,7 @@ const ItemSchedules = (props: Props) => {
     fields,
     schedule,
     scheduleTeamDetails,
+    normalizedGames,
     teamCards,
     pools,
     bracketGames,
@@ -86,7 +90,7 @@ const ItemSchedules = (props: Props) => {
   React.useEffect(() => {
     changeAllowDownload(activeDay.length > 0);
   }, [activeDay]);
-
+  const csvData = normalizedGames ? normalizedGames : [];
   const eventDays = calculateDays(teamCards);
   const allTeamCardGames = getAllTeamCardGames(
     teamCards,
@@ -290,6 +294,16 @@ const ItemSchedules = (props: Props) => {
               color={ButtonColors.SECONDARY}
               label="Schedule - Team Details - PDF"
             />
+          </li>
+          <li style={{display: 'flex'}}>
+            <CSVLink
+              style={{color:'#00A3EA', padding: '6px 8px'}}
+              data={csvData}
+              filename={"Division Games List.csv"}
+              asyncOnClick={true}
+            >
+              Division - Games List - CSV
+            </CSVLink>                  
           </li>
         </ul>
         {!isAllowDownload && (

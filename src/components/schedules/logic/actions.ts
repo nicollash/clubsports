@@ -13,6 +13,8 @@ import {
   FETCH_SCHEDULES_DETAILS_FAILURE,
   FETCH_SCHEDULE_TEAM_DETAILS_SUCCESS,
   FETCH_SCHEDULE_TEAM_DETAILS_FAILURE,
+  FETCH_SCHEDULE_NORMALIZED_GAMES_SUCCESS,
+  FETCH_SCHEDULE_NORMALIZED_GAMES_FAILURE,
   SCHEDULES_PUBLISHED_SUCCESS,
   SCHEDULES_PUBLISHED_FAILURE,
   SCHEDULES_PUBLISHED_CLEAR,
@@ -30,7 +32,7 @@ import {
   ADD_SCHEDULES_DETAILS_FAILURE,
   SET_IS_DRAFT_ALREADY_SAVED_STATUS,
 } from "./actionTypes";
-import { IField, ISchedule } from "common/models";
+import { IField, ISchedule, INormalizedGame } from "common/models";
 import { IEventSummary } from "common/models/event-summary";
 import { IAppState } from "reducers/root-reducer.types";
 import { ISchedulesDetails } from "common/models/schedule/schedules-details";
@@ -88,6 +90,13 @@ const fetchScheduleTeamDetailsSuccess = (payload: {
   payload,
 });
 
+const fetchNormalizedGamesSuccess = (payload: {
+  normalizedGames: INormalizedGame[];
+}) => ({
+  type: FETCH_SCHEDULE_NORMALIZED_GAMES_SUCCESS,
+  payload,
+});
+
 export const schedulesDetailsClear = () => ({
   type: SCHEDULES_DETAILS_CLEAR,
 });
@@ -110,6 +119,10 @@ const fetchSchedulesDetailsFailure = () => ({
 
 const fetchScheduleTeamDetailsFailure = () => ({
   type: FETCH_SCHEDULE_TEAM_DETAILS_FAILURE,
+});
+
+const fetchNormalizedGamesFailure = () => ({
+  type: FETCH_SCHEDULE_NORMALIZED_GAMES_FAILURE,
 });
 
 const anotherSchedulePublished = (payload: boolean) => ({
@@ -375,6 +388,27 @@ export const fetchScheduleTeamDetails = (
     );
   } else {
     dispatch(fetchScheduleTeamDetailsFailure());
+  }
+};
+
+export const fetchNormalizedGames = (
+  scheduleId: string,
+) => async (dispatch: Dispatch) => {
+  const normalizedGames: INormalizedGame[] = await api.get(
+    "games_normalized_csv",
+    {
+      schedule_id: scheduleId,
+    }
+  );
+
+  if (normalizedGames && normalizedGames[0]) {
+    dispatch(
+      fetchNormalizedGamesSuccess({
+        normalizedGames,
+      })
+    );
+  } else {
+    dispatch(fetchNormalizedGamesFailure());
   }
 };
 

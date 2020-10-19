@@ -1,4 +1,6 @@
 import React from "react";
+import { CSVLink } from "react-csv";
+// import moment from "moment";
 import PDFTableSchedule from "pdg-layouts/table-schedule";
 import PDFTableFieldsSchedule from "pdg-layouts/table-fields-schedule";
 import PDFTableScheduleTeamDetail from "pdg-layouts/table-schedule-team-detail";
@@ -17,14 +19,19 @@ import {
   getGamesByDays,
   onXLSXSave,
 } from "helpers";
-import { BindingAction, IPool } from "common/models";
+import { 
+  BindingAction, 
+  IPool, 
+  IEventDetails, 
+  ISchedule,
+  INormalizedGame,
+  } from "common/models";
 import {
   ButtonColors,
   ButtonVariant,
   DefaultSelectValues,
   TableScheduleTypes,
 } from "common/enums";
-import { IEventDetails, ISchedule } from "common/models";
 import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 import {
   IGame,
@@ -48,6 +55,7 @@ interface Props {
   event: IEventDetails;
   schedule: ISchedule;
   scheduleTeamDetails?: IScheduleTeamDetails[];
+  normalizedGames?: INormalizedGame[];
   timeSlots: ITimeSlot[];
   pools?: IPool[];
   tableType?: string;
@@ -64,6 +72,7 @@ const PopupSaveReporting = ({
   event,
   schedule,
   scheduleTeamDetails,
+  normalizedGames,
   timeSlots,
   pools,
   facilities,
@@ -101,6 +110,18 @@ const PopupSaveReporting = ({
       changeActiveDay(avtiveDay as string[]);
     }
   };
+
+  const csvData = normalizedGames ? normalizedGames : [];
+  // const csvData = (): any[] => {
+  //   if( normalizedGames ) {
+  //     return normalizedGames.map((gameInfo) => {
+  //       const date = moment(gameInfo.Game_Date ? gameInfo.Game_Date : '').format('MMM D YYYY');
+  //       const time = moment(gameInfo.Game_Time ? gameInfo.Game_Time : '').format('hh:mm A');
+  //       const obj ={ ...gameInfo, Game_Date: date, Game_Time: time }
+  //       return obj;
+  //     });
+  //   } else return [];
+  // } 
 
   let scorerMobile = "";
   getScorers(event.event_id).then((res) => (scorerMobile = res));
@@ -314,6 +335,17 @@ const PopupSaveReporting = ({
                     isDisabled={!isAllowDownload}
                     label="Download"
                   />
+                </li>
+                <li className={styles.dowloadLinkWrapper}>
+                  <b> Division-Games List</b>
+                  <CSVLink
+                    style={{color:'#00A3EA', margin: 10}}
+                    data={csvData}
+                    filename={"Division Games List.csv"}
+                    asyncOnClick={true}
+                  >
+                    Download
+                  </CSVLink>                  
                 </li>
               </ul>
             </li>

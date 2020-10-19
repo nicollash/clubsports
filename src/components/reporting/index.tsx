@@ -23,6 +23,7 @@ import {
   IPool,
   BindingAction,
   ISchedulesGame,
+  INormalizedGame,
 } from "common/models";
 import { EventMenuTitles, TimeSlotsEntityTypes } from "common/enums";
 import { IAppState } from "reducers/root-reducer.types";
@@ -47,7 +48,7 @@ import {
   fillSchedulesTable,
   clearSchedulesTable,
 } from "components/schedules/logic/schedules-table/actions";
-import { fetchScheduleTeamDetails } from "components/schedules/logic/actions";
+import { fetchScheduleTeamDetails, fetchNormalizedGames } from "components/schedules/logic/actions";
 import ITimeSlot from "common/models/schedule/timeSlots";
 import { IScheduleFacility } from "common/models/schedule/facilities";
 import { IScheduleDivision } from "common/models/schedule/divisions";
@@ -73,11 +74,13 @@ interface Props {
   pools: IPool[];
   schedule: ISchedule | null;
   scheduleTeamDetails?: IScheduleTeamDetails[];
+  normalizedGames?: INormalizedGame[];
   schedulesTeamCards?: ITeamCard[];
   bracketGames: IBracketGame[];
   loadReportingData: (eventId: string) => void;
   fillSchedulesTable: (teamCards: ITeamCard[]) => void;
   fetchScheduleTeamDetails: (scheduleId: string, eventId: string) => void;
+  fetchNormalizedGames: (scheduleId: string) => void;
   clearSchedulesTable: BindingAction;
 }
 
@@ -114,6 +117,7 @@ class Reporting extends React.Component<
     this.props.loadReportingData(eventId);
     if (schedule) {
       this.props.fetchScheduleTeamDetails(schedule.schedule_id, eventId);
+      this.props.fetchNormalizedGames(schedule.schedule_id);
     }
   }
 
@@ -124,6 +128,7 @@ class Reporting extends React.Component<
       schedulesTeamCards,
       event,
       fetchScheduleTeamDetails,
+      fetchNormalizedGames,
     } = this.props;
     const { teams, games, timeSlots, neccessaryDataCalculated } = this.state;
 
@@ -141,6 +146,7 @@ class Reporting extends React.Component<
       schedule
     ) {
       fetchScheduleTeamDetails(schedule.schedule_id, event.event_id);
+      fetchNormalizedGames(schedule.schedule_id);
       const days = calculateTournamentDays(event);
       const lastDay = days[days.length - 1];
 
@@ -243,6 +249,7 @@ class Reporting extends React.Component<
       bracketGames,
       schedulesGames,
       scheduleTeamDetails,
+      normalizedGames,
     } = this.props;
 
     const {
@@ -281,6 +288,7 @@ class Reporting extends React.Component<
               facilities={facilities!}
               schedule={schedule!}
               scheduleTeamDetails={scheduleTeamDetails!}
+              normalizedGames={normalizedGames}
               timeSlots={timeSlots!}
               games={games!}
               teamCards={schedulesTeamCards!}
@@ -311,6 +319,7 @@ export default connect(
     teams: reporting.teams,
     schedule: reporting.schedule,
     scheduleTeamDetails: schedules?.scheduleTeamDetails,
+    normalizedGames: schedules?.normalizedGames,
     schedulesTeamCards: schedulesTable?.current,
     schedulesGames: reporting.schedulesGames,
     pools: reporting.pools,
@@ -323,6 +332,7 @@ export default connect(
         fillSchedulesTable,
         clearSchedulesTable,
         fetchScheduleTeamDetails,
+        fetchNormalizedGames,
       },
       dispatch
     )

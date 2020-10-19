@@ -9,6 +9,8 @@ import {
   FETCH_SCHEDULES_DETAILS_FAILURE,
   FETCH_SCHEDULE_TEAM_DETAILS_SUCCESS,
   FETCH_SCHEDULE_TEAM_DETAILS_FAILURE,
+  FETCH_SCHEDULE_NORMALIZED_GAMES_SUCCESS,
+  FETCH_SCHEDULE_NORMALIZED_GAMES_FAILURE,
   SCHEDULES_PUBLISHED_FAILURE,
   SCHEDULES_PUBLISHED_SUCCESS,
   SCHEDULES_PUBLISHED_CLEAR,
@@ -27,7 +29,7 @@ import {
   SET_IS_DRAFT_ALREADY_SAVED_STATUS,
 } from "./actionTypes";
 import { IEventSummary } from "common/models/event-summary";
-import { ISchedule } from "common/models";
+import { ISchedule, INormalizedGame } from "common/models";
 import { ISchedulesDetails } from "common/models/schedule/schedules-details";
 import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 
@@ -36,6 +38,7 @@ export interface ISchedulesState {
   eventSummary?: IEventSummary[];
   schedulesDetails?: ISchedulesDetails[];
   scheduleTeamDetails?: IScheduleTeamDetails[];
+  normalizedGames?: INormalizedGame[];
   anotherSchedulePublished: boolean;
   draftIsAlreadySaved: boolean;
   schedulesPublished: boolean;
@@ -108,6 +111,17 @@ const SchedulesReducer = (state = initialState, action: IScheduleAction) => {
         ...action.payload,
       };
     case FETCH_SCHEDULE_TEAM_DETAILS_FAILURE:
+      return {
+        ...state,
+        fetchError: true,
+      };
+    case FETCH_SCHEDULE_NORMALIZED_GAMES_SUCCESS:
+      return {
+        ...state,
+        fetchError: false,
+        ...action.payload,
+      };
+    case FETCH_SCHEDULE_NORMALIZED_GAMES_FAILURE:
       return {
         ...state,
         fetchError: true,
