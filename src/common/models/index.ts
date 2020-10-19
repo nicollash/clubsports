@@ -29,4 +29,4 @@ export * from './states';
 export * from './players';
 export * from './reports';
 export * from './normalized-game';
-export * from './sms-scorer';
+export * from './reporter';

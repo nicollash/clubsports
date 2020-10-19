@@ -28,7 +28,6 @@ import {
   createEvents,
   createDataFromCSV,
   getOrganizations,
-  createFieldManagerDataFromCSV,
 } from "./logic/actions";
 import { IEventState, IOrganizationState } from "./logic/reducer";
 import { IIconFile } from "./logic/model";
@@ -242,9 +241,9 @@ class EventDetails extends Component<Props, State> {
 
   onCsvLoaderClose = () => this.setState({ isCsvLoaderOpen: false });
 
-  onOpenFieldManagerCsvLoader = () => this.setState({ isFieldManagerCsvLoaderOpen: true });
+  // onOpenFieldManagerCsvLoader = () => this.setState({ isFieldManagerCsvLoaderOpen: true });
 
-  onCloseFieldManagerCsvLoader = () => this.setState({ isFieldManagerCsvLoaderOpen: false });
+  // onCloseFieldManagerCsvLoader = () => this.setState({ isFieldManagerCsvLoaderOpen: false });
 
   onDataLoaderBtn = () => this.setState({ isDataLoaderOpen: true });
 
@@ -290,7 +289,7 @@ class EventDetails extends Component<Props, State> {
       event,
       isCsvLoaderOpen,
       isDataLoaderOpen,
-      isFieldManagerCsvLoaderOpen,
+      // isFieldManagerCsvLoaderOpen,
       isDeleteModalOpen,
       isModalOpen,
       isSectionsExpand,
@@ -372,7 +371,6 @@ class EventDetails extends Component<Props, State> {
           eventData={commonChildProps.eventData}
           onChange={this.onChange}
           isSectionExpand={isSectionsExpand}
-          onCsvLoaderBtn={this.onOpenFieldManagerCsvLoader}
         />
         <DeletePopupConfrim
           type={"event"}
@@ -408,12 +406,6 @@ class EventDetails extends Component<Props, State> {
           onCreate={createDataFromCSV}
           eventId={event_id!}
         />
-        <CsvLoader
-          type="sms_authorized_scorers"
-          isOpen={isFieldManagerCsvLoaderOpen}
-          onClose={this.onCloseFieldManagerCsvLoader}
-          onCreate={createFieldManagerDataFromCSV}
-        />
       </div>
     );
   }
@@ -443,7 +435,6 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       createEvents,
       createDataFromCSV,
       addEntityToLibrary,
-      createFieldManagerDataFromCSV,
     },
     dispatch
   );

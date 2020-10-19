@@ -243,6 +243,7 @@ class CsvLoader extends React.Component<Props, State> {
       const event = mapDataForSaving(type, res, fields, eventId);
       dataToSave.push(event);
     });
+    
     this.setState({ importLoading: true, isConfirmModalOpen: false });
     if (type === "divisions" || type === "players" || type === "teams" || type === "sms_authorized_scorers") {
       onCreate(dataToSave, importMethod, this.onModalClose);

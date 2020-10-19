@@ -2,18 +2,9 @@ import { IField } from "common/models/schedule/fields";
 import { IScheduleFacility } from "common/models/schedule/facilities";
 import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 import { IGame } from "components/common/matrix-table/helper";
-import { IDivision } from "common/models";
+import { IDivision, IReporter } from "common/models";
 import { formatPhoneNumber } from "helpers/formatPhoneNumber";
 import api from "api/api";
-
-interface AuthorizedReporter {
-  sms_scorer_id: string;
-  event_id: string;
-  first_name: string;
-  last_name: string;
-  mobile: string;
-  is_active_YN: 0 | 1;
-}
 
 const getFieldsByFacility = (fields: IField[], facility: IScheduleFacility) => {
   const filedsByFacility = fields.filter(
@@ -217,9 +208,9 @@ const getTeamCount = (sortJsonGames: any[]): any => {
 const getScorers = async (eventId: string) => {
   const scorers = (await api.get(
     `sms_authorized_scorers?event_id=${eventId}`
-  )) as AuthorizedReporter[];
+  )) as IReporter[];
   const scorer = scorers?.find(
-    (it: AuthorizedReporter) => it.is_active_YN === 1
+    (it: IReporter) => it.is_active_YN === 1
   );
   return formatPhoneNumber(scorer?.mobile || "") as string;
 };

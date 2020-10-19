@@ -1,3 +1,4 @@
+/* eslint-disable no-throw-literal */
 import { ThunkAction } from 'redux-thunk';
 import { ActionCreator, Dispatch } from 'redux';
 import { Storage } from 'aws-amplify';
@@ -14,7 +15,7 @@ import {
   ORGANIZATIONS_FETCH_FAILURE,
   OrganizationsAction,
 } from './actionTypes';
-import { eventDetailsSchema, scorerSchema } from 'validations';
+import { eventDetailsSchema, reporterSchemaCsv } from 'validations';
 import { IIconFile } from './model';
 import history from 'browserhistory';
 import { ICalendarEvent } from 'common/models/calendar';
@@ -24,7 +25,7 @@ import {
   IFacility,
   BindingAction,
   IEventDetails,
-  ISmsScorer,
+  IReporter,
 } from 'common/models';
 import { registrationUpdateSuccess } from '../../registration/registration-edit/logic/actions';
 
@@ -596,49 +597,81 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
   }
 };
 
-export const createFieldManagerDataFromCSV: ActionCreator<ThunkAction<
-  void,
-  {},
-  null,
-  { type: string }
->> = (scorers: ISmsScorer[], cb: (param?: object) => void) => async (
-  dispatch: Dispatch
-) => {
-  console.log('scorers in csv file')
-  const allFiledInScorerTable = await api.get(
-    `/data_import_map?table_name=sms_authorized_scorers`
-  );
-
-  const dupList = [];
-
-  for (const [index, localScorer] of scorers.entries()) {
-    if (!localScorer.column_name) {
-      return Toasts.errorToast(
-        `Record ${
-          index + 1
-        }: There is no division with the supplied "long name". Please, create a division first or address the data issue.`
-      );
-    }
-    const scorersIn = allFiledInScorerTable.filter(
-      // (t: ITeam) => t.division_id === team.division_id
-      (scorer: ISmsScorer) => scorer.column_name === localScorer.column_name
+export const createReporterFromCSV = async (scorers: any[], event: Partial<IEventDetails>, cb: (param?: object) => void) => {
+  // console.log('scorers in csv file=>', scorers);
+  let currentReporters: IReporter[] = [];
+  let comingReporters: any[] = [];
+  let report_id = 0;
+  try {
+    currentReporters = await api.get(`/sms_authorized_scorers?event_id=${event.event_id}`);
+    console.log('currentReporters=>', currentReporters);
+    
+    const currentReportersKeys = currentReporters.map(
+      (reporter) =>
+        `${reporter.mobile}_${reporter.first_name}_${reporter.last_name}`
     );
-    console.log("scorersIn: ", localScorer, scorersIn);
 
+    // const comingReporterKeys = scorers.map(
+    //   (reporter) =>
+    //     `${reporter.Mobile}_${reporter.First}_${reporter.Last}`
+    // );
+
+    let isAlreadyExisted = false;
+    const duplicatedRows: string[] = [];
+
+    scorers.forEach((comingReporter, index) => {
+      const key =`${comingReporter.Mobile}_${comingReporter.First}_${comingReporter.Last}`
+      if (currentReportersKeys.includes(key)) {
+        isAlreadyExisted = true;
+        duplicatedRows.push(`${index + 1}th`);
+      } else {
+        comingReporters.push(comingReporter)
+      }
+
+    });     
+
+    if (isAlreadyExisted) {
+      if (duplicatedRows.length > 1) {
+        throw {
+          message: `${duplicatedRows.join(", ")} rows are already existed.`,
+        };
+      } else if (duplicatedRows.length === 1) {
+        throw {
+          message: `${duplicatedRows.join(", ")} row is already existed.`,
+        };
+      }
+    }
+
+    if (duplicatedRows.length !== 0) {
+      cb({ type: "error", data: duplicatedRows });
+      // return;
+    }     
+
+    currentReporters.forEach((reporter) => {
+      if (Number(reporter.sms_scorer_id) > report_id) report_id = Number(reporter.sms_scorer_id);
+    })
+
+  } catch (error) {
+    Toasts.errorToast(error.message);
+  }  
+  try {
+    const dupList = [];
     try {
-      await Yup.array()
-        .of(scorerSchema)
-        .unique(
-          (s) => s.column_name,
-          "Within a division, Long Names must be unique."
-        )
-        .validate([...scorersIn, localScorer]);
-    } catch (err) {
-      if (err.value) {
-        const invalidScorer = err.value[err.value.length - 1];
-        const index = scorers.findIndex(
-          // (team) => team.team_id === invalidTeam.team_id
-          (localScorer: ISmsScorer) => localScorer.column_name === invalidScorer.column_name
+        await Yup.array()
+          .of(reporterSchemaCsv)
+          .unique(
+            (comingReporter) => `${comingReporter.Mobile}_${comingReporter.First}_${comingReporter.Last}`,
+            "Within a Reporters, First + Last + Mobile  must be unique."
+          )
+          .validate(comingReporters);
+      } catch (err) {
+        const invalidReporter = err.value[err.value.length - 1];
+        const index = comingReporters.findIndex(
+          (reporter) => (
+            reporter.First === invalidReporter.First &&
+            reporter.Last === invalidReporter.Last &&
+            reporter.Mobile === invalidReporter.Mobile
+          )
         );
 
         dupList.push({
@@ -646,61 +679,70 @@ export const createFieldManagerDataFromCSV: ActionCreator<ThunkAction<
           msg: err.message,
         });
       }
+    // await Yup.array().of(reporterSchemaCsv).validate(comingReporters);
+    if (dupList.length !== 0) {
+      cb({ type: "error", data: dupList });
+      // return;
     }
-  }
 
-  if (dupList.length !== 0) {
-    cb({ type: "error", data: dupList });
-  } else {
-    // let progress = 0;
-    // for (const team of data) {
-    //   const postData = {
-    //     event_id: team.event_id,
-    //     division_id: team.division_id,
-    //     pool_id: team.pool_id,
-    //     long_name: team.long_name,
-    //     short_name: team.short_name,
-    //     team_tag: team.team_tag,
-    //     team_id: team.team_id,
-    //     contact_first_name: team.contact_first_name,
-    //     contact_last_name: team.contact_last_name,
-    //     phone_num: team.phone_num,
-    //     contact_email: team.contact_email,
-    //     city: team.city,
-    //     state: team.state,
-    //     level: team.level,
-    //     org_id: team.org_id,
-    //     schedule_restrictions: team.schedule_restrictions,
-    //     is_active_YN: team.is_active_YN,
-    //     is_library_YN: team.is_library_YN,
-    //   };
+    const addedReporters: IReporter[] = [];
 
-    //   const response = await api.post(`/teams`, postData);
-    //   if (response?.errorType === "Error" || response?.message === false) {
-    //     return Toasts.errorToast("Couldn't create a team");
-    //   }
-    //   progress += 1;
+    let progress = 0;
+    for await (const reporter of comingReporters) {  
+      report_id += 1;
+      // post player data
+      
+      const newData = {
+        // sms_scorer_id: report_id.toString(),
+        event_id: event.event_id,
+        first_name: reporter.First,
+        last_name: reporter.Last,
+        mobile: reporter.Mobile,
+        is_active_YN: 1,
+      };
+      addedReporters.push(newData as IReporter);
+      const response = await api.post(
+        `/sms_authorized_scorers?event_id=${event.event_id}`,
+        newData
+      )
+      // const response = await api.put(
+      //   `/sms_authorized_scorers?event_id=${event.event_id}&sms_scorer_id=${newData.sms_scorer_id}`,
+      //   newData
+      // );
+      if (response?.errorType === "Error" || response?.message === false) {
+        return Toasts.errorToast("Couldn't create a player");
+      }
 
-    //   cb({
-    //     type: "progress",
-    //     data: [
-    //       {
-    //         status: "Importing New Data...",
-    //         msg: `${progress / data.length}`,
-    //       },
-    //     ],
-    //   });
-    // }
+      progress += 1;
 
-    dispatch({
-      // type: CREATE_TEAMS_SUCCESS,
-      type: 'CREATE_SCORERS_SUCCESS',
-      payload: {
-        scorers,
-      },
-    });
+      cb({
+        type: "progress",
+        data: [
+          {
+            status: "Importing New Data...",
+            msg: `${progress / comingReporters.length}`,
+          },
+        ],
+      });
+    }
+    cb({
+        type: "info",
+        data: [
+          {
+            index: 0,
+            msg: `Import Summary; Of the ${comingReporters.length} reporters you imported, ${addedReporters.length} rows mapped to existing sms-scorers.`,
+          },
+        ],
+      });
 
-    const successMsg = `(${scorers.length}) scorers were successfully imported.`;
+    // console.log('new addedReporters =>',addedReporters )
+
+    const successMsg = `(${addedReporters.length}) scorers were successfully imported.`;
     Toasts.successToast(successMsg);
-  }
+    return addedReporters;
+    
+  } catch (error) {
+    Toasts.errorToast(error.message);
+    return []
+  }  
 };
