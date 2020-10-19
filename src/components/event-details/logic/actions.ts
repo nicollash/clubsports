@@ -710,20 +710,15 @@ export const createReporterFromCSV = async (scorers: any[], event: Partial<IEven
         type: "progress",
         data: [
           {
-            status: "Importing New Data...",
+            status: "Importing New SMS Scorers ...",
             msg: `${progress / comingReporters.length}`,
           },
         ],
       });
     }
     cb({
-        type: "info",
-        data: [
-          {
-            index: 0,
-            msg: `Import Summary; Of the ${comingReporters.length} reporters you imported, ${addedReporters.length} rows mapped to existing sms-scorers.`,
-          },
-        ],
+        type: "",
+        data: [],
       });
 
     const successMsg = `(${addedReporters.length}) scorers were successfully imported.`;

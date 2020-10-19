@@ -144,11 +144,9 @@ class CsvLoader extends React.Component<Props, State> {
 
   onFileSelect = (files: File[]) => {
     const { isHeaderIncluded, headerPosition, fields } = this.state;
-
     if (isHeaderIncluded && !Number(headerPosition)) {
       return Toasts.errorToast("Please, choose header position");
     }
-
     if (files[0]) {
       Papa.parse(files[0], {
         skipEmptyLines: true,
@@ -159,6 +157,7 @@ class CsvLoader extends React.Component<Props, State> {
             headerPosition,
             fields
           );
+       
           if (!isCsvValid) {
             return Toasts.errorToast(
               "Please check your csv. Something seems to be off with it."
@@ -299,7 +298,6 @@ class CsvLoader extends React.Component<Props, State> {
   onModalClose = async (param = { type: "", data: [] }) => {
     const { onClose } = this.props;
     const { type, data } = param;
-
     if (type === "error" && data.length >= 0) {
       this.setState({ errorList: data, inProgress: [] });
     } else if (type === "progress") {

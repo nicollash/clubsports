@@ -94,7 +94,7 @@ const GameDayScoring: React.FC<IProps> = (props) => {
             type: "progress",
             data: [
               {
-                status: "Deleting Existing Teams...",
+                status: "Deleting Existing Scorers...",
                 msg: `${progress / reporters.length}`,
               },
             ],
