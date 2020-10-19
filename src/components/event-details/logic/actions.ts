@@ -598,23 +598,17 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
 };
 
 export const createReporterFromCSV = async (scorers: any[], event: Partial<IEventDetails>, cb: (param?: object) => void) => {
-  // console.log('scorers in csv file=>', scorers);
+
   let currentReporters: IReporter[] = [];
   let comingReporters: any[] = [];
   let report_id = 0;
   try {
     currentReporters = await api.get(`/sms_authorized_scorers?event_id=${event.event_id}`);
-    console.log('currentReporters=>', currentReporters);
     
     const currentReportersKeys = currentReporters.map(
       (reporter) =>
         `${reporter.mobile}_${reporter.first_name}_${reporter.last_name}`
     );
-
-    // const comingReporterKeys = scorers.map(
-    //   (reporter) =>
-    //     `${reporter.Mobile}_${reporter.First}_${reporter.Last}`
-    // );
 
     let isAlreadyExisted = false;
     const duplicatedRows: string[] = [];
@@ -705,10 +699,7 @@ export const createReporterFromCSV = async (scorers: any[], event: Partial<IEven
         `/sms_authorized_scorers?event_id=${event.event_id}`,
         newData
       )
-      // const response = await api.put(
-      //   `/sms_authorized_scorers?event_id=${event.event_id}&sms_scorer_id=${newData.sms_scorer_id}`,
-      //   newData
-      // );
+
       if (response?.errorType === "Error" || response?.message === false) {
         return Toasts.errorToast("Couldn't create a player");
       }
@@ -734,8 +725,6 @@ export const createReporterFromCSV = async (scorers: any[], event: Partial<IEven
           },
         ],
       });
-
-    // console.log('new addedReporters =>',addedReporters )
 
     const successMsg = `(${addedReporters.length}) scorers were successfully imported.`;
     Toasts.successToast(successMsg);
