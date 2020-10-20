@@ -124,9 +124,9 @@ const parseJsonGames = (scheduleTeamDetails: IScheduleTeamDetails[]) => {
   return parsedDetailsList;
 };
 
-const sortJsonGames = (parsedJsonGames: any[]) => {
+const sortJsonGamesList = (parsedJsonGames: any[]) => {
   let parsedDetailsList: any[] = parsedJsonGames;
-  // console.log('total parsedDetailsList ->', parsedDetailsList) //
+  // console.log('input parsedDetailsList ->', parsedDetailsList) //
   const divisionArrangedDetails = getDetailsByKey(
     parsedDetailsList,
     "division_name"
@@ -171,6 +171,7 @@ const sortJsonGames = (parsedJsonGames: any[]) => {
     newDivisionDetail[divisionKey] = teamArrangedList;
     parsedDetailsList.push(newDivisionDetail);
   });
+
   return parsedDetailsList;
 };
 
@@ -234,7 +235,7 @@ export {
   getScorers,
   parseJsonGames,
   getUniqueKeyArray,
-  sortJsonGames,
+  sortJsonGamesList,
   getGamesCountForDay,
   getTeamCount,
 };

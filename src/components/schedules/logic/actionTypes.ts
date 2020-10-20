@@ -97,7 +97,7 @@ interface FetchSchedulesDetailsSuccess {
 interface FetchScheduleTeamDetailsSuccess {
   type: "FETCH_SCHEDULE_TEAM_DETAILS_SUCCESS";
   payload: {
-    schedulesDetails: IScheduleTeamDetails[];
+    scheduleTeamDetails: IScheduleTeamDetails[];
   };
 }
 

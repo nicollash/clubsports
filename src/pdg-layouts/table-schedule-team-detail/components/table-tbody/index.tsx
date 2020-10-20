@@ -16,18 +16,18 @@ const TableTbody = ({ teamDetails, splitIdx, pageIdx, days }: Props) => {
     let colsView: any[] = [];
     const divisionKey = Object.keys(division)[0];
     if (
-      rowCount >= pageIdx * DEFAULT_ROWS_COUNT - 1 &&
+      rowCount >= pageIdx * DEFAULT_ROWS_COUNT &&
       rowCount < (pageIdx + 1) * DEFAULT_ROWS_COUNT
     ) {
-      rowCount++;
       colsView.push(<RowDivisionSlot divisionName={divisionKey} />);
     }
+    rowCount++;
 
     const teamRows = division[divisionKey].map(
       (teamItem: any, index: number) => {
         const teamKey = Object.keys(teamItem)[0];
         if (
-          rowCount >= pageIdx * DEFAULT_ROWS_COUNT - 1 &&
+          rowCount >= pageIdx * DEFAULT_ROWS_COUNT &&
           rowCount < (pageIdx + 1) * DEFAULT_ROWS_COUNT
         ) {
           rowCount++;

@@ -379,7 +379,6 @@ export const fetchScheduleTeamDetails = (
       event_id: eventId,
     }
   );
-
   if (scheduleTeamDetails && scheduleTeamDetails[0]) {
     dispatch(
       fetchScheduleTeamDetailsSuccess({
