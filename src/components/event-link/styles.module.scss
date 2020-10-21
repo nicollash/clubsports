@@ -78,6 +78,7 @@
   padding: 0 20px 20px 24px;
   .msContentTitle {
     font-weight: 600;
+    margin-right: 3px;
   }
   .msInfoWrapper {
     display: flex;
@@ -87,6 +88,9 @@
   }
   .msInfoContent {
     max-width: calc(100% - 335px);
+    & > p {
+      display: flex;
+    }
   }
   .msInfoContent > p, .msContentMessage {
     padding: 4px 0;

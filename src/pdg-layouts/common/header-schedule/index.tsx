@@ -4,11 +4,13 @@ import TMLogo from 'assets/logo.png';
 import { IEventDetails, ISchedule } from 'common/models';
 import { styles } from './styles';
 import { formatPhoneNumber } from "helpers/formatPhoneNumber";
+import { PDFReportType } from 'components/reporting/components/item-schedules';
 
 interface Props {
   event: IEventDetails;
   schedule: ISchedule;
   byPool?: boolean;
+  pdfType?: PDFReportType;
   divisionName?: string;
   facilitiesName?: string;
   date?: string;
@@ -19,6 +21,7 @@ const HeaderSchedule = ({
   event,
   schedule,
   byPool,
+  pdfType,
   divisionName,
   facilitiesName,
   date,
@@ -53,7 +56,7 @@ const HeaderSchedule = ({
             </View>
 
           </View>
-          {event.sms_scoring_YN ? (
+          {event.sms_scoring_YN && pdfType === PDFReportType.MASTER_SCHEDULE_FIELD_BY_FIELD ? (
             <View>
               <Text style={styles.scoreResult}>
                 Text game result: (206) 888-2314 
@@ -64,7 +67,8 @@ const HeaderSchedule = ({
                 "ABCD1234,2,4")
               </Text>
             </View>
-          ) : null}
+            ) : null
+          }
         </>
       )}
     </View>

@@ -28,7 +28,6 @@ import {
   createEvents,
   createDataFromCSV,
   getOrganizations,
-  createFieldManagerDataFromCSV,
 } from "./logic/actions";
 import { IEventState, IOrganizationState } from "./logic/reducer";
 import { IIconFile } from "./logic/model";
@@ -73,7 +72,6 @@ type State = {
   isDeleteModalOpen: boolean;
   isCsvLoaderOpen: boolean;
   isDataLoaderOpen: boolean;
-  isFieldManagerCsvLoaderOpen: boolean;
   isSectionsExpand: boolean;
   changesAreMade: boolean;
   warningModalOpen: boolean;
@@ -89,7 +87,6 @@ class EventDetails extends Component<Props, State> {
     isDeleteModalOpen: false,
     isCsvLoaderOpen: false,
     isDataLoaderOpen: false,
-    isFieldManagerCsvLoaderOpen: false,
     isSectionsExpand: false,
     changesAreMade: false,
     warningModalOpen: false,
@@ -242,10 +239,6 @@ class EventDetails extends Component<Props, State> {
 
   onCsvLoaderClose = () => this.setState({ isCsvLoaderOpen: false });
 
-  onOpenFieldManagerCsvLoader = () => this.setState({ isFieldManagerCsvLoaderOpen: true });
-
-  onCloseFieldManagerCsvLoader = () => this.setState({ isFieldManagerCsvLoaderOpen: false });
-
   onDataLoaderBtn = () => this.setState({ isDataLoaderOpen: true });
 
   onDataLoaderClose = () => this.setState({ isDataLoaderOpen: false });
@@ -290,7 +283,6 @@ class EventDetails extends Component<Props, State> {
       event,
       isCsvLoaderOpen,
       isDataLoaderOpen,
-      isFieldManagerCsvLoaderOpen,
       isDeleteModalOpen,
       isModalOpen,
       isSectionsExpand,
@@ -372,7 +364,6 @@ class EventDetails extends Component<Props, State> {
           eventData={commonChildProps.eventData}
           onChange={this.onChange}
           isSectionExpand={isSectionsExpand}
-          onCsvLoaderBtn={this.onOpenFieldManagerCsvLoader}
         />
         <DeletePopupConfrim
           type={"event"}
@@ -408,12 +399,6 @@ class EventDetails extends Component<Props, State> {
           onCreate={createDataFromCSV}
           eventId={event_id!}
         />
-        <CsvLoader
-          type="sms_authorized_scorers"
-          isOpen={isFieldManagerCsvLoaderOpen}
-          onClose={this.onCloseFieldManagerCsvLoader}
-          onCreate={createFieldManagerDataFromCSV}
-        />
       </div>
     );
   }
@@ -443,7 +428,6 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       createEvents,
       createDataFromCSV,
       addEntityToLibrary,
-      createFieldManagerDataFromCSV,
     },
     dispatch
   );

@@ -4,22 +4,26 @@ import { IBracketGame } from "components/playoffs/bracketGames";
 import { orderBy } from "lodash-es";
 import { MatrixTableDropEnum } from "components/common/matrix-table/dnd/drop";
 import BracketGameCard from "components/playoffs/dnd/bracket-game";
+import CustomBracketGameCard from "components/playoffs/dnd/custom-bracket-game";
 import { IDivision, IPool } from "common/models";
 import { IGame } from "components/common/matrix-table/helper";
 import styles from "./styles.module.scss";
+import { ITeamCard } from "../../../../../common/models/schedule/teams";
 
 interface IProps {
+  isCustomMode: number | null;
   acceptType: string;
   bracketGames: IBracketGame[];
   divisions: IDivision[];
   pools?: IPool[];
+  teamCards?: ITeamCard[];
   filteredGames: IGame[];
   onDrop: (dropParams: any) => void;
   setHighlightedGame: (gameId: number) => void;
 }
 
 export default (props: IProps) => {
-  const { bracketGames, acceptType, pools } = props;
+  const { isCustomMode, bracketGames, acceptType, pools, teamCards } = props;
   const [{ isOver }, drop] = useDrop({
     accept: acceptType,
     drop: (item: any) => {
@@ -53,7 +57,7 @@ export default (props: IProps) => {
     (item: IBracketGame) => !item.hidden && item.fieldId && item.startTime
   );
 
-  const params = ["round", "divisionName", "poolName", "index"];
+  const params = ["divisionName", "poolName", "round", "index"];
   const orderedUnassignedBracketGames = orderBy(unassignedBracketGames, params);
 
   const orderedBracketGames = orderBy(currentBracketGames, params);
@@ -73,6 +77,22 @@ export default (props: IProps) => {
         item.fieldId === bracketGame.fieldId &&
         item.startTime === bracketGame.startTime
     );
+
+    if (isCustomMode) {
+      return (
+        <CustomBracketGameCard
+          key={`${index}-renderGame`}
+          game={bracketGame}
+          gameSlotId={game?.id}
+          divisionHex={divisionHex!}
+          poolHex={poolHex!}
+          poolName={poolName!}
+          teamCards={teamCards!}
+          type={MatrixTableDropEnum.BracketDrop}
+          setHighlightedGame={props.setHighlightedGame}
+        />
+      );
+    }
 
     return (
       <BracketGameCard

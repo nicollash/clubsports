@@ -123,7 +123,7 @@ const SectionGames = ({ event }: Props) => {
         : [];
       const bracketGames = publishedBracket
         ? ((await Api.get(
-            `/brackets_details?bracket_id=${publishedBracket.bracket_id}`
+            `/v_brackets_details?bracket_id=${publishedBracket.bracket_id}`
           )) as IPlayoffGame[])
         : [];
 

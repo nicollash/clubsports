@@ -48,12 +48,9 @@ class AddDivisionForm extends React.Component<
   state = { hasUniqueGameDurations: false, hasMessage: true };
 
   componentDidMount() {
-    if(this.props.event?.sport_id === 1 || this.props.event?.sport_id === 3) {
-      this.props.onChange('gender_id', 1, this.props.index);
-    }
-    if(this.props.event?.sport_id === 2 || this.props.event?.sport_id === 4) {
-      this.props.onChange('gender_id', 2, this.props.index);
-    }
+    this.props.event?.sport_id !== 2 && this.props.event?.sport_id !== 5
+      ? this.props.onChange("gender_id", 1, this.props.index)
+      : this.props.onChange("gender_id", 2, this.props.index);
   };
 
   onLongNameChange = (e: InputTargetValue) =>
@@ -158,16 +155,16 @@ class AddDivisionForm extends React.Component<
         }))
       : [];
 
-    const isSelectGender = this.props.event &&
-                            (this.props.event?.sport_id === 5 || this.props.event?.sport_id === 6)
-                              ? true
-                              : false;
+    const isSelectGender = Boolean(
+      this.props.event?.sport_id === 3 || this.props.event?.sport_id === 6
+    );
 
-    const defaultGender = !this.props.event ||
-                   this.props.event?.sport_id === 1 || 
-                   this.props.event?.sport_id === 3
-                    ? "Male"
-                    : "Female";
+    const defaultGender =
+      this.props.event?.sport_id === 3 || this.props.event?.sport_id === 6
+        ? ""
+        : this.props.event?.sport_id !== 2 && this.props.event?.sport_id !== 5
+        ? "Male"
+        : "Female";
 
     return (
       <div className={styles.sectionContainer}>

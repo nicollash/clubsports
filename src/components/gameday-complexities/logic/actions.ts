@@ -351,7 +351,7 @@ export const cancelGames = (
 
     const bracketGames = publishedBraket
       ? ((await api.get(
-          `/brackets_details?bracket_id=${publishedBraket.bracket_id}`
+          `/v_brackets_details?bracket_id=${publishedBraket.bracket_id}`
         )) as IPlayoffGame[])
       : [];
 
@@ -442,7 +442,7 @@ export const modifyGameTimeSlots = (backUp: IBackupPlan) => async (
 
     const bracketGames = publishedBraket
       ? ((await api.get(
-          `/brackets_details?bracket_id=${publishedBraket.bracket_id}`
+          `/v_brackets_details?bracket_id=${publishedBraket.bracket_id}`
         )) as IPlayoffGame[])
       : [];
 

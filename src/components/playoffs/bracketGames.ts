@@ -42,6 +42,28 @@ export interface IBracketGame {
   createDate: string;
   poolId?: string;
   poolName?: string;
+  // rendering
+  xLeft?: number;
+  yTop?: number;
+  xWidth?: number;
+  yHeight?: number;
+  gameNum?: number;
+  direction?: bracketDirectionEnum;
+  // custom playoff
+  homeSourceType?: bracketSourceTypeEnum;
+  homeSourceId?: string;
+  homeSourceValue?: string;
+  awaySourceType?: bracketSourceTypeEnum;
+  awaySourceId?: string;
+  awaySourceValue?: string;
+  isChecked?: boolean;
+  connectedBrackets?: IBracketConnector[];
+}
+
+export interface IAdvancedGame extends IBracketGame {
+  isChecked: boolean;
+  x: number;
+  y: number;
 }
 
 export interface IBracketSeed {
@@ -51,6 +73,29 @@ export interface IBracketSeed {
   teamName?: string;
   divisionId?: string;
   poolId?: string;
+}
+
+export interface IBracketConnector {
+  direction: bracketDirectionEnum;
+  id: string;
+  index: number;
+  y: number;
+  x: number;
+}
+
+export enum bracketDirectionEnum {
+  "Left" = "Left",
+  "Right" = "Right",
+  "Both" = "Both",
+}
+
+export enum bracketSourceTypeEnum {
+  "Bye" = "Bye",
+  "Winner" = "Winner",
+  "Loser" = "Loser",
+  "Division" = "Division",
+  "Pool" = "Pool",
+  "Team" = "Team",
 }
 
 interface IFacilityData {
@@ -163,10 +208,22 @@ export const advanceBracketGamesWithTeams = (
 ) => {
   return bracketGames.map((item) => {
     const foundAwaySeed = seeds[item.divisionId].find(
-      (v) => v.id === item.awaySeedId
+      (v) =>
+        v.id ===
+        (item.awaySeedId ||
+          (item.awaySourceType === bracketSourceTypeEnum.Division ||
+          item.awaySourceType === bracketSourceTypeEnum.Pool
+            ? +(item.awaySourceValue || 0)
+            : false))
     );
     const foundHomeSeed = seeds[item.divisionId].find(
-      (v) => v.id === item.homeSeedId
+      (v) =>
+        v.id ===
+        (item.homeSeedId ||
+          (item.homeSourceType === bracketSourceTypeEnum.Division ||
+          item.homeSourceType === bracketSourceTypeEnum.Pool
+            ? +(item.homeSourceValue || 0)
+            : false))
     );
 
     return {
@@ -238,6 +295,8 @@ export const rearrangeSeedForGames = (
 
     games[gameIndex].awaySeedId = first?.id;
     games[gameIndex].homeSeedId = last?.id;
+    games[gameIndex].awaySourceValue = first?.id.toString();
+    games[gameIndex].homeSourceValue = last?.id.toString();
 
     seeds[seeds.length - (i + 1)] = undefined!;
     preSeeds.shift();
@@ -255,6 +314,8 @@ export const rearrangeSeedForGames = (
 
     games[gameIndex].awaySeedId = first?.id;
     games[gameIndex].homeSeedId = last?.id;
+    games[gameIndex].awaySourceValue = first?.id.toString();
+    games[gameIndex].homeSourceValue = last?.id.toString();
 
     seeds.shift();
     seeds.pop();
@@ -291,22 +352,41 @@ const generateGamesArray = (
   const numberOfPreGames = minNumberOfGames - maxPowerOfTwo;
   const firstRoundGamesNum = maxPowerOfTwo / 2;
   const localGamesLength = minNumberOfGames - 1 || 0;
+  let round = 0;
+  let roundCount = 0;
+  const width = 280;
+  const height = 120;
 
   const localGames = [
     ...Array(localGamesLength > 0 ? localGamesLength : parent?.length),
-  ].map((_, index) => ({
-    id: getVarcharEight(),
-    index: index + 1,
-    gridNum: 1,
-    round: getRoundBy(index, numberOfPreGames, firstRoundGamesNum),
-    awayDisplayName: `Away ${division.short_name}`,
-    homeDisplayName: `Home ${division.short_name}`,
-    divisionName: division.short_name,
-    divisionId: division.division_id,
-    poolId,
-    createDate: new Date().toISOString(),
-    isCancelled: false,
-  }));
+  ].map((_, index) => {
+    const curRound = getRoundBy(index, numberOfPreGames, firstRoundGamesNum);
+    if (curRound !== round) {
+      round = curRound;
+      roundCount = 0;
+    } else roundCount++;
+
+    return {
+      id: getVarcharEight(),
+      index: index + 1,
+      gridNum: 1,
+      round,
+      awayDisplayName: `Away ${division.short_name}`,
+      homeDisplayName: `Home ${division.short_name}`,
+      divisionName: division.short_name,
+      divisionId: division.division_id,
+      poolId,
+      createDate: new Date().toISOString(),
+      isCancelled: false,
+      homeSourceType: bracketSourceTypeEnum.Division,
+      awaySourceType: bracketSourceTypeEnum.Division,
+      xLeft: 20 + round * width,
+      yTop: (roundCount - 1) * (height * 1.5),
+      xWidth: width,
+      yHeight: height,
+      direction: bracketDirectionEnum.Right,
+    } as IBracketGame;
+  });
 
   return rearrangeSeedForGames(minNumberOfGames, localGames);
 };
@@ -329,7 +409,6 @@ export const createBracketGames = (
       games.push(generateGamesArray(division.teams, bracketTeamsNum, division));
     }
   });
-
   return games.flat();
 };
 

@@ -10,6 +10,10 @@ interface Props {
 export const InsertFormFieldButton = ({ formName, insertFormField }: Props) => {
 
   const onClick = () => {
+    if (formName === "Download app link") {
+      insertFormField(` https://bit.ly/clublaxapp `);
+      return;
+    }
     insertFormField(`{{${formName}}}`);
   };
 

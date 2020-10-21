@@ -9,7 +9,7 @@ import {
   TableBody,
   TableFooter,
 } from "@material-ui/core";
-import { CardMessageTypes } from 'components/common/card-message/types';
+import { CardMessageTypes } from "components/common/card-message/types";
 import {
   SectionDropdown,
   HeadingLevelThree,
@@ -18,36 +18,33 @@ import {
   Input,
   Button,
 } from "components/common";
+import CsvLoader from "components/common/csv-loader";
 import { getIcon } from "helpers/get-icon.helper";
-import { EventMenuTitles, Icons, ButtonVariant, ButtonColors } from "common/enums";
+import {
+  EventMenuTitles,
+  Icons,
+  ButtonVariant,
+  ButtonColors,
+} from "common/enums";
 import Api from "api/api";
-import { IEventDetails } from "common/models";
-import { BindingAction } from 'common/models';
+import { createReporterFromCSV } from "../logic/actions";
+import { IEventDetails, IReporter } from "common/models";
 
 import styles from "../styles.module.scss";
 
 interface IProps {
   isSectionExpand: boolean;
   onChange: any;
-  onCsvLoaderBtn: BindingAction;
   eventData: Partial<IEventDetails>;
-}
-
-export interface AuthorizedReporter {
-  sms_scorer_id: string;
-  event_id: string;
-  first_name: string;
-  last_name: string;
-  mobile: string;
-  is_active_YN: boolean;
 }
 
 type InputTargetValue = React.ChangeEvent<HTMLInputElement>;
 
 const GameDayScoring: React.FC<IProps> = (props) => {
-  const { isSectionExpand, eventData, onChange, onCsvLoaderBtn } = props;
+  const { isSectionExpand, eventData, onChange } = props;
   const [isEditing, setEditing] = useState(-1);
-  const [reporters, setReporters] = useState<AuthorizedReporter[]>([]);
+  const [reporters, setReporters] = useState<IReporter[]>([]);
+  const [isReporterCsvLoaderOpen, setReporterCsvLoader] = useState(false);
 
   useEffect(() => {
     getScoring();
@@ -61,13 +58,13 @@ const GameDayScoring: React.FC<IProps> = (props) => {
           Boolean(eventData.sms_scoring_YN) &&
           (!response || response.length === 0)
         ) {
-          const newReporter: AuthorizedReporter = {
+          const newReporter: IReporter = {
             sms_scorer_id: "",
             event_id: eventData.event_id ? eventData.event_id : "",
             first_name: "",
             last_name: "",
             mobile: "",
-            is_active_YN: false,
+            is_active_YN: 0,
           };
           const newReporters = [newReporter];
           setEditing(0);
@@ -79,10 +76,39 @@ const GameDayScoring: React.FC<IProps> = (props) => {
     );
   };
 
-  const handleChange = (
-    evt: InputTargetValue,
-    reporter: AuthorizedReporter
+  const onCreateScorers = async (
+    dataToSave: any,
+    importMethod: string,
+    cb: (param?: object) => void
   ) => {
+    if (importMethod === "replace") {
+      let progress = 0;
+      for await (const reporter of reporters) {
+        await handleDeleteReporter(reporter);
+
+        progress += 1;
+
+        if (cb) {
+          cb({
+            type: "progress",
+            data: [
+              {
+                status: "Deleting Existing Reporters...",
+                msg: `${progress / reporters.length}`,
+              },
+            ],
+          });
+        }
+      }
+    }
+    if (eventData) {
+      await createReporterFromCSV(dataToSave, eventData, cb);
+      getScoring();
+      setEditing(-1);
+    }
+  };
+
+  const handleChange = (evt: InputTargetValue, reporter: IReporter) => {
     const newReporter = {
       ...reporter,
       [evt.target.name]: evt.target.value,
@@ -100,7 +126,7 @@ const GameDayScoring: React.FC<IProps> = (props) => {
     setReporters(newReporters);
   };
 
-  const onPhoneChange = (phoneNumber: string, reporter: AuthorizedReporter) => {
+  const onPhoneChange = (phoneNumber: string, reporter: IReporter) => {
     const newReporter = {
       ...reporter,
       mobile: phoneNumber,
@@ -118,23 +144,26 @@ const GameDayScoring: React.FC<IProps> = (props) => {
     setReporters(newReporters);
   };
 
-  const handleDeleteReporter = (reporter: AuthorizedReporter) => {
-    Api.delete(
-      `/sms_authorized_scorers?sms_scorer_id=${reporter.sms_scorer_id}`
-    ).then(() => {
+  const handleDeleteReporter = async (reporter: IReporter) => {
+    try {
+      await Api.delete(
+        `/sms_authorized_scorers?sms_scorer_id=${reporter.sms_scorer_id}`
+      );
       getScoring();
       setEditing(-1);
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const addNewReporter = () => {
-    const newReporter: AuthorizedReporter = {
+    const newReporter: IReporter = {
       sms_scorer_id: "",
       event_id: eventData.event_id ? eventData.event_id : "",
       first_name: "",
       last_name: "",
       mobile: "",
-      is_active_YN: false,
+      is_active_YN: 0,
     };
     const newReporters = [...reporters, newReporter];
     setEditing(newReporters.length - 1);
@@ -147,7 +176,7 @@ const GameDayScoring: React.FC<IProps> = (props) => {
     setReporters(newReporters);
   };
 
-  const onSaveEdit = (reporter: AuthorizedReporter) => {
+  const onSaveEdit = (reporter: IReporter) => {
     if (!reporter.sms_scorer_id) {
       const newData = {
         event_id: reporter.event_id,
@@ -201,184 +230,202 @@ const GameDayScoring: React.FC<IProps> = (props) => {
     marginBottom: 30,
     width: "100%",
   };
+  const onOpenReporterCsvLoader = () => setReporterCsvLoader(true);
 
+  const onCloseReporterCsvLoader = () => setReporterCsvLoader(false);
   return (
-    <SectionDropdown
-      id={EventMenuTitles.GAME_DAY_SCORING}
-      type="section"
-      panelDetailsType="flat"
-      useShadow={true}
-      expanded={isSectionExpand}
-    >
-      <HeadingLevelThree>
-        <span className={styles.blockHeading}>Field Manager Management</span>
-      </HeadingLevelThree>
-      <div>
-        <div style={{ display: "flex", justifyContent: "space-between", width: '100%' }}>
-          <CardMessage
+    <>
+      <SectionDropdown
+        id={EventMenuTitles.GAME_DAY_SCORING}
+        type="section"
+        panelDetailsType="flat"
+        useShadow={true}
+        expanded={isSectionExpand}
+      >
+        <HeadingLevelThree>
+          <span className={styles.blockHeading}>Field Manager Management</span>
+        </HeadingLevelThree>
+        <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <CardMessage
               style={CARD_MESSAGE_STYLES}
               type={CardMessageTypes.EMODJI_OBJECTS}
             >
-              Enable two way transactional texting with your team! Authorizing them to txt final scores is faster, more efficient, and has fewer errors.
+              Enable two way transactional texting with your team! Authorizing
+              them to txt final scores is faster, more efficient, and has fewer
+              errors.
             </CardMessage>
-          <div style={{ marginTop: '-8px', width: 170 }} >
-            <Button
-                onClick={onCsvLoaderBtn}
+            <div style={{ marginTop: "-8px", width: 170 }}>
+              <Button
+                onClick={onOpenReporterCsvLoader}
                 variant={ButtonVariant.TEXT}
-                color={ButtonColors.SECONDARY}              
+                color={ButtonColors.SECONDARY}
                 label="Import from CSV"
               />
             </div>
           </div>
 
-        <div className={styles.gdscoringDetails}>
-          <div className={styles.heading}>
-            <a
-              href="https://tourneymaster.s3.amazonaws.com/public/Quickstarts/Tourney+Master+SMS+Scoring+Quick+Start+Guide.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Quickstart Guide to SMS Scoring
-            </a>
+          <div className={styles.gdscoringDetails}>
+            <div className={styles.heading}>
+              <a
+                href="https://tourneymaster.s3.amazonaws.com/public/Quickstarts/Tourney+Master+SMS+Scoring+Quick+Start+Guide.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Quickstart Guide to SMS Scoring
+              </a>
+            </div>
           </div>
-        </div>
 
-        <Checkbox
-          options={[
-            {
-              label: "Enable Field Manager Management and SMS Scoring",
-              checked: Boolean(eventData.sms_scoring_YN),
-            },
-          ]}
-          onChange={onSMSScoring}
-        />
-        {Boolean(eventData.sms_scoring_YN) && (
-          <div className={styles.authorizedReports}>
-            <span className={styles.authorizedReportsHeader}>
-              Authorized Reporters
-            </span>
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>First Name</TableCell>
-                    <TableCell>Last Name</TableCell>
-                    <TableCell>Phone #</TableCell>
-                    <TableCell />
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {reporters?.length > 0 &&
-                    reporters?.map((reporter, index) => (
-                      <TableRow key={reporter.sms_scorer_id}>
-                        <TableCell>
-                          <Input
-                            fullWidth={true}
-                            name="first_name"
-                            placeholder="Enter First Name"
-                            disabled={isEditing !== index}
-                            value={reporter.first_name}
-                            onChange={(evt: InputTargetValue) =>
-                              handleChange(evt, reporter)
-                            }
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            fullWidth={true}
-                            name="last_name"
-                            placeholder="Enter Last Name"
-                            disabled={isEditing !== index}
-                            value={reporter.last_name}
-                            onChange={(evt: InputTargetValue) =>
-                              handleChange(evt, reporter)
-                            }
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <PhoneInput
-                            country={"us"}
-                            onlyCountries={["us", "ca"]}
-                            placeholder="Mobile is required"
-                            enableAreaCodes={true}
-                            disabled={isEditing !== index}
-                            disableCountryCode={true}
-                            value={reporter.mobile}
-                            onChange={(value: string) =>
-                              onPhoneChange(value, reporter)
-                            }
-                            inputStyle={{
-                              height: "42px",
-                              fontSize: "18px",
-                              color: "#6a6a6a",
-                              borderRadius: "4px",
-                              width: "100%",
-                            }}
-                            inputClass={styles.phoneInput}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <div style={{ display: "flex" }}>
-                            {isEditing !== index ? (
-                              <Button
-                                btnStyles={{ minWidth: 0 }}
-                                icon={getIcon(Icons.EDIT)}
-                                variant="text"
-                                type="icon"
-                                label=""
-                                color="default"
-                                onClick={() => setEditing(index)}
-                              />
-                            ) : (
-                              <Button
-                                btnStyles={{ minWidth: 0 }}
-                                icon={getIcon(Icons.SAVE)}
-                                variant="text"
-                                type="icon"
-                                label=""
-                                color="default"
-                                onClick={() => onSaveEdit(reporter)}
-                              />
-                            )}
-                            <Button
-                              btnStyles={{ minWidth: 0 }}
-                              icon={getIcon(Icons.DELETE)}
-                              variant="text"
-                              type="icon"
-                              label=""
-                              color="default"
-                              onClick={() => handleDeleteReporter(reporter)}
+          <Checkbox
+            options={[
+              {
+                label: "Enable Field Manager Management and SMS Scoring",
+                checked: Boolean(eventData.sms_scoring_YN),
+              },
+            ]}
+            onChange={onSMSScoring}
+          />
+          {Boolean(eventData.sms_scoring_YN) && (
+            <div className={styles.authorizedReports}>
+              <span className={styles.authorizedReportsHeader}>
+                Authorized Reporters
+              </span>
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>First Name</TableCell>
+                      <TableCell>Last Name</TableCell>
+                      <TableCell>Phone #</TableCell>
+                      <TableCell />
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {reporters?.length > 0 &&
+                      reporters?.map((reporter, index) => (
+                        <TableRow key={reporter.sms_scorer_id}>
+                          <TableCell>
+                            <Input
+                              fullWidth={true}
+                              name="first_name"
+                              placeholder="Enter First Name"
+                              disabled={isEditing !== index}
+                              value={reporter.first_name || ""}
+                              onChange={(evt: InputTargetValue) =>
+                                handleChange(evt, reporter)
+                              }
                             />
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={1}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        disabled={!isFilledPrevForms || isEditing !== -1}
-                        label="Add Another Scorer"
-                        btnStyles={{
-                          width: "fit-content",
-                        }}
-                        onClick={addNewReporter}
-                      />
-                    </TableCell>
-                    <TableCell />
-                    <TableCell />
-                    <TableCell />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </TableContainer>
-          </div>
-        )}
-      </div>
-    </SectionDropdown>
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              fullWidth={true}
+                              name="last_name"
+                              placeholder="Enter Last Name"
+                              disabled={isEditing !== index}
+                              value={reporter.last_name || ""}
+                              onChange={(evt: InputTargetValue) =>
+                                handleChange(evt, reporter)
+                              }
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <PhoneInput
+                              country={"us"}
+                              onlyCountries={["us", "ca"]}
+                              placeholder="Mobile is required"
+                              enableAreaCodes={true}
+                              disabled={isEditing !== index}
+                              disableCountryCode={true}
+                              value={reporter.mobile || ""}
+                              onChange={(value: string) =>
+                                onPhoneChange(value, reporter)
+                              }
+                              inputStyle={{
+                                height: "42px",
+                                fontSize: "18px",
+                                color: "#6a6a6a",
+                                borderRadius: "4px",
+                                width: "100%",
+                              }}
+                              inputClass={styles.phoneInput}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <div style={{ display: "flex" }}>
+                              {isEditing !== index ? (
+                                <Button
+                                  btnStyles={{ minWidth: 0 }}
+                                  icon={getIcon(Icons.EDIT)}
+                                  variant="text"
+                                  type="icon"
+                                  label=""
+                                  color="default"
+                                  onClick={() => setEditing(index)}
+                                />
+                              ) : (
+                                <Button
+                                  btnStyles={{ minWidth: 0 }}
+                                  icon={getIcon(Icons.SAVE)}
+                                  variant="text"
+                                  type="icon"
+                                  label=""
+                                  color="default"
+                                  onClick={() => onSaveEdit(reporter)}
+                                />
+                              )}
+                              <Button
+                                btnStyles={{ minWidth: 0 }}
+                                icon={getIcon(Icons.DELETE)}
+                                variant="text"
+                                type="icon"
+                                label=""
+                                color="default"
+                                onClick={() => handleDeleteReporter(reporter)}
+                              />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={1}>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          disabled={!isFilledPrevForms || isEditing !== -1}
+                          label="Add Another Scorer"
+                          btnStyles={{
+                            width: "fit-content",
+                          }}
+                          onClick={addNewReporter}
+                        />
+                      </TableCell>
+                      <TableCell />
+                      <TableCell />
+                      <TableCell />
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </TableContainer>
+            </div>
+          )}
+        </div>
+      </SectionDropdown>
+      <CsvLoader
+        type="sms_authorized_scorers"
+        isOpen={isReporterCsvLoaderOpen}
+        onClose={onCloseReporterCsvLoader}
+        onCreate={onCreateScorers}
+      />
+    </>
   );
 };
 

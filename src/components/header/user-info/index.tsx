@@ -26,8 +26,7 @@ const UserInfo: React.FC = () => {
   const [username, setUsername] = useState("");
   useEffect(() => {
     getUserInfo().then((userInfo) => {
-      console.log("userInfo: ", userInfo);
-      setUsername(userInfo.attributes.name);
+      setUsername(userInfo.attributes?.name);
     });
   }, []);
 

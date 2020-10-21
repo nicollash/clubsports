@@ -7,11 +7,22 @@ import styles from "./styles.module.scss";
 import { IInputEvent } from "common/types";
 import { IBracketGame } from "../bracketGames";
 
+export interface IBracketSize {
+  xLeft: number;
+  xWidth: number;
+  yTop: number;
+  yHeight: number;
+  id?: number;
+}
+
 export interface IOnAddGame {
   awayDependsUpon: string;
   homeDependsUpon: string;
   gridNum: number;
   isWinner: boolean;
+  divisionName?: string;
+  size?: IBracketSize;
+  isChecked?: boolean;
 }
 
 interface Props {
@@ -158,7 +169,7 @@ const AddGameModal = ({
     onAddGame({
       awayDependsUpon: String(Math.abs(awaySourceSelectedNum)),
       homeDependsUpon: String(Math.abs(homeSourceSelectedNum)),
-      gridNum,
+      gridNum: gridNum || 1,
       isWinner,
     });
   };

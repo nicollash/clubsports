@@ -4,6 +4,10 @@ import { ITeamCard } from "common/models/schedule/teams";
 import ITimeSlot from "common/models/schedule/timeSlots";
 import { dateToShortString } from "../../../helpers";
 import { GameType } from "./dnd/drop";
+import {
+  bracketSourceTypeEnum,
+  IBracketGame,
+} from "components/playoffs/bracketGames";
 
 export enum TeamPositionEnum {
   "awayTeam" = 1,
@@ -42,6 +46,13 @@ export interface IGame {
   scheduleVersionId?: string;
   createDate?: string;
   isCancelled?: boolean;
+  // custom playoff
+  homeSourceType?: bracketSourceTypeEnum;
+  homeSourceId?: string;
+  homeSourceValue?: string;
+  awaySourceType?: bracketSourceTypeEnum;
+  awaySourceId?: string;
+  awaySourceValue?: string;
   //
   awayTeamScore?: number;
   homeTeamScore?: number;
@@ -175,6 +186,7 @@ export const settleTeamsPerGames = (
   if (days?.length && selectedDay) {
     return games.map((game: IGame) => ({
       ...game,
+      bracketGameId: game.bracketGameId,
       gameDate: days[+selectedDay - 1],
       awayTeam: teamCards.find((team: ITeamCard) =>
         team.games?.find(
@@ -284,4 +296,30 @@ export const getContrastingColor = (color?: string) => {
     return luminance >= 123 ? "#000" : "#FFF";
   }
   return "#FFF";
+};
+
+export const mapBracketGameToGame = (
+  games: IGame[],
+  bracketGames: IBracketGame[]
+) => {
+  return games.map((game: IGame) => {
+    const addedGame = bracketGames.find(
+      (bracketGame: IBracketGame) =>
+        bracketGame.fieldId === game.fieldId &&
+        game.startTime === bracketGame.startTime &&
+        game.gameDate === bracketGame.gameDate
+    );
+    if (addedGame) {
+      return {
+        ...game,
+        awaySourceType: addedGame.awaySourceType,
+        homeSourceType: addedGame.homeSourceType,
+        awaySourceId: addedGame.awaySourceId,
+        homeSourceId: addedGame.homeSourceId,
+        awaySourceValue: addedGame.awaySourceValue,
+        homeSourceValue: addedGame.homeSourceValue,
+      };
+    }
+    return game;
+  });
 };

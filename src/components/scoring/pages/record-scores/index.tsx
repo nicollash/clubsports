@@ -31,6 +31,7 @@ import {
   IFetchedBracket,
   BindingCbWithTwo,
   IChangedGame,
+  IBracket,
 } from "common/models";
 import {
   retrieveBracketsGames,
@@ -105,6 +106,7 @@ interface Props {
   isLoaded: boolean;
   savingInProgress: boolean;
   event: IEventDetails | null;
+  bracket: IBracket | null;
   facilities: IFacility[];
   fields: IField[];
   divisions: IDivision[];
@@ -479,6 +481,7 @@ class RecordScores extends React.Component<
       savingInProgress,
       divisions,
       event,
+      bracket,
       eventSummary,
       pools,
       schedule,
@@ -558,6 +561,7 @@ class RecordScores extends React.Component<
               <TableSchedule
                 tableType={TableScheduleTypes.SCORES}
                 event={event!}
+                bracket={bracket!}
                 fields={fields!}
                 games={games!}
                 matchups={[]}
@@ -625,6 +629,7 @@ export default connect(
     isLoading: recordScores.isLoading,
     isLoaded: recordScores.isLoaded,
     event: recordScores.event,
+    bracket: mapFetchedBracket(pageEvent.tournamentData.brackets[0]),
     facilities: recordScores.facilities,
     fields: recordScores.fields,
     divisions: recordScores.divisions,

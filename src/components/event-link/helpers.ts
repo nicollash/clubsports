@@ -3,7 +3,7 @@ import { IPool, IDivision, ITeam } from 'common/models';
 import { IMultiSelectOption } from 'components/common/multi-select';
 import { findIndex, find } from 'lodash-es';
 import { IResponse } from ".";
-import { IRecipientDetails } from "./create-message";
+import { IPollOption, IRecipientDetails } from "./create-message";
 import { IScheduleFilter } from "./create-message/filter";
 
 export enum Type {
@@ -39,6 +39,7 @@ export const recipientOptions = [Recipient.ONE, Recipient.MANY];
 export const insertFormFieldButtonsLabels = [
   "First Name",
   "Last Name",
+  "Event Name",
   "Division Name",
   "Pool Name",
   "Team Name",
@@ -330,4 +331,27 @@ export const getListOfNames = (
 
 export const refreshMessage = async (messageId: string) => {
   return (await api.get(`/messaging?message_id=${messageId}`)) as IResponse[];
+};
+
+export const mapResponses = (responses: any[], options: any[]) => {
+  return responses.map((mess: any) => {
+    return {
+      recipientTarget: mess.recipient_target,
+      sendDatetime: mess.send_datetime,
+      receivedDatetime: mess.received_datetime,
+      answerText: getAnswerText(mess.answer_option_id, options),
+      messageStatus: mess.message_status,
+      messageId: mess.message_id,
+      statusMessage: mess.status_message,
+    } as IResponse;
+  });
+};
+
+export const getMessageTail = (options: IPollOption[] | undefined) => {
+  let tail = `↵↵Respond:`;
+  return !options
+    ? ""
+    : options.map((option: IPollOption) => {
+        return (tail = tail + `↵${option.answerCode} = ${option.answerText}`);
+      });
 };

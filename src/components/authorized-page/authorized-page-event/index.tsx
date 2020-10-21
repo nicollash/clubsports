@@ -8,6 +8,7 @@ import {
   loadGameCount,
   clearAuthPageData,
   publishEventData,
+  getCountBracketGame,
 } from './logic/actions';
 import { checkUnassignedGames } from "components/scheduling/logic/actions";
 import PopupPublishEvent from './components/popup-publish-event';
@@ -79,6 +80,7 @@ interface Props {
   clearAuthPageData: BindingAction;
   getCalendarEvents: BindingAction;
   updateCalendarEvent: BindingAction;
+  getCountBracketGame: (bracketId: string) => void;
   checkUnassignedGames: (bracketId: string) => void;
   publishEventData: BindingCbWithFour<
     EventPublishTypes,
@@ -106,6 +108,7 @@ const AuthorizedPageEvent = ({
   getCalendarEvents,
   updateCalendarEvent,
   publishEventData,
+  getCountBracketGame,
   checkUnassignedGames,
 }: Props & RouteComponentProps<MatchParams>) => {
   const [isPublishPopupOpen, togglePublishPopup] = React.useState<boolean>(
@@ -287,6 +290,7 @@ const AuthorizedPageEvent = ({
             countUnassignedGames={countUnassignedGames}
             onClose={onTogglePublishPopup}
             publishEventData={publishEventData}
+            getCountBracketGame={getCountBracketGame}
             checkUnassignedGames={checkUnassignedGames}
           />
         </>
@@ -314,6 +318,7 @@ export default connect(
         getCalendarEvents,
         updateCalendarEvent,
         publishEventData,
+        getCountBracketGame,
         checkUnassignedGames,
       },
       dispatch

@@ -5,10 +5,12 @@ import {
   DELETE_MESSAGES_SUCCESS,
   RESPONSES_FETCH_SUCCESS,
   OPTIONS_FETCH_SUCCESS,
-  REFRESH_MESSAGE_SUCCESS,
+  REFRESH_RESPONSE_SUCCESS,
+  MESSAGE_FETCH_SUCCESS,
 } from './actionTypes';
 import { IDivision, IEventDetails, IPool, ITeam } from 'common/models';
 import { IResponse } from "..";
+import { IMessage } from "common/models/event-link";
 
 export interface IState {
   data: {
@@ -18,6 +20,7 @@ export interface IState {
     teams: ITeam[];
   };
   messages: any[];
+  message: IMessage | undefined;
   responses: IResponse[];
   messagesAreLoading: boolean;
 }
@@ -30,6 +33,7 @@ const defaultState: IState = {
     teams: [],
   },
   messages: [],
+  message: undefined,
   messagesAreLoading: true,
   responses: [],
 };
@@ -46,7 +50,13 @@ export default (
       return { ...state, messages: action.payload, messagesAreLoading: false };
     }
     case RESPONSES_FETCH_SUCCESS: {
-      return { ...state, responses: action.payload };
+      if (!action.payload) {
+        return;
+      }
+      const filteredResponses = state.responses.filter(
+        (resp: IResponse) => resp.messageId !== action.payload[0]?.messageId
+      );
+      return { ...state, responses: [...filteredResponses, ...action.payload] };
     }
     case SEND_SAVED_MESSAGES_SUCCESS: {
       const updatedMessagesIds = action.payload.map(
@@ -72,13 +82,19 @@ export default (
     case OPTIONS_FETCH_SUCCESS: {
       return { ...state, options: action.payload };
     }
-    case REFRESH_MESSAGE_SUCCESS: {
-      const updatedResponses = state.responses.map((resp: IResponse) => {
-        return resp.messageId === action.payload.messageId
-          ? action.payload
-          : resp;
-      })
-      return { ...state, responses: updatedResponses };
+    case REFRESH_RESPONSE_SUCCESS: {
+      const updatedResponses = state?.responses.filter(
+        (resp: IResponse) => resp.messageId !== action.payload[0]?.messageId
+      );
+      updatedResponses.push(action.payload);
+      return { ...state, responses: updatedResponses.flat() };
+    }
+    case MESSAGE_FETCH_SUCCESS: {
+      const updatedMessages = state.messages.filter(
+        (mess: IMessage) => mess.message_id !== action.payload.message_id
+      );
+      updatedMessages.push(action.payload);
+      return { ...state, messages: updatedMessages };
     }
     default:
       return state;

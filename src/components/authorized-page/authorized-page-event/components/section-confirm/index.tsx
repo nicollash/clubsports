@@ -30,6 +30,7 @@ interface Props {
   brackets: IFetchedBracket[];
   publishType: EventPublishTypes;
   modifyModValue: EventModifyTypes;
+  countBracketGame: number;
   countUnassignedGames: number | null;
   onClose: BindingAction;
   publishEventData: BindingCbWithFour<
@@ -38,6 +39,7 @@ interface Props {
     IPublishSettings,
     boolean
   >;
+  getCountBracketGame: (bracketId: string) => void;
   checkUnassignedGames: (bracketId: string) => void;
 }
 
@@ -47,8 +49,10 @@ const ConfirmSection = ({
   brackets,
   publishType,
   modifyModValue,
+  countBracketGame,
   countUnassignedGames,
   onClose,
+  getCountBracketGame,
   checkUnassignedGames,
   publishEventData,
 }: Props) => {
@@ -73,6 +77,12 @@ const ConfirmSection = ({
 
   useEffect(()=>{
     onCheckUnassignedGames();
+    if(
+      publishType === EventPublishTypes.DETAILS_AND_TOURNAMENT_PLAY_AND_BRACKETS && 
+      publishSettings.activeBracket
+    ) {
+      getCountBracketGame(publishSettings.activeBracket.bracket_id);
+    }
   }, [publishSettings.activeBracket?.bracket_id]);
 
   const onCheckUnassignedGames = async () => {
@@ -91,7 +101,7 @@ const ConfirmSection = ({
       schedules,
       brackets
     );
-
+    
     changePublishSettings({
       ...publishSettings,
       [name]: settingItem,
@@ -99,13 +109,13 @@ const ConfirmSection = ({
   };
 
   const onCheckStatus = () => {
-    if(
-      countUnassignedGames &&
-      countUnassignedGames > 0 &&
-      modifyModValue === EventModifyTypes.PUBLISH &&
-      ( publishType === EventPublishTypes.DETAILS_AND_TOURNAMENT_PLAY_AND_BRACKETS ||
-        publishType === EventPublishTypes.BRACKETS)
-    ) {
+    if(modifyModValue === EventModifyTypes.PUBLISH &&
+        publishType === EventPublishTypes.DETAILS_AND_TOURNAMENT_PLAY_AND_BRACKETS && (
+          countBracketGame === 0 || 
+          ( countUnassignedGames &&
+          countUnassignedGames > 0)
+        )
+      ) {
       setIsOpenWarningPopup(true);
     } else {
       onPublishEvent();
@@ -130,9 +140,10 @@ const ConfirmSection = ({
 
   const onCloseWarningPopup = () => setIsOpenWarningPopup(false);
 
-  const warningMessage = 
-    `You have ${countUnassignedGames} game(s) that are not assigned to a field or timeslot. 
-    Select to either ignore these games or exit to fix them within the schedule.`
+  const warningMessage = countBracketGame === 0
+    ? `You don't have any games. Select to either ignore or exit to fix them within the schedule.`
+    : `You have ${countUnassignedGames} game(s) that are not assigned to a field or timeslot. 
+      Select to either ignore these games or exit to fix them within the schedule.`
 
   return (
     <>

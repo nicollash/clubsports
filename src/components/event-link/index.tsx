@@ -11,6 +11,8 @@ import {
   getMessages,
   deleteMessages,
   refreshMessage,
+  getResponses,
+  updateMessage,
 } from './logic/actions';
 import { BindingCbWithOne, IDivision, IPool, ITeam } from 'common/models';
 import { IMessage } from 'common/models/event-link';
@@ -46,9 +48,11 @@ interface IProps {
   pools: IPool[];
   teams: ITeam[];
   getMessages: (eventId: string) => void;
+  getResponses: (messageId: string) => void;
   getData: () => void;
   deleteMessages: BindingCbWithOne<string>;
   refreshMessage: (messageId: string) => void;
+  updateMessage: (messageId: string) => void;
   messages: IMessage[];
   messagesAreLoading: boolean;
   responses: IResponse[];
@@ -61,11 +65,13 @@ const EventLink = ({
   responses,
   match,
   getMessages,
+  getResponses,
   messages,
   messagesAreLoading,
   deleteMessages,
   refreshMessage,
   getData,
+  updateMessage,
 }: IProps & RouteComponentProps<MatchParams>) => {
   const eventId = match.params.eventId;
   useEffect(() => {
@@ -98,6 +104,8 @@ const EventLink = ({
           messagesAreLoading={messagesAreLoading}
           deleteMessages={deleteMessages}
           refreshMessage={refreshMessage}
+          getResponses={getResponses}
+          updateMessage={updateMessage}
           responses={responses}
           divisions={divisions}
           pools={pools}
@@ -136,6 +144,8 @@ const mapDispatchToProps = {
   getMessages,
   deleteMessages,
   refreshMessage,
+  getResponses,
+  updateMessage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventLink);

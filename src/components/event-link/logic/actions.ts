@@ -8,7 +8,8 @@ import {
   DELETE_MESSAGES_SUCCESS,
   RESPONSES_FETCH_SUCCESS,
   OPTIONS_FETCH_SUCCESS,
-  REFRESH_MESSAGE_SUCCESS,
+  REFRESH_RESPONSE_SUCCESS,
+  MESSAGE_FETCH_SUCCESS,
 } from './actionTypes';
 import { Toasts } from 'components/common';
 import { IMessageToSend, IPollOption, IRecipientDetails } from '../create-message';
@@ -18,7 +19,7 @@ import { Auth } from 'aws-amplify';
 import { IMember, IEventDetails, IDivision, IPool, ITeam } from 'common/models';
 import { chunk } from 'lodash-es';
 import { IMessage } from 'common/models/event-link';
-import { getAnswerText, sortBySendDatetime } from "../helpers";
+import { getMessageTail, mapResponses, sortBySendDatetime } from "../helpers";
 import { IResponse } from "..";
 
 interface IExtendedMessage extends IMessageToSend {
@@ -48,10 +49,17 @@ export const getMessagesSuccess = (
   payload,
 });
 
-export const refreshMessageSuccess = (
-  payload: IResponse
-): { type: string; payload: IResponse } => ({
-  type: REFRESH_MESSAGE_SUCCESS,
+export const getMessageSuccess = (
+  payload: IMessage
+): { type: string; payload: IMessage } => ({
+  type: MESSAGE_FETCH_SUCCESS,
+  payload,
+});
+
+export const refreshResponsesSuccess = (
+  payload: IResponse[]
+): { type: string; payload: IResponse[] } => ({
+  type: REFRESH_RESPONSE_SUCCESS,
   payload,
 });
 
@@ -133,7 +141,7 @@ export const saveMessages: ActionCreator<ThunkAction<
     member_id: member.member_id,
     message_type: data.type,
     message_title: data.title,
-    message_body: data.message,
+    message_body: data.message + getMessageTail(pollOptions),
     email_from_name: data.senderName,
     event_id: data.eventId,
     recipient_details: JSON.stringify(recipientDetails),
@@ -173,6 +181,12 @@ export const saveMessages: ActionCreator<ThunkAction<
     }
   }
 
+  const startSending = await api.post('/services/start-sending', {});
+
+  if (!startSending.success) {
+    Toasts.errorToast(startSending.message);
+  }
+
   history.push(`/event/event-link/${data.eventId}`);
 
   return Toasts.successToast('Messages are successfully saved.');
@@ -200,8 +214,6 @@ export const getMessages: ActionCreator<ThunkAction<
   const messages = await api.get(
     `/messaging${eventId ? `?event_id=${eventId}` : ``}`
   );
-  const responses = await api.get(`/messaging_recipients`);
-  const options = await api.get(`/messaging_response_options`);
 
   if (!messages) {
     return Toasts.errorToast("We are sorry, but we could not load the messages.");
@@ -209,22 +221,25 @@ export const getMessages: ActionCreator<ThunkAction<
 
   const filterMesssages = sortBySendDatetime(messages);
 
-  const mappedResponses = await Promise.all(
-    responses.map(async (mess: any) => {
-      return {
-        recipientTarget: mess.recipient_target,
-        sendDatetime: mess.send_datetime,
-        receivedDatetime: mess.received_datetime,
-        answerText: getAnswerText(mess.answer_option_id, options),
-        messageStatus: mess.message_status,
-        messageId: mess.message_id,
-        statusMessage: mess.status_message,
-      } as IResponse;
-    })
-  );
-
   dispatch(getMessagesSuccess(filterMesssages));
-  dispatch(getResponsesSuccess(mappedResponses as IResponse[]));
+};
+
+export const getResponses: ActionCreator<ThunkAction<
+  void,
+  {},
+  null,
+  { type: string }
+>> = (messageId: string) => async (dispatch: Dispatch) => {
+  const responses = await api.get(`/messaging_recipients?message_id=${messageId}`);
+  const options = await api.get(`/messaging_response_options?message_id=${messageId}`);
+
+  if (!responses) {
+    return Toasts.errorToast("Couldn't load the responses.");
+  }
+
+  const mappedResponses = mapResponses(responses, options);
+
+  dispatch(getResponsesSuccess(mappedResponses));
 };
 
 export const refreshMessage: ActionCreator<ThunkAction<
@@ -236,21 +251,28 @@ export const refreshMessage: ActionCreator<ThunkAction<
   const options = await api.get(
     `/messaging_response_options?message_id=${messageId}`
   );
-  const newResponse = await api.get(`/messaging?message_id=${messageId}`);
+  const responses = await api.get(`/messaging_recipients?message_id=${messageId}`);
 
-  if (!newResponse) {
+  if (!responses) {
     return Toasts.errorToast("Could not load the responses.");
   }
 
-  dispatch(
-    refreshMessageSuccess({
-      recipientTarget: newResponse.recipient_target,
-      sendDatetime: newResponse.send_datetime,
-      receivedDatetime: newResponse.received_datetime,
-      answerText: getAnswerText(newResponse.answer_option_id, options),
-      messageStatus: newResponse.message_status,
-      messageId: newResponse.message_id,
-      statusMessage: newResponse.status_message,
-    })
-  );
+  const mappedResponses = mapResponses(responses, options);
+
+  dispatch(refreshResponsesSuccess(mappedResponses));
+};
+
+export const updateMessage: ActionCreator<ThunkAction<
+  void,
+  {},
+  null,
+  { type: string }
+>> = (messageId?: string) => async (dispatch: Dispatch) => {
+  const message = await api.get(`/messaging?message_id=${messageId}`);
+
+  if (!message) {
+    return Toasts.errorToast("Couldn't load the message.");
+  }
+
+  dispatch(getMessageSuccess(message[0]));
 };

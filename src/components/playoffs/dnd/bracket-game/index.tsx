@@ -28,7 +28,7 @@ const BracketGameCard = (props: IProps) => {
     awayDependsUpon,
     homeDependsUpon,
   } = game;
-
+  
   const [{ isDragging }, drag] = useDrag({
     item: {
       id,

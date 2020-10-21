@@ -208,7 +208,7 @@ const CollegeCoaches: React.FC<IProps> = (props: IProps) => {
             formLabel=""
             options={[
               {
-                label: "Publicly List the College Coaches Attending",
+                label: "Publicly List the College Coaches Attending On ClubLax.org and TourneyMaster Event Page",
                 checked: Boolean(eventData.track_coaches_YN),
               },
             ]}

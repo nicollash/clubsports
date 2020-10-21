@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
     backgroundColor: "#DCDCFF",
     textIndent: 5,
-    width: '100%',
+    width: "100%",
   },
   teamSlot: {
     marginRight: 3,

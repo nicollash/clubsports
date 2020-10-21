@@ -42,6 +42,7 @@ const RowTeamSlot = ({
   let withinPool = 0;
   let outsidePool = 0;
   let total = 0;
+
   const viewGames = () => {
     const gamesRow = dateGames.map((dateItem: any, index) => {
       let rowsView: any[] = [];

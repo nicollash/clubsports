@@ -1,17 +1,17 @@
-import { ThunkAction } from 'redux-thunk';
-import { ActionCreator, Dispatch } from 'redux';
-import { Auth } from 'aws-amplify';
-import api from 'api/api';
-import { IMember } from 'common/models';
-import { ITableColumns, IMapping } from 'common/models/table-columns';
-import { Toasts } from 'components/common';
+import { ThunkAction } from "redux-thunk";
+import { ActionCreator, Dispatch } from "redux";
+import { Auth } from "aws-amplify";
+import api from "api/api";
+import { IMember } from "common/models";
+import { ITableColumns, IMapping } from "common/models/table-columns";
+import { Toasts } from "components/common";
 import {
   TABLE_COLUMNS_FETCH_SUCCESS,
   MAPPINGS_FETCH_SUCCESS,
   ADD_MAPPING_SUCCESS,
   REMOVE_MAPPING_SUCCESS,
   TableColumnsAction,
-} from './actionTypes';
+} from "./actionTypes";
 
 export const getTableColumnsSuccess = (
   payload: ITableColumns
@@ -62,7 +62,7 @@ export const saveMapping: ActionCreator<ThunkAction<
 
   if (response) {
     dispatch(addMappingsSuccess(data));
-    return Toasts.successToast('Mapping is successfully saved');
+    return Toasts.successToast("Mapping is successfully saved");
   }
 };
 
@@ -103,6 +103,6 @@ export const removeMapping: ActionCreator<ThunkAction<
 
   if (response) {
     dispatch(removeMappingSuccess(mappingId));
-    return Toasts.successToast('Mapping is successfully deleted');
+    return Toasts.successToast("Mapping is successfully deleted");
   }
 };

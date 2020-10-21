@@ -48,7 +48,10 @@ import {
   fillSchedulesTable,
   clearSchedulesTable,
 } from "components/schedules/logic/schedules-table/actions";
-import { fetchScheduleTeamDetails, fetchNormalizedGames } from "components/schedules/logic/actions";
+import {
+  fetchScheduleTeamDetails,
+  fetchNormalizedGames,
+} from "components/schedules/logic/actions";
 import ITimeSlot from "common/models/schedule/timeSlots";
 import { IScheduleFacility } from "common/models/schedule/facilities";
 import { IScheduleDivision } from "common/models/schedule/divisions";

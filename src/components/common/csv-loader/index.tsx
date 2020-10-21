@@ -244,7 +244,12 @@ class CsvLoader extends React.Component<Props, State> {
       dataToSave.push(event);
     });
     this.setState({ importLoading: true, isConfirmModalOpen: false });
-    if (type === "divisions" || type === "players" || type === "teams" || type === "sms_authorized_scorers") {
+    if (
+      type === "divisions" ||
+      type === "players" ||
+      type === "teams" ||
+      type === "sms_authorized_scorers"
+    ) {
       onCreate(dataToSave, importMethod, this.onModalClose);
     } else {
       onCreate(dataToSave, this.onModalClose);
@@ -587,7 +592,7 @@ class CsvLoader extends React.Component<Props, State> {
                 label="Ok"
                 color="secondary"
                 variant="text"
-                onClick={() => this.props.onClose()}
+                onClick={this.onCancel}
               />
             )}
           </div>

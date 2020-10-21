@@ -2,18 +2,9 @@ import { IField } from "common/models/schedule/fields";
 import { IScheduleFacility } from "common/models/schedule/facilities";
 import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 import { IGame } from "components/common/matrix-table/helper";
-import { IDivision } from "common/models";
+import { IDivision, IReporter } from "common/models";
 import { formatPhoneNumber } from "helpers/formatPhoneNumber";
 import api from "api/api";
-
-interface AuthorizedReporter {
-  sms_scorer_id: string;
-  event_id: string;
-  first_name: string;
-  last_name: string;
-  mobile: string;
-  is_active_YN: 0 | 1;
-}
 
 const getFieldsByFacility = (fields: IField[], facility: IScheduleFacility) => {
   const filedsByFacility = fields.filter(
@@ -30,10 +21,12 @@ const getGamesByField = (games: IGame[], field: IField) => {
 };
 
 const getGamesByDivision = (games: IGame[], division: IDivision) => {
-  const gamesByDivision = games.map((game) => {
+  const gamesByDivision = games.map((game: IGame) => {
     if (
-      game.awayTeam?.divisionId === division.division_id &&
-      game.homeTeam?.divisionId === division.division_id
+      (game.divisionId === division.division_id &&
+        (!!game.awaySourceType || !!game.homeSourceType)) ||
+      (game.awayTeam?.divisionId === division.division_id &&
+        game.homeTeam?.divisionId === division.division_id)
     ) {
       return game;
     } else {
@@ -51,7 +44,11 @@ const getGamesByDivision = (games: IGame[], division: IDivision) => {
 
 const isEmptyGames = (games: IGame[]) => {
   const gameEmpties = games.map((game) => {
-    return Boolean(game.awayTeam && game.homeTeam);
+    return Boolean(
+      (game.awayTeam && game.homeTeam) ||
+        !!game.awaySourceType ||
+        !!game.homeSourceType
+    );
   });
 
   return !gameEmpties.includes(true);
@@ -112,7 +109,7 @@ const getDetailsByKey = (details: any[], key: string) => {
 };
 
 const parseJsonGames = (scheduleTeamDetails: IScheduleTeamDetails[]) => {
-  let parsedDetailsList: any[] = [];
+  const parsedDetailsList: any[] = [];
   scheduleTeamDetails.map((detail) => {
     const jsonGames = JSON.parse(detail.json_games);
     delete detail.json_games;
@@ -126,7 +123,7 @@ const parseJsonGames = (scheduleTeamDetails: IScheduleTeamDetails[]) => {
 
 const sortJsonGamesList = (parsedJsonGames: any[]) => {
   let parsedDetailsList: any[] = parsedJsonGames;
-  // console.log('input parsedDetailsList ->', parsedDetailsList) //
+  // console.log('total parsedDetailsList ->', parsedDetailsList) //
   const divisionArrangedDetails = getDetailsByKey(
     parsedDetailsList,
     "division_name"
@@ -137,19 +134,19 @@ const sortJsonGamesList = (parsedJsonGames: any[]) => {
       divisionArrangedDetails[divisionKey],
       "team_name"
     );
-    let teamArrangedList: any[] = [];
+    const teamArrangedList: any[] = [];
     Object.keys(teamArrangedDetails).map((teamKey) => {
       const dateArrangedDetails = getDetailsByKey(
         teamArrangedDetails[teamKey],
         "game_date"
       );
-      let dateArrangedList: any[] = [];
+      const dateArrangedList: any[] = [];
       Object.keys(dateArrangedDetails).map((dateKey) => {
         const timeArrangedDetails = getDetailsByKey(
           dateArrangedDetails[dateKey],
           "game_time"
         );
-        let timeArrangedList: any[] = [];
+        const timeArrangedList: any[] = [];
         Object.keys(timeArrangedDetails).map((timeKey) => {
           const fieldArrangedDetails = getDetailsByKey(
             timeArrangedDetails[timeKey],
@@ -171,7 +168,6 @@ const sortJsonGamesList = (parsedJsonGames: any[]) => {
     newDivisionDetail[divisionKey] = teamArrangedList;
     parsedDetailsList.push(newDivisionDetail);
   });
-
   return parsedDetailsList;
 };
 
@@ -218,10 +214,8 @@ const getTeamCount = (sortJsonGames: any[]): any => {
 const getScorers = async (eventId: string) => {
   const scorers = (await api.get(
     `sms_authorized_scorers?event_id=${eventId}`
-  )) as AuthorizedReporter[];
-  const scorer = scorers?.find(
-    (it: AuthorizedReporter) => it.is_active_YN === 1
-  );
+  )) as IReporter[];
+  const scorer = scorers?.find((it: IReporter) => it.is_active_YN === 1);
   return formatPhoneNumber(scorer?.mobile || "") as string;
 };
 

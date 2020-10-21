@@ -1,9 +1,9 @@
-import { ThunkAction } from 'redux-thunk';
-import { ActionCreator, Dispatch } from 'redux';
-import { Storage } from 'aws-amplify';
-import * as Yup from 'yup';
-import api from 'api/api';
-import { getVarcharEight } from 'helpers';
+import { ThunkAction } from "redux-thunk";
+import { ActionCreator, Dispatch } from "redux";
+import { Storage } from "aws-amplify";
+import * as Yup from "yup";
+import api from "api/api";
+import { getVarcharEight } from "helpers";
 import {
   EVENT_DETAILS_FETCH_START,
   EVENT_DETAILS_FETCH_SUCCESS,
@@ -13,19 +13,20 @@ import {
   ORGANIZATIONS_FETCH_SUCCESS,
   ORGANIZATIONS_FETCH_FAILURE,
   OrganizationsAction,
-} from './actionTypes';
-import { eventDetailsSchema, teamSchema } from 'validations';
-import { IIconFile } from './model';
-import history from 'browserhistory';
-import { ICalendarEvent } from 'common/models/calendar';
-import { Toasts } from 'components/common';
+} from "./actionTypes";
+import { eventDetailsSchema, reporterSchemaCsv } from "validations";
+import { IIconFile } from "./model";
+import history from "browserhistory";
+import { ICalendarEvent } from "common/models/calendar";
+import { Toasts } from "components/common";
 import {
   IDivision,
   IFacility,
   BindingAction,
   IEventDetails,
-} from 'common/models';
-import { registrationUpdateSuccess } from '../../registration/registration-edit/logic/actions';
+  IReporter,
+} from "common/models";
+import { registrationUpdateSuccess } from "../../registration/registration-edit/logic/actions";
 
 export const eventDetailsFetchStart = () => ({
   type: EVENT_DETAILS_FETCH_START,
@@ -65,8 +66,7 @@ export const getOrganizations: ActionCreator<ThunkAction<
 >> = () => async (dispatch: Dispatch) => {
   dispatch(organizationsFetchStart());
 
-  const organizations = await api.get('/organizations');
-
+  const organizations = await api.get("/organizations");
 
   if (organizations) {
     dispatch(organizationsFetchSuccess(organizations));
@@ -83,7 +83,7 @@ export const getEventDetails: ActionCreator<ThunkAction<
 >> = (eventId: string) => async (dispatch: Dispatch) => {
   dispatch(eventDetailsFetchStart());
 
-  const eventDetails = await api.get('/events', { event_id: eventId });
+  const eventDetails = await api.get("/events", { event_id: eventId });
 
   if (eventDetails) {
     dispatch(eventDetailsFetchSuccess(eventDetails));
@@ -106,31 +106,33 @@ export const saveEventDetails: ActionCreator<ThunkAction<
       eventDetails
     );
 
-    const registration = await api.get(`/registrations?event_id=${eventDetails.event_id}`);
+    const registration = await api.get(
+      `/registrations?event_id=${eventDetails.event_id}`
+    );
 
     if (response?.errorType !== undefined) {
       return Toasts.errorToast("Couldn't save the changes");
     }
 
     const calendarEvent: Partial<ICalendarEvent> = {
-      cal_event_id: eventDetails.event_id || '',
-      cal_event_title: eventDetails.event_name || '',
-      cal_event_type: 'event',
-      cal_event_datetime: eventDetails.created_datetime || '',
-      cal_event_tag: eventDetails.event_tag || '',
-      cal_event_desc: eventDetails.event_description || '',
-      cal_event_startdate: eventDetails.event_startdate || '',
-      cal_event_enddate: eventDetails.event_enddate || '',
+      cal_event_id: eventDetails.event_id || "",
+      cal_event_title: eventDetails.event_name || "",
+      cal_event_type: "event",
+      cal_event_datetime: eventDetails.created_datetime || "",
+      cal_event_tag: eventDetails.event_tag || "",
+      cal_event_desc: eventDetails.event_description || "",
+      cal_event_startdate: eventDetails.event_startdate || "",
+      cal_event_enddate: eventDetails.event_enddate || "",
       has_reminder_YN: 1,
       status_id: 1,
     };
     dispatch<any>(saveCalendarEvent(calendarEvent));
     // dispatch<any>(updateMenu());
 
-    Toasts.successToast('Changes successfully saved');
+    Toasts.successToast("Changes successfully saved");
 
     dispatch<any>(getEventDetails(eventDetails.event_id));
-    dispatch<any>(registrationUpdateSuccess(registration, eventDetails))
+    dispatch<any>(registrationUpdateSuccess(registration, eventDetails));
   } catch (err) {
     Toasts.errorToast(err.message);
   }
@@ -153,19 +155,19 @@ export const saveCalendarEvent: ActionCreator<ThunkAction<
       event
     );
 
-    if (response?.errorType === 'Error' || response?.message === false) {
+    if (response?.errorType === "Error" || response?.message === false) {
       return Toasts.errorToast("Couldn't update (calendar event)");
     }
   } else {
     // create if not exist
-    const response = await api.post('/calendar_events', event);
+    const response = await api.post("/calendar_events", event);
 
-    if (response?.errorType === 'Error' || response?.message === false) {
+    if (response?.errorType === "Error" || response?.message === false) {
       return Toasts.errorToast("Couldn't create (calendar event)");
     }
   }
 
-  Toasts.successToast('Successfully saved (calendar event)');
+  Toasts.successToast("Successfully saved (calendar event)");
 };
 
 export const createEvent: ActionCreator<ThunkAction<
@@ -178,31 +180,31 @@ export const createEvent: ActionCreator<ThunkAction<
     await Yup.array()
       .of(eventDetailsSchema)
       .unique(
-        e => e.event_name,
-        'You already have an event with the same name. Event must have a unique name.'
+        (e) => e.event_name,
+        "You already have an event with the same name. Event must have a unique name."
       )
       .validate([eventDetails]);
 
-    const response = await api.post('/events', eventDetails);
+    const response = await api.post("/events", eventDetails);
 
     if (response?.errorType !== undefined)
       return Toasts.errorToast("Couldn't save the changes");
 
     const calendarEvent: Partial<ICalendarEvent> = {
-      cal_event_id: eventDetails.event_id || '',
-      cal_event_title: eventDetails.event_name || '',
-      cal_event_type: 'event',
-      cal_event_datetime: eventDetails.created_datetime || '',
-      cal_event_tag: eventDetails.event_tag || '',
-      cal_event_desc: eventDetails.event_description || '',
-      cal_event_startdate: eventDetails.event_startdate || '',
-      cal_event_enddate: eventDetails.event_enddate || '',
+      cal_event_id: eventDetails.event_id || "",
+      cal_event_title: eventDetails.event_name || "",
+      cal_event_type: "event",
+      cal_event_datetime: eventDetails.created_datetime || "",
+      cal_event_tag: eventDetails.event_tag || "",
+      cal_event_desc: eventDetails.event_description || "",
+      cal_event_startdate: eventDetails.event_startdate || "",
+      cal_event_enddate: eventDetails.event_enddate || "",
       has_reminder_YN: 1,
       status_id: 1,
     };
     dispatch<any>(saveCalendarEvent(calendarEvent));
 
-    Toasts.successToast('Changes successfully saved');
+    Toasts.successToast("Changes successfully saved");
 
     history.replace(`/event/event-details/${eventDetails.event_id}`);
 
@@ -230,7 +232,7 @@ export const createEvent: ActionCreator<ThunkAction<
 export const removeFiles = (files: IIconFile[]) => () => {
   if (!files || !files.length) return;
 
-  files.forEach(fileObject => {
+  files.forEach((fileObject) => {
     const { file, destinationType } = fileObject;
     const key = `event_media_files/${destinationType}_${file.name}`;
     Storage.remove(key)
@@ -250,7 +252,7 @@ export const deleteEvent: ActionCreator<ThunkAction<
 
   // DELETE REGISTRATION
   const registrations = await api.get(`/registrations?event_id=${eventId}`);
-  api.delete('/registrations', registrations);
+  api.delete("/registrations", registrations);
 
   // Delete calendar event
   await api.delete(`/calendar_events?cal_event_id=${eventId}`, {
@@ -294,13 +296,13 @@ export const deleteEvent: ActionCreator<ThunkAction<
   const divisions = await api.get(`/divisions?event_id=${eventId}`);
   divisions.forEach(async (division: IDivision) => {
     const pools = await api.get(`/pools?division_id=${division.division_id}`);
-    api.delete('/pools', pools);
+    api.delete("/pools", pools);
   });
-  api.delete('/divisions', divisions);
+  api.delete("/divisions", divisions);
 
   // DELETE TEAMS
   const teams = await api.get(`/teams?event_id=${eventId}`);
-  api.delete('/teams', teams);
+  api.delete("/teams", teams);
 
   // DELETE FACILITIES&FIELDS
   const facilities = await api.get(`/facilities?event_id=${eventId}`);
@@ -308,12 +310,12 @@ export const deleteEvent: ActionCreator<ThunkAction<
     const fields = await api.get(
       `/fields?facilities_id=${facility.facilities_id}`
     );
-    api.delete('/fields', fields);
+    api.delete("/fields", fields);
   });
-  api.delete('/facilities', facilities);
+  api.delete("/facilities", facilities);
 
-  Toasts.successToast('Event is successfully deleted');
-  history.push('/');
+  Toasts.successToast("Event is successfully deleted");
+  history.push("/");
 };
 
 export const createEvents: ActionCreator<ThunkAction<
@@ -325,20 +327,20 @@ export const createEvents: ActionCreator<ThunkAction<
   dispatch: Dispatch
 ) => {
   try {
-    const allEvents = await api.get('/events');
+    const allEvents = await api.get("/events");
 
     for (const event of events) {
       await Yup.array()
         .of(eventDetailsSchema)
         .unique(
-          e => e.event_name,
-          'You already have an event with the same name. Event must have a unique name.'
+          (e) => e.event_name,
+          "You already have an event with the same name. Event must have a unique name."
         )
         .validate([...allEvents, event]);
     }
 
     for (const event of events) {
-      await api.post('/events', event);
+      await api.post("/events", event);
     }
     const lastEvent = events[events.length - 1];
     const successMsg = `Events are successfully created (${events.length})`;
@@ -349,7 +351,7 @@ export const createEvents: ActionCreator<ThunkAction<
     dispatch<any>(getEventDetails(lastEvent.event_id));
   } catch (err) {
     const e = err.value[err.value.length - 1];
-    const index = events.findIndex(event => event.event_id === e.event_id);
+    const index = events.findIndex((event) => event.event_id === e.event_id);
     const errMessage = `Record ${index + 1}: ${err.message}`;
     return Toasts.errorToast(errMessage);
   }
@@ -459,7 +461,7 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
           )?.division_id;
           if (divisionId) {
             promisesNewTeams.push(
-              api.get(`/teams?division_id=${divisionId}`).then(allTeams => {
+              api.get(`/teams?division_id=${divisionId}`).then((allTeams) => {
                 const dupTeam = allTeams.find(
                   (el: any) =>
                     el.long_name === sortedTeamsByDivision[i].team_name
@@ -479,18 +481,18 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
 
   if (errDivisions.length !== 0) {
     cb({
-      type: 'error',
-      data: errDivisions.map(el => ({
+      type: "error",
+      data: errDivisions.map((el) => ({
         index: el,
-        msg: 'Division Name is required to fill',
+        msg: "Division Name is required to fill",
       })),
     });
   } else if (errTeams.size !== 0) {
     cb({
-      type: 'error',
-      data: [...errTeams].map(el => ({
+      type: "error",
+      data: [...errTeams].map((el) => ({
         index: el,
-        msg: 'The team must have a unique name',
+        msg: "The team must have a unique name",
       })),
     });
   } else {
@@ -507,11 +509,11 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
 
         if (!dupDivision) {
           const newHex =
-            '#' +
-            ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0');
+            "#" +
+            ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0");
 
           promisesNewDivisions.push(
-            api.post('/divisions', {
+            api.post("/divisions", {
               division_hex: newHex,
               division_id: divisionId,
               long_name: divisionName,
@@ -544,7 +546,7 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
 
             if (!dupPool) {
               promisesNewPools.push(
-                api.post('/pools', {
+                api.post("/pools", {
                   division_id: newDivisionList[parentDivision],
                   pool_id: poolId,
                   pool_name: poolName,
@@ -567,7 +569,7 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
         if (newTeams.hasOwnProperty(parentDivision)) {
           for (const newTeam of newTeams[parentDivision]) {
             promisesAddTeams.push(
-              api.post('/teams', {
+              api.post("/teams", {
                 event_id,
                 contact_email: newTeam.coach_email || undefined,
                 contact_first_name: newTeam.coach_first_name || undefined,
@@ -588,129 +590,90 @@ export const createDataFromCSV: ActionCreator<ThunkAction<
 
       await Promise.all(promisesAddTeams);
       cb();
-      Toasts.successToast('Data successfully imported');
+      Toasts.successToast("Data successfully imported");
     } catch {
       Toasts.errorToast("Couldn't import data");
     }
   }
 };
 
-export const createFieldManagerDataFromCSV: ActionCreator<ThunkAction<
-  void,
-  {},
-  null,
-  { type: string }
-// >> = (teams: Partial<ITeam>[], cb: (param?: object) => void) => async (
->> = (teams: any, cb: (param?: object) => void) => async (
-  dispatch: Dispatch
+export const createReporterFromCSV = async (
+  scorers: any[],
+  event: Partial<IEventDetails>,
+  cb: (param?: object) => void
 ) => {
-  const allDivisions = await api.get(
-    `/divisions?event_id=${teams[0].event_id}`
-  );
-  const allTeams = await api.get(`/teams?event_id=${teams[0].event_id}`);
-
-  let poolsPerDivision: any = {};
-  for await (const division of allDivisions) {
-    const pools = await api.get(`/pools?division_id=${division.division_id}`);
-    poolsPerDivision = {
-      ...poolsPerDivision,
-      [division.division_id]: pools,
-    };
-  }
-
-  for (const [index, team] of teams.entries()) {
-    if (!team.division_id) {
-      return Toasts.errorToast(
-        `Record ${index + 1}: Division Name is required to fill!`
-      );
-    }
-  }
-
-  // const data = teams.map((team) => {
-  const data = teams.map((team: any) => {
-    const divisionId = allDivisions.find(
-      (div: IDivision) =>
-        div.long_name.toLowerCase() === team.division_id?.toLowerCase()
-    )?.division_id;
-
-    let poolId = null;
-    if (poolsPerDivision[divisionId]) {
-      poolId = poolsPerDivision[divisionId].find(
-        // (it: IPool) => it.pool_name === team.pool_id
-        (it: any) => it.pool_name === team.pool_id
-      )?.pool_id;
-    }
-
-    if (team.phone_num) {
-      const orgin: any = team.phone_num;
-      const regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
-      let str = orgin.replace(regex, "");
-      str = str.replace(/\s/g, "");
-
-      if (str && str.indexOf("1") === 0) {
-        str = str.substring(1);
-      }
-
-      team.phone_num = str;
-    } else {
-      team.phone_num = "";
-    }
-
-    return { ...team, division_id: divisionId, pool_id: poolId };
-  });
-
-  const dupList = [];
-
-  for (const [index, team] of data.entries()) {
-    if (!team.division_id) {
-      return Toasts.errorToast(
-        `Record ${
-          index + 1
-        }: There is no division with the supplied "long name". Please, create a division first or address the data issue.`
-      );
-    }
-    const teamsInDivision = allTeams.filter(
-      // (t: ITeam) => t.division_id === team.division_id
-      (t: any) => t.division_id === team.division_id
+  let currentReporters: IReporter[] = [];
+  const comingReporters: any[] = [];
+  let reportId = 0;
+  try {
+    currentReporters = await api.get(
+      `/sms_authorized_scorers?event_id=${event.event_id}`
     );
-    console.log("teamsInDivision: ", team, teamsInDivision);
 
-    try {
-      await Yup.array()
-        .of(teamSchema)
-        .unique(
-          (t) => t.long_name,
-          "Within a division, Long Names must be unique."
-        )
-        .validate([...teamsInDivision, team]);
-    } catch (err) {
-      if (err.value) {
-        const invalidTeam = err.value[err.value.length - 1];
-        const index = teams.findIndex(
-          // (team) => team.team_id === invalidTeam.team_id
-          (team: any) => team.team_id === invalidTeam.team_id
-        );
+    const currentReportersKeys = currentReporters.map(
+      (reporter) => reporter.mobile
+    );
 
-        dupList.push({
+    let isAlreadyExisted = false;
+    const duplicatedRows: string[] = [];
+
+    scorers.forEach((comingReporter, index) => {
+      const key = comingReporter.mobile;
+      if (currentReportersKeys.includes(key)) {
+        isAlreadyExisted = true;
+        duplicatedRows.push(`${index + 1}th`);
+      } else {
+        comingReporters.push(comingReporter);
+      }
+    });
+
+    if (duplicatedRows.length !== 0) {
+      cb({
+        type: "error",
+        data: duplicatedRows.map((dupe: string, index: number) => ({
           index,
-          msg: err.message,
-        });
+          msg: `${dupe} row already exists.`,
+        })),
+      });
+      // return;
+    }
+
+    if (isAlreadyExisted) {
+      if (duplicatedRows.length > 1) {
+        throw {
+          message: `${duplicatedRows.join(", ")} rows already exist.`,
+        };
+      } else if (duplicatedRows.length === 1) {
+        throw {
+          message: `${duplicatedRows.join(", ")} row already exists.`,
+        };
       }
     }
 
+    currentReporters.forEach((reporter) => {
+      if (Number(reporter.sms_scorer_id) > reportId)
+        reportId = Number(reporter.sms_scorer_id);
+    });
+  } catch (error) {
+    Toasts.errorToast(error.message);
+  }
+  try {
+    const dupList = [];
     try {
       await Yup.array()
-        .of(teamSchema)
+        .of(reporterSchemaCsv)
         .unique(
-          (t) => t.long_name,
-          "Within a division, Long Names must be unique."
+          (comingReporter: any) => comingReporter.mobile,
+          "Within your Reporters, the mobile number should be unique."
         )
-        .validate([...data, team]);
+        .validate(comingReporters);
     } catch (err) {
-      const invalidTeam = err.value[err.value.length - 1];
-      const index = teams.findIndex(
-        // (team) => team.team_id === invalidTeam.team_id
-        (team: any) => team.team_id === invalidTeam.team_id
+      const invalidReporter = err.value[err.value.length - 1];
+      const index = comingReporters.findIndex(
+        (reporter) =>
+          reporter.first_name === invalidReporter.first_name &&
+          reporter.last_name === invalidReporter.last_name &&
+          reporter.mobile === invalidReporter.mobile
       );
 
       dupList.push({
@@ -718,92 +681,64 @@ export const createFieldManagerDataFromCSV: ActionCreator<ThunkAction<
         msg: err.message,
       });
     }
-  }
+    // await Yup.array().of(reporterSchemaCsv).validate(comingReporters);
+    if (dupList.length !== 0) {
+      cb({ type: "error", data: dupList });
+      return;
+    }
 
-  if (dupList.length !== 0) {
-    cb({ type: "error", data: dupList });
-  } else {
+    const addedReporters: IReporter[] = [];
+
     let progress = 0;
-    for (const team of data) {
-      const postData = {
-        event_id: team.event_id,
-        division_id: team.division_id,
-        pool_id: team.pool_id,
-        long_name: team.long_name,
-        short_name: team.short_name,
-        team_tag: team.team_tag,
-        team_id: team.team_id,
-        contact_first_name: team.contact_first_name,
-        contact_last_name: team.contact_last_name,
-        phone_num: team.phone_num,
-        contact_email: team.contact_email,
-        city: team.city,
-        state: team.state,
-        level: team.level,
-        org_id: team.org_id,
-        schedule_restrictions: team.schedule_restrictions,
-        is_active_YN: team.is_active_YN,
-        is_library_YN: team.is_library_YN,
-      };
+    for await (const reporter of comingReporters) {
+      reportId += 1;
+      // post player data
 
-      const response = await api.post(`/teams`, postData);
+      const newData = {
+        // sms_scorer_id: reportId.toString(),
+        event_id: event.event_id,
+        first_name: reporter.first_name,
+        last_name: reporter.last_name,
+        mobile: reporter.mobile,
+        is_active_YN: 1,
+      };
+      addedReporters.push(newData as IReporter);
+      const response = await api.post(
+        `/sms_authorized_scorers?event_id=${event.event_id}`,
+        newData
+      );
+
       if (response?.errorType === "Error" || response?.message === false) {
-        return Toasts.errorToast("Couldn't create a team");
+        return Toasts.errorToast("Couldn't create a player");
       }
+
       progress += 1;
 
       cb({
         type: "progress",
         data: [
           {
-            status: "Importing New Data...",
-            msg: `${progress / data.length}`,
+            status: "Importing New SMS Scorers...",
+            msg: `${progress / comingReporters.length}`,
           },
         ],
       });
     }
-
-    dispatch({
-      // type: CREATE_TEAMS_SUCCESS,
-      type: 'CREATE_TEAMS_SUCCESS',
-      payload: {
-        data,
-      },
+    cb({
+      type: "info",
+      data: [
+        {
+          index: 0,
+          msg: `Import Summary; Of the ${comingReporters.length} reporters you imported, ${addedReporters.length} rows mapped to existing sms-scorers.`,
+        },
+      ],
     });
 
-    if (!teams[0].pool_id) {
-      cb({
-        type: "info",
-        data: [
-          {
-            index: 0,
-            msg: `Import Summary; Of the ${teams.length} teams you imported, ${data.length} rows mapped to existing divisions. No pool were mapped. Be sure to map them under "Division & Pools"`,
-          },
-        ],
-      });
-    } else {
-      let poolTeamCount = 0;
-      data.forEach((it: any) => {
-        if (it.pool_id) {
-          poolTeamCount += 1;
-        }
-      });
-      cb({
-        type: "info",
-        data: [
-          {
-            index: 0,
-            msg: `Import Summary; Of the ${teams.length} teams you imported, ${
-              data.length
-            } rows mapped successfully to existing divisions and ${poolTeamCount} rows successfully mapped to existing Pools. Map them under "Division & Pools" ${
-              data.length - poolTeamCount
-            } were unassigned and need assignment.`,
-          },
-        ],
-      });
-    }
-
-    const successMsg = `(${data.length}) teams were successfully imported.`;
+    const successMsg = `(${addedReporters.length}) scorers were successfully imported.`;
     Toasts.successToast(successMsg);
+    return addedReporters;
+  } catch (error) {
+    Toasts.errorToast(error.message);
+    return [];
   }
 };

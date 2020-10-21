@@ -12,22 +12,24 @@ const CARD_MESSAGE_FOR_UNDO = 'Press multiple times to go back more than once.';
 interface IProps {
   zoomingDisabled: boolean;
   optimizeBy: OptimizeTypes;
-  onUndoClick: BindingAction;
-  onLockAllClick: BindingAction;
-  onUnlockAllClick: BindingAction;
   historyLength?: number;
+  onUndoClick: BindingAction;
+  onCheckDupes: () => void;
   toggleZooming: () => void;
+  onLockAllClick: BindingAction;
   onOptimizeClick: (optimizeBy: OptimizeTypes) => void;
+  onUnlockAllClick: BindingAction;
   togglePopupSaveReport: BindingAction;
 }
 
 const TableActions = (props: IProps) => {
   const {
     onUndoClick,
+    onCheckDupes,
     onLockAllClick,
     onUnlockAllClick,
-    historyLength,
     togglePopupSaveReport,
+    historyLength,
   } = props;
 
   return (
@@ -48,6 +50,13 @@ const TableActions = (props: IProps) => {
           </CardMessage>
         </div>
         <p className={styles.lockBtnsWrapper}>
+          <Button
+            onClick={onCheckDupes}
+            icon={getIcon(Icons.CHECK)}
+            label="Check for Dupes"
+            variant={ButtonVariant.TEXT}
+            color={ButtonColors.SECONDARY}
+          />
           <Button
             onClick={onLockAllClick}
             icon={getIcon(Icons.LOCK)}

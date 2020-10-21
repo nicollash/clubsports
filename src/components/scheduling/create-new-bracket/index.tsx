@@ -47,7 +47,9 @@ export interface ICreateBracketModalOutput {
   endTimeSlot: string;
   isManualCreation?: boolean;
   multiDay?: boolean;
+  useFacilAbbr?: number;
   bracketLevel?: number;
+  customPlayoff?: number;
 }
 
 interface IProps {
@@ -182,6 +184,8 @@ const CreateNewBracket = (props: IProps) => {
         event?.multiday_playoffs_YN === 1 &&
         mode === ModeOptionEnum["Create Custom Brackets"],
       bracketLevel: Number(event?.bracket_level) || 1,
+      customPlayoff: event.custom_playoffs_YN ? 1 : 0,
+      useFacilAbbr: 1,
     };
     onCreateBracket(scheduleData);
   };

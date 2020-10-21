@@ -15,11 +15,13 @@ import {
   getGamesByDays,
 } from '../helpers';
 import { styles } from './styles';
+import { PDFReportType } from 'components/reporting/components/item-schedules';
 
 interface Props {
   event: IEventDetails;
   games: IGame[];
   fields: IField[];
+  pdfType?: PDFReportType;
   timeSlots: ITimeSlot[];
   facilities: IScheduleFacility[];
   schedule: ISchedule;
@@ -30,6 +32,7 @@ const PDFScheduleTable = ({
   event,
   facilities,
   fields,
+  pdfType,
   timeSlots,
   games,
   schedule,
@@ -54,6 +57,7 @@ const PDFScheduleTable = ({
             >
               <HeaderSchedule
                 event={event}
+                pdfType={pdfType}
                 schedule={schedule}
                 scorerMobile={scorerMobile}
               />

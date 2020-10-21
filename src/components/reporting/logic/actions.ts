@@ -67,7 +67,7 @@ const loadReportingData: ActionCreator<ThunkAction<
 
     const fetchedBracketGames = publishedBraket
       ? await Api.get(
-          `brackets_details?bracket_id=${publishedBraket.bracket_id}`
+          `v_brackets_details?bracket_id=${publishedBraket.bracket_id}`
         )
       : [];
 

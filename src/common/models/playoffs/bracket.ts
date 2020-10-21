@@ -12,6 +12,8 @@ export interface IFetchedBracket {
   adjust_columns: 1 | 0 | null;
   start_timeslot: string | null;
   custom_warmup: string | null;
+  use_facil_abbr_YN: 1 | 0 | null;
+  custom_playoffs_YN: 1 | 0 | null;
   end_timeslot: string | null;
   fields_excluded: string | null;
   is_active_YN: 1 | 0 | null;
@@ -30,6 +32,8 @@ export interface IBracket {
   alignItems: boolean;
   adjustTime: boolean;
   warmup: string;
+  useFacilAbbr?: number;
+  customPlayoff: number;
   bracketDate: string;
   bracketLevel?: number;
   eventId: string;

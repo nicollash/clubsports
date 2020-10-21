@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
   HeadingLevelTwo,
@@ -18,13 +18,13 @@ import Filter from './filter';
 import { IScheduleFilter } from './filter';
 import {
   applyFilters,
-  insertFormFieldButtonsLabels,
   mapFilterValues,
   mapValuesByFilter,
   MessageType,
   messageTypeOptions,
   Recipient,
   recipientOptions,
+  Type,
   typeOptions,
 } from "../helpers";
 import { IInputEvent } from 'common/types/events';
@@ -33,9 +33,8 @@ import 'react-phone-input-2/lib/style.css';
 import { RouteComponentProps } from "react-router-dom";
 import PollOptions from "./poll-options";
 import Navigation from "./navigation";
-import { TextField } from "@material-ui/core";
-import { InsertFormFieldButton } from "./insert-form-button-field";
 import { CardMessageTypes } from "components/common/card-message/types";
+import MessageBody from "./message-body";
 
 interface MatchParams {
   eventId: string;
@@ -102,7 +101,7 @@ const CreateMessage = ({
   }, [divisions, pools, teams]);
 
   const [dataForServer, setDataForServer] = useState<IMessageToSend>({
-    type: 'Text',
+    type: Type.TEXT,
     title: '',
     message: '',
     senderName: '',
@@ -140,8 +139,6 @@ const CreateMessage = ({
   const [messageType, setMessageType] = useState<string>(MessageType.ONE_WAY);
   const [isSendLater, setIsSendLater] = useState<boolean>(false);
 
-  const messageInput = useRef<HTMLInputElement | null>(null);
-
   const eventOptions = events.length
     ? events.map((e: IEventDetails) => ({
         label: e.event_name,
@@ -176,7 +173,11 @@ const CreateMessage = ({
     setDataForServer({ ...dataForServer, [field]: value });
   };
 
-  const onRecipientDetailsChange = (field: string, value: string ) => {
+  const onChangeType = (e: IInputEvent) => {
+    setDataForServer({ ...dataForServer, type: e.target.value, message: "" });
+  }
+
+  const onRecipientDetailsChange = (field: string, value: string) => {
     setRecipientDetails({ ...recipientDetails, [field]: value });
   };
 
@@ -221,16 +222,6 @@ const CreateMessage = ({
     });
   };
 
-  const insertFormField = (value: string) => {
-    setDataForServer({
-      ...dataForServer,
-      message:
-        dataForServer.message.slice(0, Number(messageInput.current?.selectionStart)) +
-        value +
-        dataForServer.message.slice(Number(messageInput.current?.selectionStart)),
-    });
-  };
-
   const onMessageTypeChange = (e: IInputEvent) =>
     setMessageType(e.target.value);
 
@@ -256,12 +247,12 @@ const CreateMessage = ({
               fontSize: '18px',
               color: '#6a6a6a',
               borderRadius: '4px',
-              width: '49%',
+              width: '100%',
             }}
           />
         ) : (
           <Input
-            width="49%"
+            width="100%"
             placeholder={'example@example.com'}
             onChange={(e: IInputEvent) =>
               onRecipientDetailsChange("email", e.target.value)
@@ -320,7 +311,7 @@ const CreateMessage = ({
           <Radio
             options={typeOptions}
             formLabel="Type"
-            onChange={(e: IInputEvent) => onDataChange("type", e.target.value)}
+            onChange={onChangeType}
             checked={dataForServer.type}
           />
           <Radio
@@ -371,63 +362,52 @@ const CreateMessage = ({
         )}
       </div>
       <div className={styles.recipientsWrapper}>
-        {recipientDetails.recipient === 'One'
-          ? renderOneRecipientInput()
-          : renderRecipientFilter()}
+        {recipientDetails.recipient === Recipient.MANY &&
+          renderRecipientFilter()}
       </div>
       <div className={styles.inputGroup}>
         <div>
           {dataForServer.type === 'Email' && (
-            <div className={styles.messageTitleWrapper}>
-              <Input
-                label="From"
-                fullWidth={true}
-                onChange={(e: IInputEvent) => onDataChange("senderName", e.target.value)}
-                value={dataForServer.senderName}
-              />
-              <Input
-                label="Title"
-                fullWidth={true}
-                onChange={(e: IInputEvent) => onDataChange("title", e.target.value)}
-                value={dataForServer.title}
-              />
-            </div>
+            <>
+              <div className={styles.messageEmailTitleWrapper}>
+                {recipientDetails.recipient === Recipient.ONE &&
+                  renderOneRecipientInput()}
+                <Input
+                  label="From"
+                  fullWidth={true}
+                  onChange={(e: IInputEvent) => onDataChange("senderName", e.target.value)}
+                  value={dataForServer.senderName}
+                />
+                <Input
+                  label="Title"
+                  fullWidth={true}
+                  onChange={(e: IInputEvent) => onDataChange("title", e.target.value)}
+                  value={dataForServer.title}
+                />
+              </div>
+            </>
           )}
           {dataForServer.type === 'Text' && (
-            <div className={styles.messageTitleWrapper}>
-              <Input
-                label="EventLink Subject"
-                placeholder = "Helps you remember what the message is"
-                fullWidth={true}
-                onChange={(e: IInputEvent) => onDataChange("title", e.target.value)}
-                value={dataForServer.title}
-              />
-            </div>
+            <>
+              <div className={styles.messageTitleWrapper}>
+                {recipientDetails.recipient === Recipient.ONE &&
+                  renderOneRecipientInput()}
+                <Input
+                  label="EventLink Subject"
+                  placeholder="Helps you remember what the message is"
+                  fullWidth={true}
+                  onChange={(e: IInputEvent) => onDataChange("title", e.target.value)}
+                  value={dataForServer.title}
+                />
+              </div>
+            </>
           )}
           <div className={styles.messageWrapp}>
-            <div className={styles.messageBody}>
-              <div className={styles.label}>Body of Message:</div>
-              <TextField
-                inputRef={messageInput}
-                placeholder="Type the contents of your message here... Do not include poll options if the message is a poll. They are included automatically."
-                multiline={true}
-                variant='outlined'
-                size='small'
-                rows="10"
-                onChange={(e: IInputEvent) => onDataChange("message", e.target.value)}
-                value={dataForServer.message}
-              />
-            </div>
-            <div>
-              <div className={styles.label}>Insert From Fields:</div>
-              {insertFormFieldButtonsLabels.map((name: string) => (
-                <InsertFormFieldButton
-                  key={name}
-                  formName={name}
-                  insertFormField={insertFormField}
-                />
-              ))}
-            </div>
+            <MessageBody
+              type={dataForServer.type}
+              message={dataForServer.message}
+              onChange={onDataChange}
+            />
           </div>
         </div>
       </div>

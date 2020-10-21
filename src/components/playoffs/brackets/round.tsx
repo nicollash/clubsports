@@ -13,7 +13,7 @@ interface IProps {
   onRemove: (gameIndex: number) => void;
   onNoteOpenPopup: (gameId: string) => void;
   onEditNotePopup: (gameId: string) => void;
-};
+}
 
 const BracketRound = (props: IProps) => {
   const {

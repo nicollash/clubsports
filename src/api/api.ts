@@ -1,6 +1,6 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
-import { Auth } from "aws-amplify";
-import { getToken } from "./api.helpers";
+import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import { Auth } from 'aws-amplify';
+import { getToken } from './api.helpers';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL!;
 
@@ -13,14 +13,14 @@ class Api {
     this.instance = axios.create({
       baseURL: BASE_URL,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
   }
 
   async get(url: string, params?: any) {
     await this.checkAuthToken();
-    // console.log("token=> ", await getToken());
+
     return await this.instance
       .get(url, {
         headers: {
@@ -72,7 +72,7 @@ class Api {
 
   private handleError(err: AxiosError) {
     // tslint:disable-next-line: no-console
-    console.error("Error:", err);
+    console.error('Error:', err);
   }
 
   private async checkAuthToken() {
@@ -87,12 +87,12 @@ class Api {
           currentSession.getRefreshToken(),
           (_: any, session: any) => {
             const { idToken } = session;
-            localStorage.setItem("token", idToken.jwtToken);
+            localStorage.setItem('token', idToken.jwtToken);
           }
         );
       }
     } catch (error) {
-      console.error("Unable to refresh Token", error);
+      console.error('Unable to refresh Token', error);
     }
   }
 }

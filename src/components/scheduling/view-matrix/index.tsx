@@ -1,13 +1,13 @@
-import React from 'react';
-import styles from './styles.module.scss';
-import { Button, HeadingLevelFour, ZoomControls } from 'components/common';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import ITimeSlot from 'common/models/schedule/timeSlots';
-import { IField, IFacility, IPinchProps } from 'common/models';
-import { IField as IScheduleField } from 'common/models/schedule/fields';
-import { formatTimeSlot } from 'helpers';
-import { mapFieldsData } from 'components/schedules/mapTournamentData';
-import { sortFieldsByPremier } from 'components/common/matrix-table/helper';
+import React from "react";
+import styles from "./styles.module.scss";
+import { Button, HeadingLevelFour, ZoomControls } from "components/common";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import ITimeSlot from "common/models/schedule/timeSlots";
+import { IField, IFacility, IPinchProps } from "common/models";
+import { IField as IScheduleField } from "common/models/schedule/fields";
+import { formatTimeSlot } from "helpers";
+import { mapFieldsData } from "components/schedules/mapTournamentData";
+import { sortFieldsByPremier } from "components/common/matrix-table/helper";
 
 const TRANSFORM_WRAPPER_OPTIONS = {
   minScale: 0.2,
@@ -60,6 +60,8 @@ const ViewMatrix = (props: IProps) => {
           defaultPositionY={20}
           options={{ ...TRANSFORM_WRAPPER_OPTIONS, disabled: false }}
           wheel={{ step: 10 }}
+          zoomIn={{ step: 5 }}
+          zoomOut={{ step: 5 }}
         >
           {({ zoomIn, zoomOut }: IPinchProps) => (
             <>
@@ -69,9 +71,9 @@ const ViewMatrix = (props: IProps) => {
                   <tbody>
                     <tr>
                       <td />
-                      {sortedFields.map(item => renderField(item))}
+                      {sortedFields.map((item) => renderField(item))}
                     </tr>
-                    {timeSlots.map(item => renderTimeSlot(item.time))}
+                    {timeSlots.map((item) => renderTimeSlot(item.time))}
                   </tbody>
                 </table>
               </TransformComponent>

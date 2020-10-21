@@ -48,6 +48,7 @@ enum Icons {
   MENU = 'menu',
   FULL_SCREEN_CROSS = "fullScreenCross",
   NOTEADD = 'noteAddIcon',
+  CHECK = 'doneAllIcon',
 }
 
 export { Icons };

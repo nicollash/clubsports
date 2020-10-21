@@ -41,7 +41,6 @@ const PDFTableScheduleTeamDetail = ({
   schedule,
   scheduleTeamDetails,
 }: IPDFProps) => {
-
   const getTotalGameCountByDay = (sortedTeamDetails: any[], days: string[]) => {
     let totalCount = 0;
     days.forEach((date) => {
@@ -50,6 +49,7 @@ const PDFTableScheduleTeamDetail = ({
     });
     return totalCount;
   };
+
   const jsonTeamPlainDetails = scheduleTeamDetails
     ? parseJsonGames(scheduleTeamDetails)
     : [];
@@ -59,14 +59,15 @@ const PDFTableScheduleTeamDetail = ({
   const totalTeamCount = getTeamCount(sortedJsonTeamDetails);
   // console.log('jsonTeamPlainDetails ->', jsonTeamPlainDetails) //
   // console.log('sortedJsonTeamDetails ->', sortedJsonTeamDetails) //
-  // console.log('totalTeamCount ->', totalTeamCount) //
-  // console.log('division count ->', sortedJsonTeamDetails.length) //
+  // console.log('totalCount ->', totalCount) //
   // console.log('days ->', days) //
 
   const makeDocument = () => {
     const pagesSideCount = Math.ceil(totalCount / DEFAULT_COLUMNS_COUNT);
     console.log("pagesSideCount ->", pagesSideCount); //
-    const pagesCount = Math.ceil((totalTeamCount + sortedJsonTeamDetails.length) / DEFAULT_ROWS_COUNT);
+    const pagesCount = Math.ceil(
+      (totalTeamCount + sortedJsonTeamDetails.length) / DEFAULT_ROWS_COUNT
+    );
     const pages = [...Array(pagesCount).keys()];
     return pages.map((idx) => {
       const splitIdx = 0;

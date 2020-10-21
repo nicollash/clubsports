@@ -379,6 +379,7 @@ export const fetchScheduleTeamDetails = (
       event_id: eventId,
     }
   );
+
   if (scheduleTeamDetails && scheduleTeamDetails[0]) {
     dispatch(
       fetchScheduleTeamDetailsSuccess({
@@ -390,9 +391,9 @@ export const fetchScheduleTeamDetails = (
   }
 };
 
-export const fetchNormalizedGames = (
-  scheduleId: string,
-) => async (dispatch: Dispatch) => {
+export const fetchNormalizedGames = (scheduleId: string) => async (
+  dispatch: Dispatch
+) => {
   const normalizedGames: INormalizedGame[] = await api.get(
     "games_normalized_csv",
     {

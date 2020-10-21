@@ -17,6 +17,8 @@ interface Props {
   responses: IResponse[];
   deleteMessages: BindingCbWithOne<string>;
   refreshMessage: (messageId: string) => void;
+  getResponses: (messageId: string) => void;
+  updateMessage: (messageId: string) => void;
 };
 
 const Messaging = ({
@@ -28,7 +30,9 @@ const Messaging = ({
   responses,
   messagesAreLoading,
   deleteMessages,
-  refreshMessage
+  refreshMessage,
+  getResponses,
+  updateMessage,
 }: Props) => {
   const [areMessagesExpand, toggleMessagesExpand] = useState<boolean>(false);
   const [currentMessages, setCurrentMessages] = useState<number>(3);
@@ -63,9 +67,11 @@ const Messaging = ({
           <ul className={styles.msMessageList}>
             {messagesAreLoading && <Loader />}
             {!messagesAreLoading && data.length
-              ? data
-                  .slice(0, currentMessages)
-                  .map((message, index: number) => (
+              ? data.slice(0, currentMessages).map((message, index: number) => {
+                  const currentResponses = responses?.filter(
+                    (resp) => resp.messageId === message.message_id
+                  );
+                  return (
                     <MessageItem
                       key={index}
                       isSectionExpand={areMessagesExpand}
@@ -75,11 +81,12 @@ const Messaging = ({
                       teams={teams}
                       deleteMessages={deleteMessages}
                       refreshMessage={refreshMessage}
-                      responses={responses.filter(
-                        (resp) => resp.messageId === message.message_id
-                      )}
+                      getResponses={getResponses}
+                      updateMessage={updateMessage}
+                      responses={currentResponses}
                     />
-                  ))
+                  );
+                })
               : !messagesAreLoading && (
                   <div className={styles.noFoundWrapper}>
                     <span>There are no messages yet.</span>

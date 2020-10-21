@@ -90,7 +90,13 @@ const calculateTournamentDays = (event: IEventDetails) => {
   return days;
 };
 
+const dateToMMMDD = (date: string | Date | null | undefined) => {
+  if (!date) return "";
+  return moment.utc(date).format("ll").slice(0, 6);
+};
+
 export {
+  dateToMMMDD,
   timeToDate,
   dateToTime,
   getTimeFromString,

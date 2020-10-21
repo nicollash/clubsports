@@ -1,6 +1,6 @@
 import { groupBy, max, maxBy, min, minBy, orderBy, union } from "lodash-es";
 import { IGame } from "components/common/matrix-table/helper";
-import { IBracketGame } from "./bracketGames";
+import { bracketSourceTypeEnum, IBracketGame } from "./bracketGames";
 import { IOnAddGame } from "./add-game-modal";
 import { dateToShortString, getVarcharEight } from "helpers";
 import {
@@ -20,6 +20,7 @@ interface IBracketMoveWarning {
   gamePlayTimeBeforeInvalid: boolean;
   gamePlayTimeAfterInvalid: boolean;
   facilitiesDiffer: boolean;
+  gameSourceTypeBye: boolean;
 }
 
 export const checkMultiDay = (
@@ -126,21 +127,20 @@ export const addGameToExistingBracketGames = (
   bracketGames: IBracketGame[],
   divisionId: string
 ) => {
-  const { isWinner } = data;
+  const { isWinner, divisionName } = data;
   const awayDependsUpon = Number(data.awayDependsUpon);
   const homeDependsUpon = Number(data.homeDependsUpon);
   let gridNum = data.gridNum;
 
   // Selected division games
-  const divisionGames = bracketGames?.filter(
-    (v) => v.divisionId === divisionId
-  );
+  const divisionGames =
+    bracketGames?.filter((v) => v.divisionId === divisionId) || [];
 
   // Get origin games
   let awayDependent = divisionGames.find((v) => v.index === awayDependsUpon)!;
   let homeDependent = divisionGames.find((v) => v.index === homeDependsUpon)!;
   const bothOriginAreNotFromMainGrid =
-    awayDependent.gridNum !== 1 && homeDependent.gridNum !== 1;
+    awayDependent?.gridNum !== 1 && homeDependent?.gridNum !== 1;
 
   // Set round for the new game
   const roundInceremented =
@@ -161,12 +161,12 @@ export const addGameToExistingBracketGames = (
     gridNum = Math.min(awayDependent?.gridNum, homeDependent?.gridNum);
     awayDependent = {
       ...awayDependent,
-      round: awayDependent.round,
+      round: awayDependent?.round,
       gridNum,
     };
     homeDependent = {
       ...homeDependent,
-      round: homeDependent.round,
+      round: homeDependent?.round,
       gridNum,
     };
   }
@@ -177,7 +177,9 @@ export const addGameToExistingBracketGames = (
     round,
     gridNum,
     divisionId,
-    divisionName: divisionGames[0].divisionName,
+    divisionName:
+      divisionName ||
+      (divisionGames.length > 0 ? divisionGames[0].divisionName : undefined),
     awaySeedId: undefined,
     homeSeedId: undefined,
     awayTeamId: undefined,
@@ -190,17 +192,23 @@ export const addGameToExistingBracketGames = (
     facilitiesId: undefined,
     fieldName: undefined,
     startTime: undefined,
-    gameDate: divisionGames[0].gameDate,
+    gameDate: divisionGames.length > 0 ? divisionGames[0].gameDate : undefined,
     hidden: false,
     isCancelled: false,
     createDate: new Date().toISOString(),
+    xLeft: data.size?.xLeft,
+    xWidth: data.size?.xWidth,
+    yTop: data.size?.yTop,
+    yHeight: data.size?.yHeight,
+    isChecked: data.isChecked,
   };
 
-  const newBracketGames = bracketGames.map((item) => {
-    if (item.id === awayDependent.id) return awayDependent;
-    if (item.id === homeDependent.id) return homeDependent;
-    return item;
-  });
+  const newBracketGames =
+    bracketGames.map((item) => {
+      if (item.id === awayDependent.id) return awayDependent;
+      if (item.id === homeDependent.id) return homeDependent;
+      return item;
+    }) || [];
 
   const newAdvancedBracketGame = advanceTeamsFromBrackets(
     newBracketGame,
@@ -327,6 +335,12 @@ export const updateGameSlot = (
     awayTeamScore: bracketGame?.awayTeamScore,
     homeTeamScore: bracketGame?.homeTeamScore,
     isCancelled: bracketGame?.isCancelled,
+    homeSourceType: bracketGame?.homeSourceType,
+    homeSourceValue: bracketGame?.homeSourceValue,
+    homeSourceId: bracketGame?.homeSourceId,
+    awaySourceType: bracketGame?.awaySourceType,
+    awaySourceValue: bracketGame?.awaySourceValue,
+    awaySourceId: bracketGame?.awaySourceId,
   };
 };
 
@@ -335,6 +349,7 @@ enum BracketMoveWarnEnum {
   gamePlayTimeBeforeInvalid = "This bracket game depends upon preceeding games being complete. They are not. Please place this game in a later game slot.",
   gamePlayTimeAfterInvalid = "This game cannot be placed in a timeslot that is AFTER a game that depends upon its results. Please either move this game to an earlier timeslot than its dependent games or move the dependent games to a later timeslot.",
   facilitiesDiffer = "This division is not playing at this facility on this day. Please confirm your intentions.",
+  gameSourceTypeBye = "Adding a game to the schedule is not necessary, would you like to do it anyway?",
 }
 
 export const setReplacementMessage = (
@@ -362,6 +377,11 @@ export const setReplacementMessage = (
       return {
         bracketGames,
         message: BracketMoveWarnEnum.gameAlreadyAssigned,
+      };
+    case warnings.gameSourceTypeBye:
+      return {
+        bracketGames,
+        message: BracketMoveWarnEnum.gameSourceTypeBye,
       };
     default:
       return null;
@@ -401,6 +421,7 @@ export const updateBracketGamesDndResult = (
     gamePlayTimeBeforeInvalid: false,
     gamePlayTimeAfterInvalid: false,
     facilitiesDiffer: false,
+    gameSourceTypeBye: false,
   };
   /* 1. Find a bracket game that is being dragged */
   const bracketGame = bracketGames.find((item) => item.id === gameId);
@@ -442,6 +463,12 @@ export const updateBracketGamesDndResult = (
       bracketGame?.startTime &&
       bracketGameToUpdate?.fieldId &&
       bracketGameToUpdate.startTime
+  );
+
+  warnings.gameSourceTypeBye = Boolean(
+    !bracketGame?.fieldId &&
+      (bracketGame?.awaySourceType === bracketSourceTypeEnum.Bye ||
+        bracketGame?.homeSourceType === bracketSourceTypeEnum.Bye)
   );
 
   /* Check play time for the given BracketGame */
@@ -728,4 +755,44 @@ export const getPlayoffMovementAvailability = (
     upDisabled,
     downDisabled,
   };
+};
+
+export const ordinalSuffixOf = (i: number) => {
+  const j = i % 10;
+  const k = i % 100;
+  if (j === 1 && k !== 11) {
+    return i + "st";
+  }
+  if (j === 2 && k !== 12) {
+    return i + "nd";
+  }
+  if (j === 3 && k !== 13) {
+    return i + "rd";
+  }
+  return i + "th";
+};
+
+export const generateGameNumbers = (count: number, excludeId: number) => {
+  const gameNumbers = [];
+  for (let i = 1; i <= count; i++) {
+    if (i !== excludeId) {
+      gameNumbers.push({
+        label: `G${i}`,
+        value: i,
+      });
+    }
+  }
+
+  return gameNumbers;
+};
+
+export const mapGamesToAdvanced = (games: IBracketGame[]) => {
+  return games.map((game: IBracketGame) => {
+    return {
+      ...game,
+      isChecked: false,
+      x: 0,
+      y: 0,
+    };
+  });
 };

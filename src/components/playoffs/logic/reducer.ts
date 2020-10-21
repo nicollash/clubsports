@@ -9,13 +9,16 @@ import {
   FETCH_SCORED_TEAMS,
   CLEAR_SCORED_TEAMS,
   BRACKETS_ADVANCING_IN_PROGRESS,
-} from './actionTypes';
-import { IBracketGame } from '../bracketGames';
-import { IPlayoffSortedTeams } from './actions';
+  CHANGE_CUSTOM_BRACKET_GAME,
+  CHANGE_SELECTED_DIVISION,
+} from "./actionTypes";
+import { IBracketGame } from "../bracketGames";
+import { IPlayoffSortedTeams } from "./actions";
 
 export interface IPlayoffState {
   playoffSaved: boolean;
   bracketGames: IBracketGame[] | null;
+  selectedDivision: string | null;
   bracketGamesHistory: IBracketGame[][] | [];
   sortedTeams: IPlayoffSortedTeams | null;
   advancingInProgress: boolean;
@@ -25,6 +28,7 @@ const defaultState: IPlayoffState = {
   playoffSaved: false,
   bracketGamesHistory: [],
   bracketGames: null,
+  selectedDivision: null,
   sortedTeams: null,
   advancingInProgress: false,
 };
@@ -86,6 +90,24 @@ export default (state = defaultState, action: IPlayoffAction) => {
       return {
         ...state,
         advancingInProgress: action.payload,
+      };
+    case CHANGE_SELECTED_DIVISION:
+      return {
+        ...state,
+        selectedDivision: action.payload,
+      };
+    case CHANGE_CUSTOM_BRACKET_GAME:
+      const updatedBracketGames = state.bracketGames?.map(
+        (game: IBracketGame) => {
+          if (game.id === action.payload.id) {
+            return action.payload;
+          }
+          return game;
+        }
+      );
+      return {
+        ...state,
+        bracketGames: updatedBracketGames,
       };
     default:
       return state;

@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback, useReducer } from "react";
 import { DndProvider } from "react-dnd";
 import HTML5Backend from "react-dnd-html5-backend";
-import { find } from "lodash-es";
 import {
   calculateTournamentDays,
   dateToShortString,
@@ -24,6 +23,7 @@ import {
   ISchedulesDetails,
   ScheduleCreationType,
   INormalizedGame,
+  IBracket,
 } from "common/models";
 import { IField } from "common/models/schedule/fields";
 import ITimeSlot from "common/models/schedule/timeSlots";
@@ -70,16 +70,30 @@ import { CardMessageTypes } from "../card-message/types";
 import styles from "./styles.module.scss";
 import { IMatchup } from "components/visual-games-maker/helpers";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import {
+  Backdrop,
+  CircularProgress,
+  createMuiTheme,
+  ThemeProvider,
+} from "@material-ui/core";
 import uuidv4 from "uuid/v4";
 import AddExtraGame from "./components/add-extra-game";
 import AddExtraGameModal from "./components/add-extra-game-modal";
 import { TeamPositionEnum } from "components/common/matrix-table/helper";
 import { mapGamesWithSchedulesDetails } from "components/scoring/helpers";
+import { mapDupesGames } from "./helpers";
+import PopupDupesGames from "./components/popup-dupes-games";
+
+export interface IDupesGame {
+  awayTeamId: string;
+  homeTeamId: string;
+  games: IGame[];
+}
 
 interface Props {
   tableType: TableScheduleTypes;
   event: IEventDetails;
+  bracket?: IBracket;
   divisions: IDivision[];
   pools: IPool[];
   teamCards: ITeamCard[];
@@ -138,6 +152,7 @@ const theme = createMuiTheme({
 const TableSchedule = ({
   tableType,
   event,
+  bracket,
   divisions,
   pools,
   teamCards,
@@ -244,6 +259,10 @@ const TableSchedule = ({
   const [moveCardWarning, setMoveCardWarning] = useState<string | undefined>();
   const [days, setDays] = useState(calculateDays(teamCards));
   const [highlightUnscoredGames, setHighlightUnscoredGames] = useState(false);
+  const [isOpenDupesPopup, setIsOpenDupesPopup] = useState(false);
+  const [allDupesGames, setAllDupesGames] = useState<IGame[]>([]);
+  const [isLoadingDupes, setIsLoadingDupes] = useState<boolean>(false);
+  const [isOpenNoDupesPopup, setIsOpenNoDupesPopup] = useState<boolean>(false);
 
   const toggleSimultaneousDnd = () => setSimultaneousDnd(!simultaneousDnd);
 
@@ -256,19 +275,20 @@ const TableSchedule = ({
         games,
         playoffTimeSlots
       );
-
-      definedGames = definedGames.map((item: IGame) => {
-        const foundBracketGame = find(bracketGames, {
-          fieldId: item.fieldId,
-          startTime: item.startTime,
-        });
-
-        return foundBracketGame
-          ? updateGameSlot(item, foundBracketGame, divisions, pools)
-          : item;
-      });
     }
 
+    definedGames = definedGames.map((item: IGame) => {
+      const foundBracketGame = bracketGames?.find(
+        (bg: IBracketGame) =>
+          bg.fieldId === item.fieldId &&
+          dateToShortString(bg.gameDate) ===
+            dateToShortString(days[+(filterValues?.selectedDay || 1) - 1]) &&
+          bg.startTime === item.startTime
+      );
+      return foundBracketGame
+        ? updateGameSlot(item, foundBracketGame, divisions, pools)
+        : item;
+    });
     const filledGames = settleTeamsPerGames(
       definedGames,
       teamCards,
@@ -776,6 +796,36 @@ const TableSchedule = ({
   const onShowUnscoredGames = () =>
     setHighlightUnscoredGames(!highlightUnscoredGames);
 
+  const onCheckDupes = () => {
+    setIsLoadingDupes(true);
+    const dupesGames = (mappedGames as IGame[]).filter((game: IGame) => {
+      return (mappedGames as IGame[]).find(
+        (filterGame: IGame) =>
+          game.awayTeam &&
+          game.homeTeam &&
+          game.id !== filterGame.id &&
+          ((game.awayTeam?.id === filterGame.awayTeam?.id &&
+            game.homeTeam?.id === filterGame.homeTeam?.id) ||
+            (game.awayTeam?.id === filterGame.homeTeam?.id &&
+              game.homeTeam?.id === filterGame.awayTeam?.id))
+      );
+    });
+
+    if (dupesGames.length > 0) {
+      setAllDupesGames(dupesGames);
+      setIsLoadingDupes(false);
+      setIsOpenDupesPopup(true);
+    } else {
+      setIsLoadingDupes(false);
+      setIsOpenNoDupesPopup(true);
+    }
+  };
+
+  const onCloseDupesPopup = () => setIsOpenDupesPopup(false);
+  const onCloseNoDupesPopup = () => setIsOpenNoDupesPopup(false);
+
+  const mappedDupesGames = mapDupesGames(allDupesGames);
+
   return (
     <section className={styles.section}>
       <AddExtraGameModal
@@ -952,6 +1002,8 @@ const TableSchedule = ({
               games={tableGames}
               fields={updatedFields}
               eventDay={filterValues.selectedDay!}
+              event={event}
+              bracket={bracket}
               tableType={tableType}
               teamCards={teamCards}
               facilities={facilities}
@@ -989,12 +1041,13 @@ const TableSchedule = ({
             <TableActions
               historyLength={historyLength}
               zoomingDisabled={zoomingDisabled}
-              toggleZooming={toggleZooming}
               optimizeBy={optimizeBy}
               onUndoClick={onUndo}
+              onCheckDupes={onCheckDupes}
+              toggleZooming={toggleZooming}
               onLockAllClick={onLockAll}
-              onUnlockAllClick={onUnlockAll}
               onOptimizeClick={onOptimizeClick}
+              onUnlockAllClick={onUnlockAll}
               togglePopupSaveReport={togglePopupSaveReport}
             />
             <PopupSaveReporting
@@ -1022,6 +1075,23 @@ const TableSchedule = ({
           onClose={resetMoveCardWarning}
           onCanceClick={resetMoveCardWarning}
           onYesClick={confirmReplacement}
+        />
+        <Backdrop className={styles.backdrop} open={isLoadingDupes || false}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        <PopupDupesGames
+          isOpen={isOpenDupesPopup}
+          fields={fields}
+          dupeGames={mappedDupesGames}
+          onClose={onCloseDupesPopup}
+          onCancelClick={onCloseDupesPopup}
+        />
+        <PopupConfirm
+          isOpen={isOpenNoDupesPopup}
+          message="There are no duplicate matchups."
+          onClose={onCloseNoDupesPopup}
+          onCanceClick={onCloseNoDupesPopup}
+          onYesClick={onCloseNoDupesPopup}
         />
       </>
     </section>

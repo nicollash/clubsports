@@ -46,6 +46,7 @@ interface Props {
     IPublishSettings,
     boolean
   >;
+  getCountBracketGame: (bracketId: string) => void;
   checkUnassignedGames: (bracketId: string) => void;
 }
 
@@ -59,6 +60,7 @@ const PopupPublishEvent = ({
   countUnassignedGames,
   onClose,
   publishEventData,
+  getCountBracketGame,
   checkUnassignedGames,
 }: Props) => {
   const [isConfrimOpen, toggleConfrim] = React.useState<boolean>(false);
@@ -126,11 +128,13 @@ const PopupPublishEvent = ({
             event={event}
             publishType={publishType}
             modifyModValue={modifyModValue}
+            countBracketGame={gameCount.bracketLength}
             countUnassignedGames={countUnassignedGames}
             schedules={sortByDate(schedules)}
             brackets={sortByDate(brackets)}
             onClose={onClose}
             publishEventData={publishEventData}
+            getCountBracketGame={getCountBracketGame}
             checkUnassignedGames={checkUnassignedGames}
           />
         ) : (

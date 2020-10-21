@@ -1,6 +1,7 @@
 import React from 'react';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import PersonIcon from '@material-ui/icons/Person';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import EmailIcon from '@material-ui/icons/Email';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -143,9 +144,11 @@ const getIcon = (icon: string, iconStyles?: object): JSX.Element => {
     case Icons.MENU:
       return <MenuIcon style={iconStyles} />;
     case Icons.FULL_SCREEN_CROSS:
-      return <img src={CrossImage} alt="Cross"/>
+      return <img src={CrossImage} alt="Cross" />
     case Icons.NOTEADD:
-      return <NoteAddIcon style={iconStyles}/>
+      return <NoteAddIcon style={iconStyles} />
+    case Icons.CHECK:
+      return <DoneAllIcon style={iconStyles} />
   }
   return <ClearIcon />;
 };

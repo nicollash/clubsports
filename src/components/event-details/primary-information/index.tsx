@@ -10,6 +10,7 @@ import {
   DatePicker,
   CardMessage,
   ButtonCopy,
+  PopupConfirm,
 } from "components/common";
 import PhoneInput from "react-phone-input-2";
 import { CardMessageTypes } from "components/common/card-message/types";
@@ -113,6 +114,7 @@ const PrimaryInformationSection: React.FC<Props> = ({
 
   const [genderId, onChangeGender] = useState(dropdownGenderValue);
   const [sportId, onChangeSport] = useState(dropdownSportValue);
+  const [isWarningPopupOpen, setIsWarningPopupOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const calculatedSportId = getIdByGenderAndSport(genderId, sportId);
@@ -138,6 +140,9 @@ const PrimaryInformationSection: React.FC<Props> = ({
     onChange("event_level", e.target.value);
 
   const onGenderChange = (e: InputTargetValue) => {
+    if (genderEnum[e.target.value] === genderEnum["Co-Ed"]) {
+      setIsWarningPopupOpen(true);
+    }
     onChangeGender(genderEnum[e.target.value]);
   };
 
@@ -197,6 +202,8 @@ const PrimaryInformationSection: React.FC<Props> = ({
 
   const onMainContactEmailChange = (e: InputTargetValue) =>
     onChange("main_contact_email", e.target.value);
+
+  const closeWarning = () => setIsWarningPopupOpen(false);
 
   const { primary_location_lat: lat, primary_location_long: lng } = eventData;
 
@@ -394,6 +401,13 @@ const PrimaryInformationSection: React.FC<Props> = ({
               : undefined
           }
           label="Results Link"
+        />
+        <PopupConfirm
+          isOpen={isWarningPopupOpen}
+          message="You now need to update the genders for each division."
+          onClose={closeWarning}
+          onCanceClick={closeWarning}
+          onYesClick={closeWarning}
         />
       </div>
     </SectionDropdown>

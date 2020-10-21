@@ -44,6 +44,14 @@ const STYLES_ICOM_WARNING = {
   width: "30px",
 };
 
+export enum PDFReportType {
+  MASTER_SCHEDULE = "Master Schedule - PDF",
+  MASTER_SCHEDULE_HEATMAP = "Master Schedule (with Heatmap) - PDF",
+  MASTER_SCHEDULE_FIELD_BY_FIELD = "Master Schedule (Field by Field) - PDF",
+  POOLS_SCHEDULE_HEATMAP = "Printed Pools Schedule (with Heatmap) - PDF",
+  TEAM_DETAILS_SCHEDULE = "Schedule - Team Details - PDF",
+}
+
 interface Props {
   event: IEventDetails;
   timeSlots: ITimeSlot[];
@@ -90,6 +98,7 @@ const ItemSchedules = (props: Props) => {
   React.useEffect(() => {
     changeAllowDownload(activeDay.length > 0);
   }, [activeDay]);
+
   const csvData = normalizedGames ? normalizedGames : [];
   const eventDays = calculateDays(teamCards);
   const allTeamCardGames = getAllTeamCardGames(
@@ -201,6 +210,7 @@ const ItemSchedules = (props: Props) => {
         event={event}
         games={gamesByDay}
         fields={fields}
+        pdfType={PDFReportType.MASTER_SCHEDULE_FIELD_BY_FIELD}
         timeSlots={timeSlots}
         facilities={facilities}
         schedule={schedule}
@@ -250,7 +260,7 @@ const ItemSchedules = (props: Props) => {
               variant={ButtonVariant.TEXT}
               color={ButtonColors.SECONDARY}
               isDisabled={!isAllowDownload}
-              label="Master Schedule - PDF"
+              label={PDFReportType.MASTER_SCHEDULE}
             />
           </li>
           <li>
@@ -259,7 +269,7 @@ const ItemSchedules = (props: Props) => {
               variant={ButtonVariant.TEXT}
               color={ButtonColors.SECONDARY}
               isDisabled={!isAllowDownload}
-              label="Master Schedule (with Heatmap) - PDF"
+              label={PDFReportType.MASTER_SCHEDULE_HEATMAP}
             />
           </li>
           <li>
@@ -268,7 +278,7 @@ const ItemSchedules = (props: Props) => {
               variant={ButtonVariant.TEXT}
               color={ButtonColors.SECONDARY}
               isDisabled={!isAllowDownload}
-              label="Master Schedule (Field by Field) - PDF"
+              label={PDFReportType.MASTER_SCHEDULE_FIELD_BY_FIELD}
             />
           </li>
           <li>
@@ -284,7 +294,7 @@ const ItemSchedules = (props: Props) => {
               loadFunc={onSchedulePoolsPDFSave}
               variant={ButtonVariant.TEXT}
               color={ButtonColors.SECONDARY}
-              label="Printed Pools Schedule (with Heatmap) - PDF"
+              label={PDFReportType.POOLS_SCHEDULE_HEATMAP}
             />
           </li>
           <li>
@@ -292,18 +302,18 @@ const ItemSchedules = (props: Props) => {
               loadFunc={onScheduleTeamDetailsPDFSave}
               variant={ButtonVariant.TEXT}
               color={ButtonColors.SECONDARY}
-              label="Schedule - Team Details - PDF"
+              label={PDFReportType.TEAM_DETAILS_SCHEDULE}
             />
           </li>
-          <li style={{display: 'flex'}}>
+          <li style={{ display: "flex" }}>
             <CSVLink
-              style={{color:'#00A3EA', padding: '6px 8px'}}
+              style={{ color: "#00A3EA", padding: "6px 8px" }}
               data={csvData}
-              filename={"Division Games List.csv"}
+              filename={"Divisions Games List.csv"}
               asyncOnClick={true}
             >
-              Division - Games List - CSV
-            </CSVLink>                  
+              Schedule - Team Details Raw Data - CSV
+            </CSVLink>
           </li>
         </ul>
         {!isAllowDownload && (

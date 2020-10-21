@@ -568,7 +568,7 @@ export const updateBracketStatus = (
   const bracketGames: (
     | IPlayoffGame
     | undefined
-  )[] = await api.get("/brackets_details", { bracket_id: bracketId });
+  )[] = await api.get("/v_brackets_details", { bracket_id: bracketId });
 
   const allGamesAssigned = bracketGames.every(
     (item) => item?.field_id && item.start_time
@@ -609,7 +609,7 @@ export const checkUnassignedGames = (
   const bracketGames: (
     | IPlayoffGame
     | undefined
-  )[] = await api.get("/brackets_details", { bracket_id: bracketId });
+  )[] = await api.get("/v_brackets_details", { bracket_id: bracketId });
 
   const unassignedGames = bracketGames.filter((item) => !item?.field_id && !item?.start_time);
 

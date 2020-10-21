@@ -47,6 +47,7 @@ import {
   defineGames,
   IGame,
   settleTeamsPerGamesDays,
+  mapBracketGameToGame,
 } from "components/common/matrix-table/helper";
 import {
   mapFieldsData,
@@ -78,6 +79,7 @@ import {
   clearBracketGames,
   fetchBracketGames,
   onUndoBrackets,
+  updateBracketData,
   advanceTeamsToBrackets,
   IPlayoffSortedTeams,
   clearSortedTeams,
@@ -141,6 +143,7 @@ interface IMapDispatchToProps {
   onBracketsUndo: () => void;
   advanceTeamsToBrackets: () => void;
   clearSortedTeams: () => void;
+  updateBracketData: (bracket: IBracket) => void;
   updateExistingBracket: (data: Partial<IBracket>) => void;
   schedulesDetailsClear: () => void;
   addNoteForGame: (game: IBracketGame, bracket: IBracket) => void;
@@ -276,6 +279,19 @@ class Playoffs extends Component<IProps> {
     ) {
       const res = this.calculatePlayoffTimeSlots();
       this.populateBracketGamesData(res);
+    }
+
+    if (
+      (!prevState.tableGames || prevState.tableGames.length === 0) &&
+      prevState.tableGames !== this.state.tableGames
+    ) {
+      this.setState({
+        activeTab:
+          this.props.event?.custom_playoffs_YN === 1 ||
+          this.props.bracket?.customPlayoff === 1
+            ? PlayoffsTabsEnum.BracketManager
+            : PlayoffsTabsEnum.ResourceMatrix,
+      });
     }
   }
 
@@ -478,7 +494,8 @@ class Playoffs extends Component<IProps> {
       !games ||
       !playoffTimeSlots ||
       !schedulesTeamCards ||
-      !fields
+      !fields ||
+      event?.custom_playoffs_YN === 1
     )
       return;
 
@@ -759,6 +776,20 @@ class Playoffs extends Component<IProps> {
     }
   };
 
+  setGamesChanged = (gameId: string) => {
+    if (gameId) {
+      this.setState({
+        gamesChanged: [
+          ...this.state.gamesChanged,
+          {
+            id: gameId,
+            isBracketTable: true,
+          } as IChangedGame,
+        ],
+      });
+    }
+  };
+
   openCancelConfirmation = () =>
     this.setState({ cancelConfirmationOpen: true });
 
@@ -782,11 +813,10 @@ class Playoffs extends Component<IProps> {
 
   addGame = (selectedDivision: string, data: IOnAddGame) => {
     const { bracketGames } = this.props;
-    if (!bracketGames?.length) return;
 
     const { newBracketGames, id: newId } = addGameToExistingBracketGames(
       data,
-      bracketGames,
+      bracketGames || [],
       selectedDivision
     );
 
@@ -816,16 +846,9 @@ class Playoffs extends Component<IProps> {
       selectedDivision
     );
 
-    this.setState({
-      gamesChanged: this.state.gamesChanged?.filter(
-        (item) => item.id !== removeGameId
-      ),
-    });
     this.props.fetchBracketGames(newBracketGames);
     this.setState({
-      gamesChanged: this.state.gamesChanged?.filter(
-        (item) => item.id !== removeGameId
-      ),
+      gamesChanged: [...this.state.gamesChanged, { id: removeGameId }],
     });
   };
 
@@ -872,7 +895,7 @@ class Playoffs extends Component<IProps> {
 
   saveBracketsData = (isSaveAs?: boolean) => {
     const { fields } = this.state;
-    const { match, bracketGames } = this.props;
+    const { match, bracket, bracketGames, updateBracketData } = this.props;
     const { bracketId } = match.params;
 
     const bracketsGames: IBracketGame[] | undefined = bracketGames?.map(
@@ -890,6 +913,8 @@ class Playoffs extends Component<IProps> {
     } else {
       this.props.createPlayoff(bracketsGames!);
     }
+    if (bracket && bracketId) updateBracketData(bracket);
+
     this.setState({
       gamesChanged: [],
     });
@@ -969,9 +994,22 @@ class Playoffs extends Component<IProps> {
       isFullScreen,
       onToggleFullScreen,
       addNoteForGame,
+      updateExistingBracket,
     } = this.props;
     const saveButtonCondition = bracket && bracketGames;
-
+    const filteredTableGames = checkMultiDay(event, bracket)
+      ? tableGames?.filter(
+          (g) =>
+            dateToShortString(g.gameDate) ===
+            dateToShortString(
+              this.state.multiDay[Number(this.state.selectedDay) - 1]
+            )
+        )
+      : tableGames;
+    const mappedGames =
+      bracketGames && filteredTableGames
+        ? mapBracketGameToGame(filteredTableGames, bracketGames)
+        : filteredTableGames;
     return (
       <div>
         <CreateNewBracket
@@ -1034,7 +1072,6 @@ class Playoffs extends Component<IProps> {
                           label: "Save As...",
                           action: () =>
                             this.setState({ isOpenCreateBracket: true }),
-                          // disabled: savingInProgress,
                         },
                       ]}
                     />
@@ -1047,13 +1084,21 @@ class Playoffs extends Component<IProps> {
               <div className={styles.tabToggle}>
                 <div
                   className={activeTab === 1 ? styles.active : ""}
-                  onClick={() => this.setState({ activeTab: 1 })}
+                  onClick={() =>
+                    this.setState({
+                      activeTab: PlayoffsTabsEnum.ResourceMatrix,
+                    })
+                  }
                 >
                   Resource Matrix
                 </div>
                 <div
                   className={activeTab === 2 ? styles.active : ""}
-                  onClick={() => this.setState({ activeTab: 2 })}
+                  onClick={() =>
+                    this.setState({
+                      activeTab: PlayoffsTabsEnum.BracketManager,
+                    })
+                  }
                 >
                   Bracket Manager
                 </div>
@@ -1067,19 +1112,12 @@ class Playoffs extends Component<IProps> {
                     divisions={divisions}
                     pools={pools}
                     teamCards={schedulesTeamCards}
-                    games={
-                      checkMultiDay(event, bracket)
-                        ? tableGames?.filter(
-                            (g) =>
-                              dateToShortString(g.gameDate) ===
-                              dateToShortString(
-                                this.state.multiDay[
-                                  Number(this.state.selectedDay) - 1
-                                ]
-                              )
-                          )
-                        : tableGames
+                    isCustomMode={
+                      !match.params.bracketId
+                        ? event?.custom_playoffs_YN || 0
+                        : bracket?.customPlayoff || 0
                     }
+                    games={mappedGames}
                     fields={fields}
                     timeSlots={timeSlots}
                     facilities={facilities}
@@ -1111,6 +1149,7 @@ class Playoffs extends Component<IProps> {
                   historyLength={historyLength}
                   divisions={divisions!}
                   seeds={bracketSeeds}
+                  facilities={facilities}
                   bracketGames={bracketGames!}
                   advancingInProgress={advancingInProgress}
                   addGame={this.addGame}
@@ -1121,6 +1160,8 @@ class Playoffs extends Component<IProps> {
                   updateSeeds={this.updateGlobalSeeds}
                   saveBracketsData={this.saveBracketsData}
                   addNoteForGame={addNoteForGame}
+                  setGamesChanged={this.setGamesChanged}
+                  onChangeFacilAbbr={updateExistingBracket}
                 />
               )}
             </section>
@@ -1203,6 +1244,7 @@ const mapDispatchToProps = (dispatch: Dispatch): IMapDispatchToProps =>
       onBracketsUndo: onUndoBrackets,
       advanceTeamsToBrackets,
       clearSortedTeams,
+      updateBracketData,
       updateExistingBracket,
       schedulesDetailsClear,
     },

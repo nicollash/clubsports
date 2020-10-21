@@ -1,0 +1,133 @@
+.bracketGame {
+    // background: #e9e9e9;
+    box-sizing: padding-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: absolute;
+
+    &.hidden {
+      transform: rotateY(90deg);
+    }
+
+    .bracketAwayTeam {
+        margin-left: 5px;
+        margin-bottom: 5px;
+        position: absolute;
+        top: -30px;
+        width: 100%;
+    }
+
+    .gameNote {
+      min-height: 28px;
+      font-size: 14px;
+      margin-top: -28px;
+      position: absolute;
+      top: -30px;
+
+        .gameNoteContainer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+
+            span {
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0.8);
+            padding-left: 1px;
+            }
+
+            .btnEdit {
+            opacity: 0.1;
+            cursor: pointer;
+            transition: opacity 0.3s ease-in-out;
+            }
+            .btnEdit:hover {
+            opacity: 1;
+            color: #00A3EA;
+            transition: color 0.2s ease-in-out;
+            }
+        }
+    }
+}
+
+.bracketGameTransition {
+    transform: rotateY(0deg);
+    transition: transform 0.2s ease-in-out;
+}
+
+.bracketGameDescription {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    position: relative;
+    box-sizing: padding-box;
+
+    .descriptionInfo {
+        width: 130px;
+        max-height: 50px;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        align-items: baseline;
+        justify-content: center;
+        margin-left: 7px;
+        margin-bottom: 15px;
+
+
+        span {
+            font-size: 13px;
+            color: #1c315f;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+    }
+
+    .bracketHomeTeam {
+        position: absolute;
+        left: 5px;
+        bottom: 5px;
+        width: 100%;
+    }
+}
+
+.bracketManage {
+    width: 60px;
+    max-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    cursor: pointer;
+    margin-right: 7px;
+
+    .btnNote {
+      margin-left: 5px;
+    }
+
+    .btnNote, .btnTrash {
+      opacity: 0.1;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    > div {
+        color: rgb(44, 44, 44);
+        transition: color 0.2s ease-in-out;
+    }
+
+    & .btnTrash:hover {
+      opacity: 1;
+      color: #e82b2b;
+    }
+
+    & .btnNote:hover {
+      opacity: 1;
+      color: #00A3EA;
+    }
+}
+
+.btnCross {
+  color: #00A3EA;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}

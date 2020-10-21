@@ -1,4 +1,3 @@
-import { find } from "lodash-es";
 import { updateGameSlot } from "components/playoffs/helper";
 import {
   IGame,
@@ -21,7 +20,7 @@ const getAllTeamCardGames = (
   divisions?: IDivision[]
 ) => {
   return eventDays
-    .map((_, idx) => {
+    .map((dayValue, idx) => {
       let definedGames = [...games];
       const day = `${idx + 1}`;
 
@@ -30,18 +29,19 @@ const getAllTeamCardGames = (
           games,
           playoffTimeSlots
         );
-
-        definedGames = definedGames.map((item) => {
-          const foundBracketGame = find(bracketGames, {
-            fieldId: item.fieldId,
-            startTime: item.startTime,
-          });
-
-          return foundBracketGame
-            ? updateGameSlot(item, foundBracketGame, divisions)
-            : item;
-        });
       }
+      definedGames = definedGames.map((item) => {
+        const foundBracketGame = bracketGames?.find(
+          (bg: IBracketGame) =>
+            bg.fieldId === item.fieldId &&
+            dateToShortString(bg.gameDate) === dateToShortString(dayValue) &&
+            bg.startTime === item.startTime
+        );
+
+        return foundBracketGame
+          ? updateGameSlot(item, foundBracketGame, divisions)
+          : item;
+      });
 
       return settleTeamsPerGames(definedGames, teamCards, eventDays, day);
     })

@@ -41,9 +41,6 @@
   }
 }
 .recipientWrapper {
-  width: 100%;
-  margin: 10px 0;
-  margin-top: 45px;
   color: #6a6a6a;
   .title {
     margin: 7px 0;
@@ -151,27 +148,60 @@
 
 .messageTitleWrapper {
   width: 100%;
+  margin-top: 45px;
   display: flex;
   justify-content: space-between;
 
   & > div {
-    width: 49%;
+    width: 74%;
+  }
+
+  & > .recipientWrapper {
+    width: 23%;
+  }
+}
+
+.messageEmailTitleWrapper {
+  width: 100%;
+  margin-top: 45px;
+  display: flex;
+
+  & > div {
+    width: 23%;
+    margin-right: 2.66%;
   }
 }
 
 .messageWrapp {
   display: flex;
   justify-content: space-between;
-  height: 206px;
 
   & > div {
-    width: 49%;
+    margin-bottom: 40px;
+    height: 400px;
   }
 
   .messageBody > div {
     width: 100%;
   }
-  button {
-    margin: 3px;
+  .messageBody {
+    width: 73%;
   }
+  button {
+    margin: 3px 3px 3px 0;
+  }
+}
+.insertFormFields, .templates {
+  display: flex;
+  flex-direction: column;
+
+  width: 23%;
+}
+
+.redactorWrapp {
+  background-color: white;
+  height: 367px;
+}
+.redactor {
+  height: 320px;
 }

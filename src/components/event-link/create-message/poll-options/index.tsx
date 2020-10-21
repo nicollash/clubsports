@@ -3,7 +3,6 @@ import styles from '../styles.module.scss';
 import { IPollOption } from "..";
 import { Button, Checkbox, Input } from "components/common";
 import { ButtonColors, ButtonTypes, ButtonVariant } from "common/enums";
-//import DeleteIcon from '@material-ui/icons/Delete';
 import { IInputEvent } from "common/types";
 
 interface IProps {

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { SectionDropdown, Button, DataGrid, MenuButton, Loader } from 'components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
 import styles from '../../styles.module.scss';
-import { capitalize } from 'lodash';
 import moment from 'moment';
 import { BindingCbWithOne, IDivision, IPool, ITeam } from 'common/models';
 import { IResponse } from 'components/event-link';
@@ -21,6 +20,17 @@ import {
 import { dateComparator } from "components/common/data-grid";
 import DateRangeFilter from "components/common/data-grid/filters/DateRangeFilter";
 import { ColumnApi, GridApi, GridReadyEvent } from "ag-grid-community";
+
+enum MessageStatus {
+  NEW = 'new',
+  SENT = 'sent',
+  SENDING = 'sending',
+  SCHEDULED = 'scheduled',
+  PREPARING = 'preparing',
+  REPLIED = 'replied',
+  ERROR = 'error',
+};
+
 interface IProps {
   divisions: IDivision[];
   pools: IPool[];
@@ -30,7 +40,9 @@ interface IProps {
   responses: IResponse[];
   deleteMessages: BindingCbWithOne<string>;
   refreshMessage: (messageId: string) => void;
-}
+  getResponses: (messageId: string) => void;
+  updateMessage: (messageId: string) => void;
+};
 
 const MessageItem = ({
   divisions,
@@ -41,23 +53,49 @@ const MessageItem = ({
   responses,
   deleteMessages,
   refreshMessage,
+  getResponses,
+  updateMessage,
 }: IProps) => {
   const [isDeleteModalOpen, toggleDeleteModal] = useState<boolean>(false);
   const [recipientDetails, setRecipientDetails] = useState<IRecipientDetails>();
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  useEffect(() => {
-    setIsLoading(false);
-  }, [responses]);
-
+  const [isRefreshLoading, setIsRefreshLoading] = useState<boolean>(false);
   const [gridApi, setGridApi] = useState<GridApi>();
   const [gridColumnApi, setGridColumnApi] = useState<ColumnApi>();
-  const [dateFilterOpen, setDateFilterOpen] = useState(false);
+  const [dateFilterOpen, setDateFilterOpen] = useState<boolean>(false);
   const [range, setRange] = useState({
     startDate: null,
     endDate: null,
     key: 'selection',
   });
+  const [isLoadingStatus, setIsLoadingStatus] = useState<boolean>(
+    message.status === MessageStatus.SENDING ||
+      message.status === MessageStatus.PREPARING ||
+      message.status === MessageStatus.NEW
+  );
+
+  useEffect(() => {
+    setIsRefreshLoading(false);
+  }, [responses]);
+
+  useEffect(() => {
+    setRecipientDetails(JSON.parse(message.recipient_details));
+  }, [message]);
+
+  useEffect(() => {
+    let timerId: NodeJS.Timeout;
+    const status =
+      message.status === MessageStatus.SENDING ||
+      message.status === MessageStatus.PREPARING ||
+      message.status === MessageStatus.NEW;
+    setIsLoadingStatus(status);
+    if (!status) {
+      getResponses(message.message_id);
+    } else {
+      timerId = setInterval(() => updateMessage(message.message_id), 5000);
+    }
+    return () => clearInterval(timerId);
+  }, [message]);
 
   const dateRangeRef = useRef();
 
@@ -81,10 +119,6 @@ const MessageItem = ({
       } - ${endDate ? moment(endDate!).format('MM/DD/YYYY') : ''}`;
     }
   }
-
-  useEffect(() => {
-    setRecipientDetails(JSON.parse(message.recipient_details));
-  }, [message]);
 
   const onMessagesDelete = () => {
     deleteMessages(message.message_id);
@@ -125,7 +159,7 @@ const MessageItem = ({
   };
 
   const onRefreshClick = () => {
-    setIsLoading(true);
+    setIsRefreshLoading(true);
     refreshMessage(message.message_id);
   };
 
@@ -137,7 +171,8 @@ const MessageItem = ({
       <SectionDropdown expanded={isSectionExpand} panelDetailsType="flat">
         <div className={styles.msTitleContainer}>
           <p className={styles.msTitle}>
-            {capitalize(message.message_title) || message.message_type}
+            {message.message_title}
+            {responses?.length !== 0 ? `(${responses.length})` : null}
           </p>
           <p className={styles.msDeliveryDate}>
             {new Date(message.send_datetime) < new Date()
@@ -152,7 +187,9 @@ const MessageItem = ({
             <div className={styles.msContentMessage}>
               <div>
                 <span className={styles.msContentTitle}>Message:</span>{' '}
-                {message.message_body || message.message_type}
+                {message.message_type === Type.TEXT
+                  ? message.message_body
+                  : message.message_type}
               </div>
               <div>
                 <Button
@@ -170,8 +207,8 @@ const MessageItem = ({
                   onClick={() => {}}
                 />
                 <div>
-                  {isLoading ? (
-                    <Loader size={20} styles={{ backgroudColor: '#00A3EA'}}/>
+                  {isRefreshLoading ? (
+                    <Loader size={20} styles={{ backgroudColor: '#00A3EA', margin: '0 10px' }}/>
                   ) : (
                     <Button
                       label="Refresh"
@@ -201,6 +238,15 @@ const MessageItem = ({
             </div>
             <div className={styles.msInfoWrapper}>
               <div className={styles.msInfoContent}>
+                <p>
+                <span className={styles.msContentTitle}>Status:{' '}</span>
+                  {message.status?.toLocaleUpperCase()}
+                  {(message.status === MessageStatus.SENDING ||
+                    message.status === MessageStatus.PREPARING ||
+                    message.status === MessageStatus.NEW) && (
+                    <Loader size={10} styles={{width: '24px', padding: 0}}/>
+                  )}
+                </p>
                 {recipientDetails &&
                   recipientDetails.recipient === Recipient.ONE && (
                     <p>
@@ -217,7 +263,7 @@ const MessageItem = ({
                     <>
                       {recipientDetails.divisionIds?.length !== 0 && (
                         <p>
-                          <span className={styles.msContentTitle}>Divisions of participants:</span>{" "}
+                          <span className={styles.msContentTitle}>Divisions of participants:{" "}</span>
                           {getListOfNames(
                             recipientDetails.divisionIds,
                             divisions,
@@ -273,7 +319,7 @@ const MessageItem = ({
                   variant='outlined'
                   onClick={onDateFilterButtonClick}
                 />
-                {dateFilterOpen && (
+                {!isLoadingStatus && dateFilterOpen && (
                   <div className={styles.dateFilter}>
                     <DateRangeFilter
                       ref={dateRangeRef}
@@ -289,15 +335,17 @@ const MessageItem = ({
               </div>
             </div>
           </div>
-          <div className={styles.msContainer}>
-            <DataGrid
-              columns={columnsForMessages}
-              rows={responses}
-              defaultToolPanel={''}
-              height={40}
-              onGridReady={onGridReady}
-            />
-          </div>
+          {!isLoadingStatus && (
+            <div className={styles.msContainer}>
+              <DataGrid
+                columns={columnsForMessages}
+                rows={responses}
+                defaultToolPanel={''}
+                height={40}
+                onGridReady={onGridReady}
+              />
+            </div>
+          )}
         </div>
       </SectionDropdown>
       <DeletePopupConfrim

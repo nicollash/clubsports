@@ -303,7 +303,7 @@ const checkTeamInSchedule = (teamId: string, eventId: string) => async (
     )
   );
   const gamesBracketsResp = await Api.get(
-    `/brackets_details?event_id=${eventId}`
+    `/v_brackets_details?event_id=${eventId}`
   );
 
   schedulesDetailsResp.map((schedule) => {
@@ -708,7 +708,7 @@ export const createTeamsCsv: ActionCreator<ThunkAction<
         data: [
           {
             index: 0,
-            msg: `Import Summary; Of the ${teams.length} teams you imported, ${data.length} rows mapped to existing divisions. No pool were mapped. Be sure to map them under "Division & Pools"`,
+            msg: `Import Summary; Of the ${teams.length} teams you imported, ${data.length} rows mapped to existing divisions. No pool were mapped. Be sure to map them under "Division & Pools".`,
           },
         ],
       });
@@ -726,7 +726,7 @@ export const createTeamsCsv: ActionCreator<ThunkAction<
             index: 0,
             msg: `Import Summary; Of the ${teams.length} teams you imported, ${
               data.length
-            } rows mapped successfully to existing divisions and ${poolTeamCount} rows successfully mapped to existing Pools. Map them under "Division & Pools" ${
+            } rows mapped successfully to existing divisions and ${poolTeamCount} rows successfully mapped to existing Pools. If needed, map them under "Division & Pools". ${
               data.length - poolTeamCount
             } were unassigned and need assignment.`,
           },

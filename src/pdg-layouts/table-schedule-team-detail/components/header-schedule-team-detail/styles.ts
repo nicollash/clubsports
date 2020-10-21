@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     width: 80,
   },
   logoWrapper: {
-    width: 70,
+    width: 100,
   },
   logo: {
     objectFit: "contain",

@@ -10,6 +10,7 @@ enum SortByFilesTypes {
   BACKUP_PLAN = 'backup_name',
   CREATED_DATETIME = 'created_datetime',
   UPDATED_DATETIME = 'updated_datetime',
+  LABEL = "label",
 }
 
 export { SortByFilesTypes };

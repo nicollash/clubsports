@@ -7,6 +7,7 @@ import DropContainer, {
 } from "../dnd/drop";
 import TeamDragCard from "../dnd/drag";
 import SeedCard from "../dnd/seed";
+import CustomSeedCard from "../dnd/custom-seed";
 import styles from "../styles.module.scss";
 import { IGame } from "../helper";
 import { ITeamCard } from "common/models/schedule/teams";
@@ -84,12 +85,13 @@ const RenderGameSlot = (props: Props) => {
     playoffRound,
     awayTeamScore,
     homeTeamScore,
+    awayDisplayName,
+    homeDisplayName,
     bracketGameId,
     awayDependsUpon,
     homeDependsUpon,
     poolHex,
   } = game;
-
   const acceptType = [
     MatrixTableDropEnum.TeamDrop,
     MatrixTableDropEnum.ExtraGameDrop,
@@ -134,7 +136,12 @@ const RenderGameSlot = (props: Props) => {
     );
   };
 
-  const opacity = noTransparentGameId !== awayTeam?.id && noTransparentGameId !== homeTeam?.id && noTransparentGameId !== '' ? 0.2 : 1;
+  const opacity =
+    noTransparentGameId !== awayTeam?.id &&
+    noTransparentGameId !== homeTeam?.id &&
+    noTransparentGameId !== ""
+      ? 0.2
+      : 1;
 
   const awayTeamName = teamCards.find((item) => item.id === awayTeamId)?.name;
   const homeTeamName = teamCards.find((item) => item.id === homeTeamId)?.name;
@@ -196,41 +203,77 @@ const RenderGameSlot = (props: Props) => {
                 onDrag={onDrag}
               />
             )}
-            {!awayTeam && (awaySeedId || awayDependsUpon) && bracketGameId && (
-              <SeedCard
-                type={MatrixTableDropEnum.BracketDrop}
-                round={playoffRound}
-                slotId={id}
-                seedId={awaySeedId}
-                teamId={awayTeamId}
-                teamName={awayTeamName}
-                position={1}
-                teamScore={awayTeamScore}
-                tableType={tableType}
-                isDndMode={isDndMode}
-                divisionId={divisionId!}
-                showHeatmap={true}
-                dependsUpon={awayDependsUpon}
-                divisionHex={poolHex || divisionHex}
-                isCancelled={isCancelled}
-                playoffIndex={playoffIndex!}
-                divisionName={divisionName}
-                bracketGameId={bracketGameId}
-                isEnterScores={isEnterScores}
-                highlightUnscoredGames={checkScoreBrackets()}
-                highlightIncompletedGames={checkGame()}
-                onGameUpdate={(changes: any) =>
-                  onGameUpdate({ ...game, ...changes })
-                }
-              />
-            )}
+
+            {!awayTeam &&
+              (!!awaySeedId || !!awayDependsUpon) &&
+              !event?.custom_playoffs_YN &&
+              !bracket?.customPlayoff &&
+              !!bracketGameId && (
+                <SeedCard
+                  type={MatrixTableDropEnum.BracketDrop}
+                  round={playoffRound}
+                  slotId={id}
+                  seedId={awaySeedId}
+                  teamId={awayTeamId}
+                  teamName={awayTeamName}
+                  position={1}
+                  teamScore={awayTeamScore}
+                  tableType={tableType}
+                  isDndMode={isDndMode}
+                  divisionId={divisionId!}
+                  showHeatmap={true}
+                  dependsUpon={awayDependsUpon}
+                  divisionHex={poolHex || divisionHex}
+                  isCancelled={isCancelled}
+                  playoffIndex={playoffIndex!}
+                  divisionName={divisionName}
+                  bracketGameId={bracketGameId}
+                  isEnterScores={isEnterScores}
+                  highlightUnscoredGames={checkScoreBrackets()}
+                  highlightIncompletedGames={checkGame()}
+                  onGameUpdate={(changes: any) =>
+                    onGameUpdate({ ...game, ...changes })
+                  }
+                />
+              )}
+
+            {!awayTeam &&
+              (awayDisplayName || bracketGameId) &&
+              (!!event?.custom_playoffs_YN || !!bracket?.customPlayoff) && (
+                <CustomSeedCard
+                  game={game}
+                  type={MatrixTableDropEnum.BracketDrop}
+                  displayName={game.awayDisplayName}
+                  slotId={id}
+                  teamId={awayTeamId}
+                  teamName={awayTeamName}
+                  teamCards={teamCards}
+                  position={1}
+                  teamScore={awayTeamScore}
+                  tableType={tableType}
+                  isDndMode={isDndMode}
+                  divisionId={divisionId!}
+                  showHeatmap={true}
+                  divisionHex={poolHex || divisionHex}
+                  isCancelled={isCancelled}
+                  playoffIndex={playoffIndex!}
+                  divisionName={divisionName}
+                  bracketGameId={bracketGameId!}
+                  isEnterScores={isEnterScores}
+                  highlightUnscoredGames={checkScoreBrackets()}
+                  highlightIncompletedGames={checkGame()}
+                  onGameUpdate={(changes: any) =>
+                    onGameUpdate({ ...game, ...changes })
+                  }
+                />
+              )}
           </div>
         </DropContainer>
         {moveBothChain && (
           <div
             className={styles.chainWrapper}
             style={{
-              opacity, 
+              opacity,
               backgroundColor: checkGame()
                 ? "rgb(227, 225, 220)"
                 : poolHex || awayTeam?.divisionHex,
@@ -277,34 +320,70 @@ const RenderGameSlot = (props: Props) => {
                 onDrag={onDrag}
               />
             )}
-            {!homeTeam && (homeSeedId || homeDependsUpon) && bracketGameId && (
-              <SeedCard
-                type={MatrixTableDropEnum.BracketDrop}
-                round={playoffRound}
-                slotId={id}
-                seedId={homeSeedId}
-                teamId={homeTeamId}
-                teamName={homeTeamName}
-                position={2}
-                teamScore={homeTeamScore}
-                tableType={tableType}
-                isDndMode={isDndMode}
-                divisionId={divisionId!}
-                showHeatmap={true}
-                dependsUpon={homeDependsUpon}
-                divisionHex={poolHex || divisionHex}
-                isCancelled={isCancelled}
-                divisionName={divisionName}
-                bracketGameId={bracketGameId}
-                playoffIndex={playoffIndex!}
-                isEnterScores={isEnterScores}
-                highlightUnscoredGames={checkScoreBrackets()}
-                highlightIncompletedGames={checkGame()}
-                onGameUpdate={(changes: any) =>
-                  onGameUpdate({ ...game, ...changes })
-                }
-              />
-            )}
+
+            {!homeTeam &&
+              (!!homeSeedId || !!homeDependsUpon) &&
+              !event?.custom_playoffs_YN &&
+              !bracket?.customPlayoff &&
+              bracketGameId && (
+                <SeedCard
+                  type={MatrixTableDropEnum.BracketDrop}
+                  round={playoffRound}
+                  slotId={id}
+                  seedId={homeSeedId}
+                  teamId={homeTeamId}
+                  teamName={homeTeamName}
+                  position={2}
+                  teamScore={homeTeamScore}
+                  tableType={tableType}
+                  isDndMode={isDndMode}
+                  divisionId={divisionId!}
+                  showHeatmap={true}
+                  dependsUpon={homeDependsUpon}
+                  divisionHex={poolHex || divisionHex}
+                  isCancelled={isCancelled}
+                  divisionName={divisionName}
+                  bracketGameId={bracketGameId}
+                  playoffIndex={playoffIndex!}
+                  isEnterScores={isEnterScores}
+                  highlightUnscoredGames={checkScoreBrackets()}
+                  highlightIncompletedGames={checkGame()}
+                  onGameUpdate={(changes: any) =>
+                    onGameUpdate({ ...game, ...changes })
+                  }
+                />
+              )}
+
+            {!homeTeam &&
+              (homeDisplayName || bracketGameId) &&
+              (!!event?.custom_playoffs_YN || !!bracket?.customPlayoff) && (
+                <CustomSeedCard
+                  game={game}
+                  type={MatrixTableDropEnum.BracketDrop}
+                  displayName={game.homeDisplayName}
+                  slotId={id}
+                  teamId={homeTeamId}
+                  teamName={homeTeamName}
+                  teamCards={teamCards}
+                  position={2}
+                  teamScore={homeTeamScore}
+                  tableType={tableType}
+                  isDndMode={isDndMode}
+                  divisionId={divisionId!}
+                  showHeatmap={true}
+                  divisionHex={poolHex || divisionHex}
+                  isCancelled={isCancelled}
+                  playoffIndex={playoffIndex!}
+                  divisionName={divisionName}
+                  bracketGameId={bracketGameId!}
+                  isEnterScores={isEnterScores}
+                  highlightUnscoredGames={checkScoreBrackets()}
+                  highlightIncompletedGames={checkGame()}
+                  onGameUpdate={(changes: any) =>
+                    onGameUpdate({ ...game, ...changes })
+                  }
+                />
+              )}
           </div>
         </DropContainer>
       </div>

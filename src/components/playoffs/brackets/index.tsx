@@ -6,7 +6,7 @@ import BracketRound from "./round";
 import { IBracketGame, IBracketSeed } from "../bracketGames";
 import BracketConnector from "./connector";
 import { IPinchProps, IBracket } from "common/models";
-import NoteModal from './note-modal/note-modal';
+import NoteModal from "./note-modal/note-modal";
 
 import styles from "./styles.module.scss";
 
@@ -23,7 +23,7 @@ interface IProps {
   games: IBracketGame[];
   onRemove: (gameIndex: number) => void;
   addNoteForGame: (game: IBracketGame, bracket: IBracket) => void;
-};
+}
 
 export const SeedsContext = React.createContext<{
   seeds?: IBracketSeed[];
@@ -32,15 +32,11 @@ export const SeedsContext = React.createContext<{
 }>({ setHighlightedTeamId: () => {} });
 
 const Brackets = (props: IProps) => {
-  const { 
-    games, 
-    seeds, 
-    bracket, 
-    onRemove, 
-    addNoteForGame, 
-  } = props;
+  const { games, seeds, bracket, onRemove, addNoteForGame } = props;
   const [highlightedTeam, setHighlighteamTeam] = useState<string | undefined>();
-  const [selectedGameForNote, setSelectedGameForNote] = useState<IBracketGame | undefined>();
+  const [selectedGameForNote, setSelectedGameForNote] = useState<
+    IBracketGame | undefined
+  >();
 
   const setHighlightedTeamId = (teamId: string) => {
     setHighlighteamTeam(teamId);
@@ -80,17 +76,23 @@ const Brackets = (props: IProps) => {
 
   const [hidden, setHidden] = useState<any>();
   const [isOpenNotePopup, setIsOpenNotePopup] = useState<boolean>(false);
-  const [isOpenEditNotePopup, setIsOpenEditNotePopup] = useState<boolean>(false);
+  const [isOpenEditNotePopup, setIsOpenEditNotePopup] = useState<boolean>(
+    false
+  );
 
   const onNoteOpenPopup = (gameId: string) => {
     setIsOpenNotePopup(true);
-    setSelectedGameForNote(games.find((game: IBracketGame) => game.id === gameId));
+    setSelectedGameForNote(
+      games.find((game: IBracketGame) => game.id === gameId)
+    );
   };
 
   const onEditNotePopup = (gameId: string) => {
     setIsOpenNotePopup(true);
     setIsOpenEditNotePopup(true);
-    setSelectedGameForNote(games.find((game: IBracketGame) => game.id === gameId));
+    setSelectedGameForNote(
+      games.find((game: IBracketGame) => game.id === gameId)
+    );
   };
 
   const onCloseNotePopup = () => {
@@ -104,8 +106,10 @@ const Brackets = (props: IProps) => {
       return;
     }
 
-    isDeleteNote ? selectedGameForNote.gameNote = "" : selectedGameForNote.gameNote = note;
-    
+    isDeleteNote
+      ? (selectedGameForNote.gameNote = "")
+      : (selectedGameForNote.gameNote = note);
+
     addNoteForGame(selectedGameForNote, bracket);
     onCloseNotePopup();
   };
@@ -353,7 +357,7 @@ const Brackets = (props: IProps) => {
           </>
         )}
       </TransformWrapper>
-      <NoteModal 
+      <NoteModal
         game={selectedGameForNote}
         isOpen={isOpenNotePopup}
         isEdit={isOpenEditNotePopup}

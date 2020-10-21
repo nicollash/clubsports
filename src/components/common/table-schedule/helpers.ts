@@ -1,11 +1,11 @@
-import { findIndex, find, groupBy, max, orderBy } from "lodash-es";
+import { find, findIndex, groupBy, max, orderBy } from "lodash-es";
 import { ITeamCard } from "common/models/schedule/teams";
 import { IGame } from "../matrix-table/helper";
 import {
   IDivision,
+  IEventDetails,
   IEventSummary,
   IPool,
-  IEventDetails,
   ISchedule,
   ISchedulesDetails,
 } from "common/models";
@@ -16,6 +16,7 @@ import { ScheduleWarningsEnum } from "common/enums";
 import { IDiagnosticsInput } from "components/schedules/diagnostics";
 import ITimeSlot from "common/models/schedule/timeSlots";
 import moment from "moment";
+import { bracketSourceTypeEnum } from "../../playoffs/bracketGames";
 
 interface IApplyFilterParams {
   selectedDay?: string;
@@ -152,7 +153,6 @@ export const mapGamesByFilter = (
   const timeIds = mapCheckedValues(timeOptions);
   const teamIds = mapCheckedValues(teamsOptions);
   const fieldIds = mapCheckedValues(fieldsOptions);
-
   const filteredGamesIds = games
     .filter(
       (game) =>
@@ -190,8 +190,24 @@ const checkDivisions = (game: IGame, divisionIds: string[]) => {
 };
 
 const checkPools = (game: IGame, poolIds: string[]) => {
-  const { awayTeam, homeTeam, isPlayoff } = game;
-  return isPlayoff || poolIds.includes(awayTeam?.poolId! || homeTeam?.poolId!);
+  const {
+    awayTeam,
+    homeTeam,
+    isPlayoff,
+    awaySourceId,
+    awaySourceType,
+    homeSourceType,
+    homeSourceId,
+  } = game;
+  return (
+    isPlayoff ||
+    poolIds.includes(
+      awayTeam?.poolId! ||
+        homeTeam?.poolId! ||
+        (awaySourceType === bracketSourceTypeEnum.Pool ? awaySourceId! : "") ||
+        (homeSourceType === bracketSourceTypeEnum.Pool ? homeSourceId! : "")
+    )
+  );
 };
 
 const checkTime = (game: IGame, timeIds: string[]) => {
@@ -210,6 +226,10 @@ const checkTeams = (game: IGame, teamIds: string[]) => {
     homeSeedId,
     homeDependsUpon,
     awayDependsUpon,
+    homeSourceType,
+    homeSourceValue,
+    awaySourceType,
+    awaySourceValue,
   } = game;
 
   return (
@@ -218,7 +238,13 @@ const checkTeams = (game: IGame, teamIds: string[]) => {
     (isPlayoff && (awaySeedId || awayDependsUpon) && !awayTeamId) ||
     (isPlayoff && (homeSeedId || homeDependsUpon) && !homeTeamId) ||
     teamIds.includes(awayTeam?.id!) ||
-    teamIds.includes(homeTeam?.id!)
+    teamIds.includes(homeTeam?.id!) ||
+    (!!homeSourceType &&
+      (homeSourceType !== bracketSourceTypeEnum.Team ||
+        teamIds.includes(homeSourceValue!))) ||
+    (!!awaySourceType &&
+      (awaySourceType !== bracketSourceTypeEnum.Team ||
+        teamIds.includes(awaySourceValue!)))
   );
 };
 
@@ -429,6 +455,9 @@ const getScheduleWarning = (
     });
   }
 
+  if (!event.same_coach_timeslot_YN) {
+    return items;
+  }
   days.forEach((day) => {
     if (!day) return;
 
@@ -506,7 +535,33 @@ const getScheduleWarning = (
   return items;
 };
 
+const mapDupesGames = (dupesGames: IGame[]) => {
+  const uniqConcatTeamId = [
+    ...new Set(dupesGames.map((g) => `${g.awayTeam?.id}${g.homeTeam?.id}`)),
+  ];
+  const gamesWithUniqId = uniqConcatTeamId.map((str) => {
+    return {
+      awayTeamId: str.slice(0, 8),
+      homeTeamId: str.slice(8),
+    };
+  });
+  const uniqDupesGames = gamesWithUniqId.map((uniqGame) => {
+    const a = dupesGames.filter(
+      (game) =>
+        uniqGame.awayTeamId === game.awayTeam?.id &&
+        uniqGame.homeTeamId === game.homeTeam?.id
+    );
+    return {
+      ...uniqGame,
+      games: a,
+    };
+  });
+
+  return uniqDupesGames;
+};
+
 export {
+  mapDupesGames,
   getUnsatisfiedTeams,
   getSatisfiedTeams,
   getScheduleWarning,

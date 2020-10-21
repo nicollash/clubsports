@@ -1,6 +1,5 @@
 import React from "react";
 import { CSVLink } from "react-csv";
-// import moment from "moment";
 import PDFTableSchedule from "pdg-layouts/table-schedule";
 import PDFTableFieldsSchedule from "pdg-layouts/table-fields-schedule";
 import PDFTableScheduleTeamDetail from "pdg-layouts/table-schedule-team-detail";
@@ -19,13 +18,13 @@ import {
   getGamesByDays,
   onXLSXSave,
 } from "helpers";
-import { 
-  BindingAction, 
-  IPool, 
-  IEventDetails, 
+import {
+  BindingAction,
+  IPool,
+  IEventDetails,
   ISchedule,
   INormalizedGame,
-  } from "common/models";
+} from "common/models";
 import {
   ButtonColors,
   ButtonVariant,
@@ -44,6 +43,7 @@ import styles from "./styles.module.scss";
 import { ITeamCard } from "common/models/schedule/teams";
 import { getScheduleTableXLSX, TableType } from "components/reporting/helpers";
 import { getScorers } from "pdg-layouts/helpers";
+import { PDFReportType } from 'components/reporting/components/item-schedules';
 
 const STYLES_ICOM_WARNING = {
   fill: "#FFCB00",
@@ -112,16 +112,6 @@ const PopupSaveReporting = ({
   };
 
   const csvData = normalizedGames ? normalizedGames : [];
-  // const csvData = (): any[] => {
-  //   if( normalizedGames ) {
-  //     return normalizedGames.map((gameInfo) => {
-  //       const date = moment(gameInfo.Game_Date ? gameInfo.Game_Date : '').format('MMM D YYYY');
-  //       const time = moment(gameInfo.Game_Time ? gameInfo.Game_Time : '').format('hh:mm A');
-  //       const obj ={ ...gameInfo, Game_Date: date, Game_Time: time }
-  //       return obj;
-  //     });
-  //   } else return [];
-  // } 
 
   let scorerMobile = "";
   getScorers(event.event_id).then((res) => (scorerMobile = res));
@@ -188,6 +178,7 @@ const PopupSaveReporting = ({
         event={event}
         games={gamesByDay}
         fields={fields}
+        pdfType={PDFReportType.MASTER_SCHEDULE_FIELD_BY_FIELD}
         timeSlots={timeSlots}
         facilities={facilities}
         schedule={schedule}
@@ -339,13 +330,13 @@ const PopupSaveReporting = ({
                 <li className={styles.dowloadLinkWrapper}>
                   <b> Division-Games List</b>
                   <CSVLink
-                    style={{color:'#00A3EA', margin: 10}}
+                    style={{ color: "#00A3EA", margin: 10 }}
                     data={csvData}
                     filename={"Division Games List.csv"}
                     asyncOnClick={true}
                   >
                     Download
-                  </CSVLink>                  
+                  </CSVLink>
                 </li>
               </ul>
             </li>

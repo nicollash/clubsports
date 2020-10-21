@@ -28,6 +28,7 @@ import {
   IPublishSettings,
   ISchedule,
   IFetchedBracket,
+  IDivision,
 } from "common/models";
 import {
   EventStatuses,
@@ -138,6 +139,22 @@ const clearAuthPageData = () => ({
   type: CLEAR_AUTH_PAGE_DATA,
 });
 
+const getCountBracketGame = (bracketId: string) => async (
+  dispatch: Dispatch,
+  getState: () => IAppState
+  ) =>{
+    const games = await api.get(`/v_brackets_details?bracket_id=${bracketId}`);
+    const { gameCount } = getState().pageEvent;
+
+    dispatch({
+      type: PUBLISH_GAMECOUNT_SUCCESS,
+      payload: {
+        poolLength: gameCount.poolLength,
+        bracketLength: games.length,
+      },
+    });
+};
+
 const updateEventStatus = (isDraft: boolean) => async (
   dispatch: Dispatch,
   getState: () => IAppState
@@ -179,7 +196,7 @@ const publishEventData = (
   publishWithUnassignedGames?: boolean,
 ) => async (dispatch: Dispatch, getState: () => IAppState) => {
   const { tournamentData } = getState().pageEvent;
-  const { event, schedules } = tournamentData;
+  const { event, schedules, divisions } = tournamentData;
   const hasPublishedEvent = !CheckEventDrafts.checkDraftEvent(
     event as IEventDetails
   );
@@ -202,6 +219,14 @@ const publishEventData = (
     case EventPublishTypes.DETAILS_AND_TOURNAMENT_PLAY:
     case EventPublishTypes.TOURNAMENT_PLAY: {
       const publishedSchedule = publishSettings.activeSchedule as ISchedule;
+
+      if (event?.sport_id === 3 || event?.sport_id === 6) {
+        const errorDivisions = divisions.filter((div: IDivision) => !div.gender_id);
+        if (errorDivisions?.length !== 0) {
+          Toasts.errorToast(`You did not select the gender for the ${errorDivisions.map(div => div.long_name).join(", ")} division(s).`);
+          return;
+        }
+      }
 
       if (modifyModValue === EventModifyTypes.PUBLISH && !hasPublishedEvent) {
         dispatch<any>(updateEventStatus(isDraft));
@@ -257,7 +282,7 @@ const addEntityToLibrary = (entity: IEntity, entryPoint: EntryPoints) => async (
 ) => {
   try {
     if (entity.is_library_YN === LibraryStates.TRUE) {
-      throw new Error("The item is already in the library.");
+      throw new Error("This item is already in the library.");
     }
 
     const updatedEntity: IEntity = {
@@ -370,4 +395,5 @@ export {
   addEntityToLibrary,
   addEntitiesToLibrary,
   addTeams,
+  getCountBracketGame,
 };

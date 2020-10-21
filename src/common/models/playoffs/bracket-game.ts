@@ -27,4 +27,18 @@ export interface IPlayoffGame {
   created_datetime: string;
   updated_by: string | null;
   updated_datetime: string | null;
+  // new bracket fields
+  home_source_type: string | null;
+  home_source_id: string | null;
+  home_source_value: string | null;
+  away_source_type: string | null;
+  away_source_id: string | null;
+  away_source_value: string | null;
+  x_left: number | null;
+  y_top: number | null;
+  x_width: number | null;
+  y_height: number | null;
+  direction: string | null;
+  away_display?: string;
+  home_display?: string;
 }

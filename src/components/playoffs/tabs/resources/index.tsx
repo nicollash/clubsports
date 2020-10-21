@@ -52,6 +52,7 @@ interface IProps {
   fields?: IField[];
   timeSlots?: ITimeSlot[];
   scheduleData?: ISchedule;
+  isCustomMode: number | null;
   facilities?: IScheduleFacility[];
   eventSummary?: IEventSummary[];
   schedulesDetails?: ISchedulesDetails[];
@@ -237,6 +238,7 @@ class ResourceMatrix extends Component<IProps> {
       timeSlots,
       facilities,
       scheduleData,
+      isCustomMode,
       eventSummary,
       onTeamCardsUpdate,
       onTeamCardUpdate,
@@ -279,10 +281,12 @@ class ResourceMatrix extends Component<IProps> {
         <div className={styles.leftColumn}>
           {bracketGames && divisions && filteredGames && (
             <BracketGamesList
+              isCustomMode={isCustomMode}
               acceptType={MatrixTableDropEnum.BracketDrop}
               bracketGames={bracketGames}
               divisions={divisions}
               pools={pools}
+              teamCards={teamCards}
               filteredGames={filteredGames}
               onDrop={this.onMoveCard}
               setHighlightedGame={setHighlightedGame!}

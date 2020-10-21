@@ -11,6 +11,8 @@ import {
   FETCH_SCORED_TEAMS,
   CLEAR_SCORED_TEAMS,
   BRACKETS_ADVANCING_IN_PROGRESS,
+  CHANGE_CUSTOM_BRACKET_GAME,
+  CHANGE_SELECTED_DIVISION,
 } from "./actionTypes";
 import {
   mapBracketData,
@@ -95,8 +97,10 @@ const managePlayoffSaving = (
   bracketGames: IBracketGame[],
   isCreate: boolean
 ) => async (dispatch: Dispatch, getState: IGetState) => {
-  const { scheduling } = getState();
+  const { pageEvent, scheduling } = getState();
+
   const { bracket } = scheduling;
+  const { custom_playoffs_YN } = pageEvent.tournamentData.event!;
 
   if (!bracket) return newError();
 
@@ -112,6 +116,7 @@ const managePlayoffSaving = (
       ? ({
           ...bracketData,
           bracket_level: bracket?.bracketLevel,
+          custom_playoffs_YN: custom_playoffs_YN ? 1 : 0,
         } as IFetchedBracket)
       : bracketData,
     !isCreate
@@ -126,7 +131,7 @@ const managePlayoffSaving = (
   const removedGames = bracketGames.filter((item) => item.hidden);
   bracketGames = bracketGames.filter((item) => !item.hidden);
 
-  bracketGames.forEach((item) =>
+  bracketGames?.forEach((item) =>
     existingGameIds.includes(item.id)
       ? existingGames.push(item)
       : newGames.push(item)
@@ -210,7 +215,7 @@ export const retrieveBracketsGames = (bracketId: string) => async (
   dispatch: Dispatch,
   getState: IGetState
 ) => {
-  const response = await api.get("/brackets_details", {
+  const response = await api.get("/v_brackets_details", {
     bracket_id: bracketId,
   });
   const fields = getState().pageEvent.tournamentData.fields;
@@ -220,6 +225,11 @@ export const retrieveBracketsGames = (bracketId: string) => async (
     const orderedGames = orderBy(bracketGames, ["divisionId", "index"]);
     dispatch(fetchBracketGames(orderedGames));
   }
+};
+
+export const updateBracketData = (bracket: IBracket) => async () => {
+  const bracketData = await mapBracketData(bracket, true);
+  api.put("/brackets", bracketData);
 };
 
 export const addNoteForGame = (
@@ -267,17 +277,43 @@ export const advanceTeamsToBrackets = () => async (
   dispatch(loadDataWithScores({ scoredTeams }));
 
   const divisionDictionary = groupBy(scoredTeams, "division_id");
-  const sortedTeams = {};
+  const poolDictionary = groupBy(scoredTeams, "pool_id");
+  const sortedTeamsByDivisions = {};
+  const sortedTeamsByPools = {};
 
   Object.keys(divisionDictionary).forEach(
     (key) =>
-      (sortedTeams[key] = sortTeamByScored(
+      (sortedTeamsByDivisions[key] = sortTeamByScored(
         divisionDictionary[key],
         scoredGames,
         event?.ranking_factor_divisions!
       ))
   );
 
+  Object.keys(poolDictionary).forEach(
+    (key) =>
+      (sortedTeamsByPools[key] = sortTeamByScored(
+        poolDictionary[key],
+        scoredGames,
+        event?.ranking_factor_pools!
+      ))
+  );
+
   dispatch(setAdvancingInProgress(false));
-  dispatch(fetchSortedTeams(sortedTeams));
+  dispatch(
+    fetchSortedTeams({
+      ...sortedTeamsByDivisions,
+      ...sortedTeamsByPools,
+    })
+  );
 };
+
+export const changeCustomBracketGame = (game: IBracketGame) => ({
+  type: CHANGE_CUSTOM_BRACKET_GAME,
+  payload: game,
+});
+
+export const changeSelectedDivision = (division: string) => ({
+  type: CHANGE_SELECTED_DIVISION,
+  payload: division,
+});

@@ -145,6 +145,7 @@ const SchedulesMatrix = (props: IProps) => {
                           />
                         ))}
                     </tr>
+
                     {timeSlots.map((timeSlot: ITimeSlot) => (
                       <RenderTimeSlot
                         key={timeSlot.id}

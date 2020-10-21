@@ -9,7 +9,7 @@ export interface IMessage {
   send_datetime: string;
   message_title: string;
   message_body: string;
-  status: number;
+  status: string;
   one_way_two_way: 1 | 2 | null;
   status_message: string;
   email_from_name: string;
