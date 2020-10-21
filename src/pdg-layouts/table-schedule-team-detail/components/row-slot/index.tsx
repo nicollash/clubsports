@@ -66,9 +66,9 @@ const RowTeamSlot = ({
           const fieldKey = Object.keys(timeItem[timeKey])[0];
           return timeItem[timeKey][fieldKey].map((detail: any) => {
             if (detail.within_pool_game_count !== null)
-              withinPool += detail.within_pool_game_count;
+              withinPool = detail.within_pool_game_count;
             if (detail.outside_pool_game_count !== null)
-              outsidePool += detail.outside_pool_game_count;
+              outsidePool = detail.outside_pool_game_count;
             return (
               <View style={{ flexDirection: "column" }}>
                 <Text style={styles.teamGame}>{detail.opponent_team_name}</Text>
