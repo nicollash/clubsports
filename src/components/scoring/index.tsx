@@ -232,6 +232,7 @@ class Sсoring extends React.Component<
 
         <Modal isOpen={isModalOpen} onClose={this.onCloseModal}>
           <PopupTeamEdit
+            contactId={''} // default contact in the team
             team={changeableTeam}
             division={currentDivision}
             divisions={divisions}

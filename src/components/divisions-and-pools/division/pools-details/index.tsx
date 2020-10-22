@@ -335,6 +335,7 @@ const PoolsDetails = ({
           )}
           {isEditPopupOpen && (
             <PopupTeamEdit
+              contactId={''} // default contact in the team
               team={configurableTeam}
               division={currentDivision}
               divisions={divisions}

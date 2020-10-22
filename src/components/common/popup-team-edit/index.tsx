@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import axios from "axios";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { orderBy } from "lodash-es";
@@ -17,6 +18,7 @@ import { BindingAction } from "common/models/callback";
 import { ISelectOption, IUSAState, IDivision } from "common/models";
 import { ITeam, ITeamWithResults } from "common/models/teams";
 import { Icons } from "common/enums/icons";
+import { IAppState } from "reducers/root-reducer.types";
 import { ISchedulesGameWithNames } from "common/models";
 import styles from "./styles.module.scss";
 import { formatPhoneNumber } from "helpers/formatPhoneNumber";
@@ -102,6 +104,28 @@ const TeamDetailsPopup = ({
   const [isDivisionEdited, setIsDivisionEdited] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
+
+  const { coaches } = useSelector((state: IAppState) => state.teams);
+  const coache = coaches.find((coache) => coache.team_contact_id === contactId);
+  const contactFirstName = (contactId === '') 
+    ? team?.contact_first_name
+    : coache?.first_name;
+   
+  const contactLastName = (contactId === '')
+    ? team?.contact_last_name
+    : coache?.last_name;
+
+  const contactPhone: string = contactId === '' 
+    ? (team?.phone_num ? team.phone_num : '')
+    : (coache?.phone_num ? coache.phone_num : '');
+
+  const contactEmail = function () {
+    if (contactId === '') {
+      return team?.contact_email;
+    } else {
+      return coaches.find((coache) => coache.team_contact_id === contactId)?.contact_email;
+    }
+  };
 
   useEffect(() => {
     setIsOpenConf(isOpenConfirm);
@@ -330,8 +354,8 @@ console.log('contactId => ', contactId)
                     </label>
                   </p>
                 ) : (
-                  <span>{`${team.contact_first_name || ""} ${
-                    team.contact_last_name || ""
+                  <span>{`${contactFirstName || ""} ${
+                    contactLastName || ""
                   }`}</span>
                 )}
               </li>
@@ -358,7 +382,7 @@ console.log('contactId => ', contactId)
                   />
                 ) : (
                   <span>
-                    {team.phone_num ? formatPhoneNumber(team.phone_num) : ""}
+                    {contactPhone ? formatPhoneNumber(contactPhone) : ""}
                   </span>
                 )}
               </li>
@@ -369,7 +393,7 @@ console.log('contactId => ', contactId)
                     <ValidatorForm onSubmit={() => {}}>
                       <TextValidator
                         onChange={onChangeTeam}
-                        value={team.contact_email || ""}
+                        value={contactEmail || ""}
                         name={FORM_FIELDS.CONCTACT_EMAIL}
                         validators={["isEmail"]}
                         errorMessages={["Invalid email address"]}
@@ -378,7 +402,7 @@ console.log('contactId => ', contactId)
                     <span className="visually-hidden">Email</span>
                   </label>
                 ) : (
-                  <span>{team.contact_email}</span>
+                  <span>{contactEmail}</span>
                 )}
               </li>
             </ul>
