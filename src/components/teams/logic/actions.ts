@@ -141,6 +141,8 @@ const saveTeams = (teams: ITeam[], cb?: (param?: object) => void) => async (
     const currentTeams: ITeam[] = [];
 
     let progress = 0;
+    let isDeleted = false;
+    let isChanged = false;
     for await (const team of teams) {
       if (team.isDelete) {
         await Api.delete(`/teams?team_id=${team.team_id}`);
@@ -155,14 +157,15 @@ const saveTeams = (teams: ITeam[], cb?: (param?: object) => void) => async (
           }));
           await Api.put(`/reg_responses_teams`, registrants);
         }
+        isDeleted = true;
       } else {
         currentTeams.push(team);
       }
 
       if (team.isChange && !team.isDelete) {
         delete team.isChange;
-
         await Api.put(`/teams?team_id=${team.team_id}`, team);
+        isChanged = true;
       }
       progress += 1;
 
@@ -186,7 +189,9 @@ const saveTeams = (teams: ITeam[], cb?: (param?: object) => void) => async (
       },
     });
 
-    Toasts.successToast("Teams saved successfully");
+    if (isDeleted && !isChanged) Toasts.successToast("Teams deleted successfully");
+    else Toasts.successToast("Teams saved successfully");
+
   } catch (err) {
     dispatch({
       type: SAVE_TEAMS_FAILURE,
