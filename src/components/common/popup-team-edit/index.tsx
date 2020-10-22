@@ -119,13 +119,9 @@ const TeamDetailsPopup = ({
     ? (team?.phone_num ? team.phone_num : '')
     : (coache?.phone_num ? coache.phone_num : '');
 
-  const contactEmail = function () {
-    if (contactId === '') {
-      return team?.contact_email;
-    } else {
-      return coaches.find((coache) => coache.team_contact_id === contactId)?.contact_email;
-    }
-  };
+  const contactEmail = (contactId === '') 
+    ? team?.contact_email
+    : coaches.find((coache) => coache.team_contact_id === contactId)?.contact_email;
 
   useEffect(() => {
     setIsOpenConf(isOpenConfirm);
@@ -338,7 +334,7 @@ console.log('contactId => ', contactId)
                       <b>First Name: </b>
                       <input
                         onChange={onChangeTeam}
-                        value={team.contact_first_name || ""}
+                        value={contactFirstName || ""}
                         name={FORM_FIELDS.CONTACT_FIRST_NAME}
                         type="text"
                       />
@@ -347,7 +343,7 @@ console.log('contactId => ', contactId)
                       <b>Last Name: </b>
                       <input
                         onChange={onChangeTeam}
-                        value={team.contact_last_name || ""}
+                        value={contactLastName || ""}
                         name={FORM_FIELDS.CONTACT_LAST_NAME}
                         type="text"
                       />
@@ -368,7 +364,7 @@ console.log('contactId => ', contactId)
                     onlyCountries={["us"]}
                     disableCountryCode={true}
                     placeholder=""
-                    value={team.phone_num || ""}
+                    value={contactPhone || ""}
                     onChange={onChangePhoneNumber}
                     containerStyle={{ marginTop: "7px" }}
                     inputStyle={{
