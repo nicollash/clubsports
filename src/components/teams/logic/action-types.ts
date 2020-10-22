@@ -4,6 +4,7 @@ import {
   ITeam,
   ISchedulesGameWithNames,
   IPlayer,
+  ICoache,
   ISchedule,
   ISchedulesDetails,
   IGame,
@@ -22,6 +23,9 @@ export const SAVE_TEAMS_START = 'TEAMS:SAVE_TEAMS_START';
 export const SAVE_TEAMS_SUCCESS = 'TEAMS:SAVE_TEAMS_SUCCESS';
 export const SAVE_TEAMS_FAILURE = 'TEAMS:SAVE_TEAMS_FAILURE';
 export const CREATE_TEAMS_SUCCESS = 'TEAMS:CREATE_TEAMS_SUCCESS';
+
+export const DELETE_COACHE_SUCCESS = 'DELETE_COACHE_SUCCESS';
+export const CREATE_COACHES_SUCCESS = 'CREATE_COACHES_SUCCESS';
 
 export const CREATE_PLAYERS_SUCCESS = 'CREATE_PLAYERS_SUCCESS';
 export const SAVE_PLAYER_SUCCESS = 'SAVE_PLAYER_SUCCESS';
@@ -45,6 +49,7 @@ export interface loadDivisionsTeamsSuccess {
     divisions: IDivision[];
     teams: ITeam[];
     players: IPlayer[];
+    coaches: ICoache[];
     games: ISchedulesGameWithNames[];
   };
 };
@@ -85,6 +90,13 @@ export interface createPlayersSuccess {
   }
 };
 
+export interface createCoachesSuccess {
+  type: 'CREATE_COACHES_SUCCESS';
+  payload: {
+    data: ICoache[];
+  }
+};
+
 export interface savePlayerSuccess {
   type: 'SAVE_PLAYER_SUCCESS';
   payload: {
@@ -96,6 +108,13 @@ export interface deletePlayerSuccess {
   type: 'DELETE_PLAYER_SUCCESS';
   payload: {
     player: IPlayer;
+  };
+};
+
+export interface deleteCoacheSuccess {
+  type: 'DELETE_COACHE_SUCCESS';
+  payload: {
+    coache: ICoache;
   };
 };
 
@@ -134,6 +153,8 @@ export type TeamsAction =
   | saveTeamsSuccess
   | createTeamsSuccess
   | savePlayerSuccess
+  | createCoachesSuccess
+  | deleteCoacheSuccess
   | deletePlayerSuccess
   | createPlayersSuccess
   | checkDeleteTeamStart

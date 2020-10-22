@@ -19,4 +19,11 @@ const playerSchema = Yup.object({
   division_name: Yup.string().required("Division is required"),
 });
 
-export { teamSchema, playerSchema };
+const coacheSchema = Yup.object({
+  first_name: Yup.string().required("First name is required"),
+  last_name: Yup.string().required("Last name is required"),
+  team_name: Yup.string(),
+  division_name: Yup.string(),
+});
+
+export { teamSchema, playerSchema, coacheSchema };

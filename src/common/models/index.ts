@@ -30,3 +30,4 @@ export * from "./players";
 export * from "./reports";
 export * from "./normalized-game";
 export * from "./reporter";
+export * from "./coaches";

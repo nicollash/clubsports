@@ -8,9 +8,11 @@ import {
   deleteTeam,
   savePlayer,
   deletePlayer,
+  deleteCoache,
   loadTeamsData,
   canceledDelete,
   createTeamsCsv,
+  createTeamsContactsCsv,
   createPlayersCsv,
   checkTeamInSchedule,
 } from "./logic/actions";
@@ -30,6 +32,7 @@ import { IAppState } from "reducers/root-reducer.types";
 import {
   IPool,
   ITeam,
+  ICoache,
   IPlayer,
   IDivision,
   BindingCbWithTwo,
@@ -62,12 +65,17 @@ interface Props {
   deleteTeam: () => void;
   savePlayer: (player: IPlayer[]) => void;
   deletePlayer: (player: IPlayer[]) => void;
+  deleteCoache: (player: ICoache[]) => void;
   loadTeamsData: (eventId: string) => void;
   canceledDelete: () => void;
   createTeamsCsv: (teams: ITeam[], cb: (param?: object) => void) => void;
   checkTeamInSchedule: (teamId: string, eventId: string) => void;
   createPlayersCsv: BindingCbWithTwo<
     Partial<IPlayer>[],
+    (param?: object) => void
+  >;
+  createTeamsContactsCsv: BindingCbWithTwo<
+    Partial<ICoache>[],
     (param?: object) => void
   >;
 }
@@ -77,9 +85,11 @@ interface State {
   currentPool: string | null;
   currentDivision: IDivision | null;
   configurableTeam: ITeam | null;
+  configuralbeTeamContactId: string;
   configurablePlayers: IPlayer[];
   changesAreMade: boolean;
   isCsvLoaderOpen: boolean;
+  isCoacheCsvLoaderOpen: boolean;
   isEditPopupOpen: boolean;
   isConfirmModalOpen: boolean;
   isPlayerCsvLoaderOpen: boolean;
@@ -97,6 +107,7 @@ class Teams extends React.Component<
     this.state = {
       teams: [],
       configurableTeam: null,
+      configuralbeTeamContactId: '',
       configurablePlayers: [],
       currentDivision: null,
       currentPool: null,
@@ -105,6 +116,7 @@ class Teams extends React.Component<
       isChangeTeamPlayerPopupOpen: false,
       isConfirmModalOpen: false,
       isCsvLoaderOpen: false,
+      isCoacheCsvLoaderOpen: false,
       isPlayerCsvLoaderOpen: false,
       changesAreMade: false,
     };
@@ -194,9 +206,10 @@ class Teams extends React.Component<
     // }), this.onSaveClick);
   };
 
-  onEditPopupOpen = (team: ITeam, division: IDivision, poolName: string) =>
+  onEditPopupOpen = (contactId: string, team: ITeam, division: IDivision, poolName: string) =>
     this.setState({
       isEditPopupOpen: true,
+      configuralbeTeamContactId: contactId,
       configurableTeam: team,
       currentDivision: division,
       currentPool: poolName,
@@ -368,12 +381,20 @@ class Teams extends React.Component<
     this.setState({ isCsvLoaderOpen: true });
   };
 
+  onImportFromCoacheCsv = () => {
+    this.setState({ isCoacheCsvLoaderOpen: true });
+  };
+
   onPlayerImportFromCsv = () => {
     this.setState({ isPlayerCsvLoaderOpen: true });
   };
 
   onCsvLoaderClose = () => {
     this.setState({ isCsvLoaderOpen: false });
+  };
+
+  onCoachesCsvLoaderClose = () => {
+    this.setState({ isCoacheCsvLoaderOpen: false });
   };
 
   onPlayerCsvLoaderClose = () => {
@@ -406,12 +427,25 @@ class Teams extends React.Component<
     this.props.createTeamsCsv(dataToSave, cb);
   };
 
+  onCreateTeamsContacts = async (
+    dataToSave: any,
+    importMethod: string,
+    cb: (param?: object) => void
+  ) => {
+    if (importMethod === "replace") {
+      // const { teams } = this.state;
+      // const { deleteCoache } = this.props;
+      // const newTeams = teams.map((it) => ({ ...it, isDelete: true }));
+      // await deleteCoache(newTeams);
+    }
+    this.props.createTeamsContactsCsv(dataToSave, cb);
+  };
+
   onCreatePlayers = async (
     dataToSave: any,
     importMethod: string,
     cb: (param?: object) => void
   ) => {
-    console.log("importedMethod: ", importMethod, cb);
     if (importMethod === "replace") {
       const { players, deletePlayer } = this.props;
       await deletePlayer(players);
@@ -436,6 +470,7 @@ class Teams extends React.Component<
 
     const {
       configurableTeam,
+      configuralbeTeamContactId,
       currentDivision,
       currentPool,
       isEditPopupOpen,
@@ -469,6 +504,7 @@ class Teams extends React.Component<
               onEditPopupOpen={this.onEditPopupOpen}
               onDeleteAllTeams={this.onDeleteAllTeams}
               onImportFromCsv={this.onImportFromCsv}
+              onImportFromCoacheCsv={this.onImportFromCoacheCsv}
             />
             <PlayerManagement
               players={players}
@@ -486,6 +522,7 @@ class Teams extends React.Component<
         </section>
         <Modal isOpen={isEditPopupOpen} onClose={this.onCloseModal}>
           <PopupTeamEdit
+            contactId={configuralbeTeamContactId}
             team={configurableTeam}
             divisions={divisions}
             division={currentDivision}
@@ -540,6 +577,13 @@ class Teams extends React.Component<
           eventId={this.props.match.params.eventId}
         />
         <CsvLoader
+          isOpen={this.state.isCoacheCsvLoaderOpen}
+          onClose={this.onCoachesCsvLoaderClose}
+          type="team_contacts"
+          onCreate={this.onCreateTeamsContacts}
+          eventId={this.props.match.params.eventId}
+        />
+        <CsvLoader
           isOpen={this.state.isPlayerCsvLoaderOpen}
           onClose={this.onPlayerCsvLoaderClose}
           type="players"
@@ -573,9 +617,11 @@ export default connect(
         savePlayer,
         deleteTeam,
         deletePlayer,
+        deleteCoache,
         loadTeamsData,
         canceledDelete,
         createTeamsCsv,
+        createTeamsContactsCsv,
         createPlayersCsv,
         checkTeamInSchedule,
       },

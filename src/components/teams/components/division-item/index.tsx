@@ -12,7 +12,7 @@ interface Props {
   pools: IPool[];
   teams: ITeam[];
   loadPools: (divisionId: string) => void;
-  onEditPopupOpen: (team: ITeam, division: IDivision, poolName: string) => void;
+  onEditPopupOpen: (contactId: string, team: ITeam, division: IDivision, poolName: string) => void;
   onDeleteAllTeams: (divisionId: string) => void;
   isSectionExpand: boolean;
 }

@@ -23,8 +23,9 @@ interface Props {
   eventId: string | undefined;
   history: History;
   onImportFromCsv: BindingAction;
+  onImportFromCoacheCsv: BindingAction;
   loadPools: (divisionId: string) => void;
-  onEditPopupOpen: (team: ITeam, division: IDivision, poolName: string) => void;
+  onEditPopupOpen: (contactId: string, team: ITeam, division: IDivision, poolName: string) => void;
   onDeleteAllTeams: (divisionId: string) => void;
 }
 
@@ -35,6 +36,7 @@ const TeamManagement = ({
   history,
   eventId,
   onImportFromCsv,
+  onImportFromCoacheCsv,
   loadPools,
   onEditPopupOpen,
   onDeleteAllTeams,
@@ -59,7 +61,6 @@ const TeamManagement = ({
 
     history.push(path);
   };
-
   return (
     <li>
       <SectionDropdown
@@ -103,7 +104,13 @@ const TeamManagement = ({
               onClick={onImportFromCsv}
               variant={ButtonVariant.TEXT}
               color={ButtonColors.SECONDARY}
-              label="Import from CSV"
+              label="Import Team List from CSV"
+            />
+            <Button
+              onClick={onImportFromCoacheCsv}
+              variant={ButtonVariant.TEXT}
+              color={ButtonColors.SECONDARY}
+              label="Import Coaches List from CSV"
             />
             <Button
               onClick={onCreateTeam}

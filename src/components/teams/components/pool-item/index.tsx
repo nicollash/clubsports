@@ -9,7 +9,7 @@ interface Props {
   pool?: IPool;
   teams: ITeam[];
   division: IDivision;
-  onEditPopupOpen: (team: ITeam, division: IDivision, poolName: string) => void;
+  onEditPopupOpen: (contactId: string, team: ITeam, division: IDivision, poolName: string) => void;
 }
 
 const PoolItem = ({ pool, teams, division, onEditPopupOpen }: Props) => {

@@ -3,7 +3,7 @@ import { ActionCreator, Dispatch } from "redux";
 import * as Yup from "yup";
 import { IAppState } from "reducers/root-reducer.types";
 import Api from "api/api";
-import { teamSchema, playerSchema } from "validations";
+import { teamSchema, playerSchema, coacheSchema } from "validations";
 import { mapScheduleGamesWithNames, getVarcharEight } from "helpers";
 import history from "browserhistory";
 import { ScheduleStatuses } from "common/enums";
@@ -13,6 +13,7 @@ import {
   IGame,
   ITeam,
   IPlayer,
+  ICoache,
   IDivision,
   IFacility,
   ISchedule,
@@ -30,6 +31,8 @@ import {
   LOAD_POOLS_FAILURE,
   SAVE_TEAMS_SUCCESS,
   SAVE_TEAMS_FAILURE,
+  CREATE_COACHES_SUCCESS,
+  DELETE_COACHE_SUCCESS,
   CREATE_TEAMS_SUCCESS,
   CREATE_PLAYERS_SUCCESS,
   SAVE_PLAYER_SUCCESS,
@@ -75,6 +78,8 @@ const loadTeamsData: ActionCreator<ThunkAction<void, {}, null, TeamsAction>> = (
 
     const players = await Api.get(`/teams_players_events?event_id=${eventId}`);
 
+    const coaches = await Api.get(`/teams_contacts`);
+
     dispatch({
       type: LOAD_TEAMS_DATA_SUCCESS,
       payload: {
@@ -82,6 +87,7 @@ const loadTeamsData: ActionCreator<ThunkAction<void, {}, null, TeamsAction>> = (
         divisions,
         teams,
         players,
+        coaches,
         games: mappedGames,
       },
     });
@@ -739,6 +745,249 @@ export const createTeamsCsv: ActionCreator<ThunkAction<
   }
 };
 
+export const createTeamsContactsCsv = (
+  teamsContacts: Partial<ICoache>[],
+  cb: (param?: object) => void
+) => async (dispatch: Dispatch, getState: () => IAppState) => {
+  console.log('teamsContacts =>', teamsContacts);
+
+  if (!teamsContacts || !teamsContacts[0]) return;
+
+  let comingCoaches: any[] = [];
+  comingCoaches = teamsContacts.map(
+    (coache) =>
+      ({
+        first_name: coache.first_name?.trim(),
+        last_name: coache.last_name?.trim(),
+        // division_name: coache.division_name?.trim(),
+        // team_name: coache.team_name?.trim(),
+        allow_sms_YN: 1,
+        contact_email: coache.contact_email?.trim(),
+        phone_num: coache.phone_num?.trim(),
+        role: coache.role?.trim(),
+      })
+  );
+  let dupsCoaches: any[] = [];
+  const reportedRows: string[] = [];
+  try {
+    const currentCoaches = getState().teams.coaches;
+    console.log('currentCoaches =>', currentCoaches);
+    if (currentCoaches && currentCoaches[0]) {
+      const currentCoacheskeys = currentCoaches.map(
+        (coache) =>
+          `${coache.division_name}_${coache.team_name}_${coache.first_name}_${coache.last_name}`
+      );
+
+      const comingCoacheskeys = comingCoaches.map(
+        (coache) =>
+          `${coache.division_name}_${coache.team_name}_${coache.first_name}_${coache.last_name}`
+      );
+
+      comingCoacheskeys.forEach((key, index) => {
+        if (currentCoacheskeys.includes(key)) {
+          reportedRows.push(`${index + 1}th row already exists.`);
+        } else {
+          dupsCoaches.push(comingCoaches[index]);
+          reportedRows.push(`importing`);
+        }
+      });
+      if (reportedRows.length !== 0) {
+        cb({
+          type: "error",
+          data: reportedRows.map((report: string, index: number) => ({
+            index,
+            msg: report,
+          })),
+        });
+      if (reportedRows.length > 1) {
+        throw {
+          message: `${reportedRows.join(", ")} rows are already existed.`,
+        };
+      } else if (reportedRows.length === 1) {
+        throw {
+          message: `${reportedRows.join(", ")} row is already existed.`,
+        };
+      }
+    }
+    } else {
+      dupsCoaches = comingCoaches;
+    }
+
+  } catch (err) {
+    Toasts.errorToast(err.message);
+  }
+
+  try{
+    // await Yup.array().of(coacheSchema).validate(teamsContacts);
+    let cleanedCoaches = dupsCoaches;
+    try {
+      await Yup.array()
+        .of(coacheSchema)
+        .unique(
+          (coache: any) => `${coache.division_name}_${coache.team_name}_${coache.first_name}_${coache.last_name}`,
+          "Within your Teat contracts, the Division + Team + Firstname + LastName should be unique."
+        )
+        .validate(comingCoaches);
+    } catch (err) {
+      const invalidCoache = err.value[err.value.length - 1];
+      const conflictedCoache = comingCoaches.find(
+        (coache) =>
+          // coache.division_name === invalidCoache.division_name &&
+          coache.team_id === invalidCoache.team_id &&
+          coache.first_name === invalidCoache.first_name &&
+          coache.last_name === invalidCoache.last_name 
+      );
+      console.log('conflictedCoache =>', conflictedCoache);
+      if (conflictedCoache) {
+        const indexConflicted = comingCoaches.lastIndexOf(conflictedCoache);
+        console.log('indexConflicted =>', indexConflicted);
+        reportedRows[indexConflicted] = 'conflicted';
+        const index = cleanedCoaches.lastIndexOf(conflictedCoache);
+        if (index) cleanedCoaches.splice(index,1);
+      }
+    }
+    // await Yup.array().of(reporterSchemaCsv).validate(comingReporters);
+    if (reportedRows.length !== 0) {
+      cb({
+        type: "error",
+        data: reportedRows.map((report: string, index: number) => ({
+          index,
+          msg: report,
+        })),
+      });
+    }
+    console.log('cleanedCoaches =>', cleanedCoaches);
+    // let validatedCoaches = cleanedCoaches;
+    // cleanedCoaches.forEach((coache) => {
+    //   // check if user selected correct division.
+    //   const selectedDivision = getState().teams.divisions.find(
+    //     (division) => division.short_name === coache.division_name
+    //   );
+    //   if (!selectedDivision) {
+    //     validatedCoaches = validatedCoaches.filter((it) => (it.division_name !== selectedDivision.division_name))
+    //     throw { message: "Division Should be selected" };
+    //   }
+
+    //   // check if user selected available team.
+    //   const filteredTeamByDivision = getState().teams.teams.filter(
+    //     (team) => team.division_id === selectedDivision.division_id
+    //   );
+    //   const selectedTeam = filteredTeamByDivision.find(
+    //     (team) => team.short_name === coache.team_name
+    //   );
+    //   if (!selectedTeam) {
+    //     validatedCoaches = validatedCoaches.filter((it) => (it.team_name !== selectedTeam.short_name))
+    //     throw {
+    //       message: `There is a team in the form names the ${coache.team_name}. But that team doesn't exist. Please address this issue and try to import again.`,
+    //     };
+    //   }
+    // });
+
+    const addedCoaches: ICoache[] = [];
+    let progress = 0;
+    for await (const coache of cleanedCoaches) {
+      console.log('cleanedCoaches=>', cleanedCoaches);
+       // post coache data
+      const data = {
+        team_contact_id: getVarcharEight(),
+        team_id: getVarcharEight(),
+        first_name: coache.first_name,
+        last_name: coache.last_name,
+        // division_name: "2021",
+        // team_name: "Team 1",
+        // team_id: "",
+        allow_sms_YN: 1,
+        contact_email: coache.contact_email,
+        phone_num: coache.phone_num,
+        role: coache.role,
+      };
+      const response = await Api.post("/teams_contacts", data);
+      console.log('response=>', response);
+      if (!response || response?.errorType === "Error" || response?.message === false) {
+        Toasts.errorToast("Couldn't create a teams contacts");
+        const indexFailed = comingCoaches.findIndex(
+          (coache) =>
+            // coache.division_name === data.division_name &&
+            coache.team_id === data.team_id &&
+            coache.first_name === data.first_name &&
+            coache.last_name === data.last_name 
+        );
+         reportedRows[indexFailed] = 'import failed';
+      } else {
+        console.log('added Coache=>', data);
+        const indexFailed = comingCoaches.findIndex(
+          (coache) =>
+            // coache.division_name === data.division_name &&
+            coache.team_id === data.team_id &&
+            coache.first_name === data.first_name &&
+            coache.last_name === data.last_name 
+        );
+        reportedRows[indexFailed] = 'import successed';
+        addedCoaches.push(data as ICoache);
+        progress += 1;
+
+        cb({
+          type: "progress",
+          data: [
+            {
+              status: "Importing New SMS Scorers...",
+              msg: `${progress / cleanedCoaches.length}`,
+            },
+          ],
+        });
+      }
+      
+    }
+
+    cb({
+      type: "info",
+      data: [
+        {
+          index: 0,
+          msg: `Import Summary; Of the ${cleanedCoaches.length} reporters you imported, ${addedCoaches.length} rows mapped to existing teams contacts.`,
+        },
+      ],
+    });
+    if ( addedCoaches.length > 0) {
+      Toasts.successToast("The Team Contacts(s) have been successfully created!");
+      dispatch({
+        type: CREATE_COACHES_SUCCESS,
+        payload: {
+          data: addedCoaches,
+        },
+      });
+    } else {
+      Toasts.errorToast("Couldn't create a teams contacts");
+    }
+  } catch (err) {
+    Toasts.errorToast(err.message);
+  }
+
+  // cb();
+};
+
+export const deleteCoache = (coaches: ICoache[]) => async (
+  dispatch: Dispatch
+) => {
+  try {
+    for await (const coache of coaches) {
+      await Api.delete(
+        `/team_contacts?first_name=${coache.first_name}&last_name=${coache.first_name}&division_name=${coache.division_name}&team_name=${coache.team_name}`
+      );
+
+      dispatch({
+        type: DELETE_COACHE_SUCCESS,
+        payload: {
+          coache,
+        },
+      });
+    }
+    Toasts.successToast("The Coache(s) have been removed successfully.");
+  } catch (err) {
+    Toasts.errorToast(err.message);
+  }
+};
+
 export const createPlayersCsv = (
   players: Partial<IPlayer>[],
   cb: (param?: object) => void
@@ -774,6 +1023,7 @@ export const createPlayersCsv = (
         };
       }
     }
+
 
     await Yup.array().of(playerSchema).validate(players);
 

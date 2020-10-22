@@ -51,6 +51,7 @@ export enum ComponentType {
 
 interface Props {
   componentType: ComponentType;
+  contactId: string;
   team: ITeam | ITeamWithResults | null;
   pool: string | null;
   games: ISchedulesGameWithNames[] | null;
@@ -72,6 +73,7 @@ interface Props {
 }
 
 const TeamDetailsPopup = ({
+  contactId,
   team,
   pool,
   games,
@@ -189,7 +191,7 @@ const TeamDetailsPopup = ({
   const warningMessageDivision = `This team is in the ${
     schedulesNames ? schedulesNames.join(", ") : null
   } schedule. Delete team from schedules?`;
-
+console.log('contactId => ', contactId)
   return (
     <div className={styles.popupWrapper}>
       <div className={styles.headerWrapper}>

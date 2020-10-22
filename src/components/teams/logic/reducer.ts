@@ -8,7 +8,9 @@ import {
   SAVE_PLAYER_SUCCESS,
   CREATE_TEAMS_SUCCESS,
   CREATE_PLAYERS_SUCCESS,
+  CREATE_COACHES_SUCCESS,
   DELETE_PLAYER_SUCCESS,
+  DELETE_COACHE_SUCCESS,
   CHECK_DELETE_TEAM_START,
   CHECK_DELETE_TEAM_SUCCESS,
   CHECK_DELETE_TEAM_FAILURE,
@@ -20,6 +22,7 @@ import {
   IPool,
   ITeam,
   IPlayer,
+  ICoache,
   IDivision,
   IGameBracket,
   ISchedulesDetails,
@@ -31,6 +34,7 @@ export interface ITeamsState {
   teams: ITeam[];
   games: ISchedulesGameWithNames[];
   players: IPlayer[];
+  coaches: ICoache[];
   divisions: IDivision[];
   schedulesId: string[];
   updatedGames: IGame[];
@@ -49,6 +53,7 @@ const initialState = {
   teams: [],
   games: [],
   players: [],
+  coaches: [],
   divisions: [],
   schedulesId: [],
   updatedGames: [],
@@ -71,13 +76,14 @@ const teamsReducer = (
       return { ...initialState, isLoading: true };
     }
     case LOAD_TEAMS_DATA_SUCCESS: {
-      const { schedules, divisions, teams, players, games } = action.payload;
+      const { schedules, divisions, teams, players, games, coaches } = action.payload;
 
       return {
         ...state,
         schedules,
         divisions,
         teams,
+        coaches,
         players,
         games,
         isLoading: false,
@@ -123,6 +129,13 @@ const teamsReducer = (
         players: [...state.players, ...data],
       };
     }
+    case CREATE_COACHES_SUCCESS: {
+      const { data } = action.payload;
+      return {
+        ...state,
+        coaches: [...state.coaches, ...data],
+      };
+    }
     case SAVE_PLAYER_SUCCESS: {
       const { player } = action.payload;
       const newPlayers = state.players.filter(
@@ -142,6 +155,16 @@ const teamsReducer = (
       return {
         ...state,
         players: newPlayers
+      };
+    }
+    case DELETE_COACHE_SUCCESS: {
+      const { coache } = action.payload;
+      const deletedCoache = state.coaches.filter(
+        (p) => p.team_contact_id !== coache.team_contact_id
+      );
+      return {
+        ...state,
+        coache: deletedCoache
       };
     }
     case CHECK_DELETE_TEAM_START: {

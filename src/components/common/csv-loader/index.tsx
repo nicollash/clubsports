@@ -248,6 +248,7 @@ class CsvLoader extends React.Component<Props, State> {
       type === "divisions" ||
       type === "players" ||
       type === "teams" ||
+      type === "team_contacts" ||
       type === "sms_authorized_scorers"
     ) {
       onCreate(dataToSave, importMethod, this.onModalClose);
@@ -490,6 +491,7 @@ class CsvLoader extends React.Component<Props, State> {
               {(type === "divisions" ||
                 type === "players" ||
                 type === "teams" ||
+                type === "teams-coaches" ||
                 type === "sms_authorized_scorers") && (
                 <div style={{ marginRight: 10 }}>
                   <Select
