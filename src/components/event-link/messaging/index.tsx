@@ -16,7 +16,6 @@ interface Props {
   messagesAreLoading: boolean;
   responses: IResponse[];
   deleteMessages: BindingCbWithOne<string>;
-  refreshMessage: (messageId: string) => void;
   getResponses: (messageId: string) => void;
   updateMessage: (messageId: string) => void;
 };
@@ -30,7 +29,6 @@ const Messaging = ({
   responses,
   messagesAreLoading,
   deleteMessages,
-  refreshMessage,
   getResponses,
   updateMessage,
 }: Props) => {
@@ -80,7 +78,6 @@ const Messaging = ({
                       pools={pools}
                       teams={teams}
                       deleteMessages={deleteMessages}
-                      refreshMessage={refreshMessage}
                       getResponses={getResponses}
                       updateMessage={updateMessage}
                       responses={currentResponses}

@@ -2,9 +2,11 @@ import { IField } from "common/models/schedule/fields";
 import { IScheduleFacility } from "common/models/schedule/facilities";
 import { IScheduleTeamDetails } from "common/models/schedule/schedule-team-details";
 import { IGame } from "components/common/matrix-table/helper";
-import { IDivision, IReporter } from "common/models";
+import { IDivision, IReporter, ISchedulesGame } from "common/models";
 import { formatPhoneNumber } from "helpers/formatPhoneNumber";
 import api from "api/api";
+import { dateToShortString } from "helpers";
+import ITimeSlot from "common/models/schedule/timeSlots";
 
 const getFieldsByFacility = (fields: IField[], facility: IScheduleFacility) => {
   const filedsByFacility = fields.filter(
@@ -219,6 +221,23 @@ const getScorers = async (eventId: string) => {
   return formatPhoneNumber(scorer?.mobile || "") as string;
 };
 
+
+const getTimeslotsForDay = (day: string | Date, schedulesGames: any) => {
+  const timeslots = schedulesGames
+    .filter(
+      (game: ISchedulesGame) =>
+        dateToShortString(game.game_date) === dateToShortString(day)
+    )
+    .map((game: ISchedulesGame) => game.game_time);
+  const uniqueTimeslots = [...new Set(timeslots)];
+  return uniqueTimeslots.sort().map((timeslot: any, index) => {
+    return {
+      id: index,
+      time: timeslot,
+    } as ITimeSlot;
+  });
+};
+
 export {
   getFieldsByFacility,
   getGamesByField,
@@ -232,4 +251,5 @@ export {
   sortJsonGamesList,
   getGamesCountForDay,
   getTeamCount,
+  getTimeslotsForDay,
 };

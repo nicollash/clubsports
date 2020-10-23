@@ -18,6 +18,8 @@ export default (
     possibleGame,
     originGameId,
     originGameDate,
+    fieldId,
+    startTime,
   } = dropParams;
   let result = {
     teamCards: [...teamCards],
@@ -34,8 +36,9 @@ export default (
     const outcomingTeam = teamCards?.find(({ games }) =>
       games?.find(
         (g) =>
-          g.id === gameId &&
           g.teamPosition === position &&
+          g.startTime === startTime &&
+          g.fieldId === fieldId &&
           dateToShortString(g.date) === dateToShortString(day)
       )
     );
@@ -54,7 +57,8 @@ export default (
     const incomingTeamGames = filledGames.filter((item) =>
       incomingTeamFiltered.games?.find(
         (g) =>
-          g.id === item.id &&
+          g.startTime === item.startTime &&
+          g.fieldId === item.fieldId &&
           dateToShortString(g.date) === dateToShortString(day)
       )
     );
@@ -89,7 +93,8 @@ export default (
             item.id !== originGameId &&
             secondIncomingTeamGames?.find(
               (sitg) =>
-                sitg.id === item.id &&
+                sitg.startTime === item.startTime &&
+                sitg.fieldId === item.fieldId &&
                 dateToShortString(sitg.date) === dateToShortString(day)
             )
         )
@@ -196,13 +201,19 @@ export default (
     ) {
       let games = [
         ...teamCard.games?.filter(
-          (item) => item.id !== originGameId || item.date !== originGameDate
+          (item) =>
+            !(
+              item.fieldId === possibleGame.fieldId &&
+              item.startTime === possibleGame.startTime
+            ) || item.date !== originGameDate
         ),
         {
           id: gameId,
           teamPosition: position,
           isTeamLocked: false,
           date: day,
+          startTime,
+          fieldId,
           gameType:
             filledGames?.find(
               (g) =>
@@ -214,7 +225,8 @@ export default (
       if (
         teamCard?.games?.find(
           (g) =>
-            g.id === gameId &&
+            g.fieldId === fieldId &&
+            g.startTime === startTime &&
             g.teamPosition === (position === 1 ? 2 : 1) &&
             dateToShortString(g.date) === dateToShortString(day)
         )
@@ -222,7 +234,10 @@ export default (
         games = [
           ...games.filter(
             (item) =>
-              item.id !== gameId ||
+              !(
+                item.fieldId === possibleGame.fieldId &&
+                item.startTime === possibleGame.startTime
+              ) ||
               item.teamPosition !== (position === 1 ? 2 : 1) ||
               item.date !== day
           ),
@@ -250,7 +265,11 @@ export default (
 
       const games = [
         ...teamCard.games?.filter(
-          (item) => item.id !== originGameId || item.date !== originGameDate
+          (item) =>
+            !(
+              item.fieldId === possibleGame.fieldId &&
+              item.startTime === possibleGame.startTime
+            ) || item.date !== originGameDate
         ),
       ];
 
@@ -260,6 +279,8 @@ export default (
           isTeamLocked: false,
           teamPosition: originPosition,
           date: day,
+          startTime,
+          fieldId,
           gameType:
             filledGames?.find((g) => g.id === originGameId)?.gameType || "game",
         });
@@ -278,14 +299,17 @@ export default (
       originGameId &&
       teamCard.games?.find(
         (g) =>
-          g.id === gameId &&
+          g.startTime === startTime &&
+          g.fieldId === fieldId &&
           dateToShortString(g.date) === dateToShortString(day)
       )
     ) {
       return {
         ...teamCard,
         games: teamCard.games?.filter(
-          (item) => item.id !== gameId || item.date !== day
+          (item) =>
+            !(item.startTime === startTime && item.fieldId === fieldId) ||
+            item.date !== day
         ),
       };
     }
@@ -294,7 +318,11 @@ export default (
     if (!simultaneousDnd && !gameId && !position && teamId === teamCard.id) {
       const games = [
         ...teamCard.games?.filter(
-          (item) => item.id !== originGameId || item.date !== originGameDate
+          (item) =>
+            !(
+              item.fieldId === possibleGame.fieldId &&
+              item.startTime === possibleGame.startTime
+            ) || item.date !== originGameDate
         ),
       ];
       return {
@@ -309,7 +337,8 @@ export default (
       (isSeparateTeamInMatchupsMode &&
         teamCard.games?.find(
           (g) =>
-            g.id === gameId &&
+            g.startTime === startTime &&
+            g.fieldId === fieldId &&
             g.teamPosition === position &&
             dateToShortString(g.date) === dateToShortString(day)
         ))
@@ -317,7 +346,7 @@ export default (
       const games = [
         ...teamCard.games?.filter(
           (item) =>
-            item.id !== gameId ||
+            !(item.startTime === startTime && item.fieldId === fieldId) ||
             item.teamPosition !== position ||
             item.date !== day
         ),

@@ -128,11 +128,11 @@ const ItemSchedules = (props: Props) => {
         event={event}
         games={gamesByDay}
         fields={fields}
-        timeSlots={timeSlots}
         facilities={facilities}
         schedule={schedule}
         teamCards={teamCards}
         scorerMobile={scorerMobile}
+        schedulesGames={schedulesGames}
         isEmptyListsIncluded={isEmptyListsIncluded}
       />,
       event.event_name
@@ -147,12 +147,12 @@ const ItemSchedules = (props: Props) => {
         event={event}
         games={gamesByDay}
         fields={fields}
-        timeSlots={timeSlots}
         facilities={facilities}
         schedule={schedule}
         teamCards={teamCards}
         isHeatMap={true}
         scorerMobile={scorerMobile}
+        schedulesGames={schedulesGames}
         isEmptyListsIncluded={isEmptyListsIncluded}
       />,
       event.event_name
@@ -166,7 +166,6 @@ const ItemSchedules = (props: Props) => {
         event={event}
         games={gamesByDay}
         fields={fields}
-        timeSlots={timeSlots}
         facilities={facilities}
         schedule={schedule}
         teamCards={teamCards}
@@ -175,6 +174,7 @@ const ItemSchedules = (props: Props) => {
         divisions={divisions}
         pools={pools}
         scorerMobile={scorerMobile}
+        schedulesGames={schedulesGames}
         isEmptyListsIncluded={isEmptyListsIncluded}
       />,
       event.event_name
@@ -212,8 +212,10 @@ const ItemSchedules = (props: Props) => {
         fields={fields}
         pdfType={PDFReportType.MASTER_SCHEDULE_FIELD_BY_FIELD}
         timeSlots={timeSlots}
+        teamCards={teamCards}
         facilities={facilities}
         schedule={schedule}
+        schedulesGames={schedulesGames}
         scorerMobile={scorerMobile}
       />,
       event.event_name

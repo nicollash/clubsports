@@ -162,7 +162,7 @@ class Reporting extends React.Component<
         lastDay
       );
 
-      this.setState({ games: games, playoffTimeSlots });
+      this.setState({ games, playoffTimeSlots });
 
       const mappedTeams = mapTeamsFromShedulesGames(
         schedulesGames,

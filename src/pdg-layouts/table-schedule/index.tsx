@@ -4,10 +4,9 @@ import moment from "moment";
 import TableThead from "./components/table-thead";
 import TableTbody from "./components/table-tbody";
 import { HeaderSchedule, PrintedDate } from "../common";
-import { IEventDetails, ISchedule, IDivision, IPool } from "common/models";
+import { IEventDetails, ISchedule, IDivision, IPool, ISchedulesGame, ISchedulesDetails } from "common/models";
 import { IGame } from "components/common/matrix-table/helper";
 import { IField } from "common/models/schedule/fields";
-import ITimeSlot from "common/models/schedule/timeSlots";
 import { IScheduleFacility } from "common/models/schedule/facilities";
 import {
   getFieldsByFacility,
@@ -15,6 +14,7 @@ import {
   getGamesByFacility,
   getGamesByDivision,
   isEmptyGames,
+  getTimeslotsForDay,
 } from "../helpers";
 import { DEFAULT_COLUMNS_COUNT } from "./common";
 import { styles } from "./styles";
@@ -24,7 +24,6 @@ interface IPDFProps {
   event: IEventDetails;
   games: IGame[];
   fields: IField[];
-  timeSlots: ITimeSlot[];
   facilities: IScheduleFacility[];
   schedule: ISchedule;
   teamCards: ITeamCard[];
@@ -34,6 +33,7 @@ interface IPDFProps {
   pools?: IPool[];
   isEmptyListsIncluded?: boolean;
   scorerMobile: string;
+  schedulesGames: ISchedulesGame[] | ISchedulesDetails[];
 }
 
 const PDFScheduleTable = ({
@@ -41,7 +41,6 @@ const PDFScheduleTable = ({
   fields,
   facilities,
   games,
-  timeSlots,
   schedule,
   teamCards,
   isHeatMap,
@@ -50,6 +49,7 @@ const PDFScheduleTable = ({
   pools,
   isEmptyListsIncluded,
   scorerMobile,
+  schedulesGames,
 }: IPDFProps) => {
   const gamesByDays = getGamesByDays(games);
 
@@ -57,6 +57,7 @@ const PDFScheduleTable = ({
     <Document>
       {Object.keys(gamesByDays).map((day) => {
         const gamesByDay = gamesByDays[day];
+        const timeslotsPerDay = getTimeslotsForDay(day, schedulesGames!);
 
         return facilities.map((facility) => {
           const fieldsByFacility = getFieldsByFacility(fields, facility);
@@ -110,7 +111,7 @@ const PDFScheduleTable = ({
                             splitIdx={splitIdx}
                           />
                           <TableTbody
-                            timeSlots={timeSlots}
+                            timeSlots={timeslotsPerDay}
                             games={gamesByFacilityAndDivision}
                             teamCards={teamCards}
                             splitIdx={splitIdx}
@@ -161,7 +162,7 @@ const PDFScheduleTable = ({
                           splitIdx={splitIdx}
                         />
                         <TableTbody
-                          timeSlots={timeSlots}
+                          timeSlots={timeslotsPerDay}
                           games={gamesByFacility}
                           teamCards={teamCards}
                           splitIdx={splitIdx}

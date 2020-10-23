@@ -14,6 +14,8 @@ export enum MatrixTableDropEnum {
 
 export interface IDropParams {
   teamId: string;
+  fieldId: string | undefined;
+  startTime: string | undefined;
   position: number | undefined;
   gameId: number | undefined;
   possibleGame?: any;
@@ -90,6 +92,8 @@ const DropContainer = (props: IProps) => {
       } else {
         onDrop({
           teamId: item.id,
+          startTime: game.startTime!,
+          fieldId: game.fieldId,
           position: props.position,
           gameId: props.gameId,
           possibleGame: item.possibleGame,

@@ -181,8 +181,8 @@ class ResourceMatrix extends Component<IProps> {
           )
           .filter((item) => {
             return (
-              item.gameDate ===
-              this.state?.days[Number(this.state?.selectedDay) - 1]
+              dateToShortString(item.gameDate) ===
+              this.state?.days[+(this.state?.selectedDay || 1) - 1]
             );
           });
       } else {

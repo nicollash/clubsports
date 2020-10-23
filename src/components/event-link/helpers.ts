@@ -1,5 +1,6 @@
 import api from "api/api";
 import { IPool, IDivision, ITeam } from 'common/models';
+import { IMessageTemplate } from "common/models/event-link";
 import { IMultiSelectOption } from 'components/common/multi-select';
 import { findIndex, find } from 'lodash-es';
 import { IResponse } from ".";
@@ -340,18 +341,34 @@ export const mapResponses = (responses: any[], options: any[]) => {
       sendDatetime: mess.send_datetime,
       receivedDatetime: mess.received_datetime,
       answerText: getAnswerText(mess.answer_option_id, options),
-      messageStatus: mess.message_status,
+      messageStatus: mess.message_status.toLocaleUpperCase(),
       messageId: mess.message_id,
       statusMessage: mess.status_message,
     } as IResponse;
   });
 };
 
+export const mapTemplates = (templates: any[]) => {
+  return templates.map((temp: any) => {
+    return {
+      messageTemplateId: temp.message_template_id,
+      messageType: temp.message_type,
+      messageContent: temp.message_content,
+      subject: temp.subject,
+      responseOptions: temp.response_options,
+      type: temp.type,
+    } as IMessageTemplate;
+  });
+};
+
 export const getMessageTail = (options: IPollOption[] | undefined) => {
-  let tail = `↵↵Respond:`;
+  const tail = `\n\nPlease respond:`;
   return !options
     ? ""
-    : options.map((option: IPollOption) => {
-        return (tail = tail + `↵${option.answerCode} = ${option.answerText}`);
-      });
+    : tail +
+        options
+          .map((option: IPollOption) => {
+            return `\n${option.answerCode} = ${option.answerText}`;
+          })
+          .join('');
 };

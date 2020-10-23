@@ -154,6 +154,7 @@ interface State {
   errorModalOpen: boolean;
   errorModalMessage?: string;
   isPopupPrintOpen: boolean;
+  selectedDay?: string;
 }
 
 class RecordScores extends React.Component<
@@ -172,6 +173,7 @@ class RecordScores extends React.Component<
       bracket: undefined,
       gamesChanged: [],
       isPopupPrintOpen: false,
+      selectedDay: undefined,
     };
   }
 
@@ -443,6 +445,10 @@ class RecordScores extends React.Component<
     }
   };
 
+  changeSelectedDay = (selectedDay: string) => {
+    this.setState({ selectedDay });
+  };
+
   onGameUpdated = (game: IChangedGame) => {
     const { gamesChanged } = this.state;
     if (
@@ -490,6 +496,7 @@ class RecordScores extends React.Component<
       onToggleFullScreen,
       bracketGames,
       bracketName,
+      schedulesGames,
     } = this.props;
 
     const {
@@ -573,6 +580,8 @@ class RecordScores extends React.Component<
                 teamCards={schedulesTeamCards!}
                 eventSummary={eventSummary!}
                 scheduleData={schedule!}
+                schedulesGames={schedulesGames!}
+                selectedDayChanged={this.changeSelectedDay}
                 isEnterScores={isEnterScores}
                 isFullScreen={isFullScreen}
                 onScheduleGameUpdate={() => {}}
@@ -610,6 +619,7 @@ class RecordScores extends React.Component<
             eventDays={days}
             isOpen={this.state.isPopupPrintOpen}
             teamCards={schedulesTeamCards!}
+            schedulesGames={schedulesGames}
             onClose={() => this.setState({ isPopupPrintOpen: false })}
           />
         )}

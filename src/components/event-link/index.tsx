@@ -10,7 +10,6 @@ import {
   getData,
   getMessages,
   deleteMessages,
-  refreshMessage,
   getResponses,
   updateMessage,
 } from './logic/actions';
@@ -51,7 +50,6 @@ interface IProps {
   getResponses: (messageId: string) => void;
   getData: () => void;
   deleteMessages: BindingCbWithOne<string>;
-  refreshMessage: (messageId: string) => void;
   updateMessage: (messageId: string) => void;
   messages: IMessage[];
   messagesAreLoading: boolean;
@@ -69,7 +67,6 @@ const EventLink = ({
   messages,
   messagesAreLoading,
   deleteMessages,
-  refreshMessage,
   getData,
   updateMessage,
 }: IProps & RouteComponentProps<MatchParams>) => {
@@ -103,7 +100,6 @@ const EventLink = ({
           data={messages}
           messagesAreLoading={messagesAreLoading}
           deleteMessages={deleteMessages}
-          refreshMessage={refreshMessage}
           getResponses={getResponses}
           updateMessage={updateMessage}
           responses={responses}
@@ -143,7 +139,6 @@ const mapDispatchToProps = {
   getData,
   getMessages,
   deleteMessages,
-  refreshMessage,
   getResponses,
   updateMessage,
 };

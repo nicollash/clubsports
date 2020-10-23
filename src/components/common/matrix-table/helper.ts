@@ -82,7 +82,8 @@ export const sortFieldsByPremier = (fields: IField[]) => {
 
 export const defineGames = (
   fields: IField[],
-  timeSlots: ITimeSlot[]
+  timeSlots: ITimeSlot[],
+  selectedDay?: string
 ): IDefinedGames => {
   const fieldsNumber = fields.length;
   const timeSlotsNumber = timeSlots.length;
@@ -100,6 +101,7 @@ export const defineGames = (
 
     games.push({
       id: i,
+      gameDate: selectedDay,
       startTime,
       timeSlotId,
       fieldId,
@@ -138,7 +140,7 @@ const getScore = (
 export const selectProperGamesPerTimeSlot = (
   timeSlot: ITimeSlot,
   games: IGame[]
-) => games.filter((game: IGame) => game.timeSlotId === timeSlot.id);
+) => games.filter((game: IGame) => game.startTime === timeSlot.time);
 
 export const settleTeamsPerGamesDays = (
   games: IGame[],
@@ -151,7 +153,8 @@ export const settleTeamsPerGamesDays = (
     awayTeam: teamCards.find((team: ITeamCard) =>
       team.games?.find(
         (g) =>
-          g.id === game.id &&
+          g.startTime === game.startTime &&
+          g.fieldId === game.fieldId &&
           g.teamPosition === 1 &&
           dateToShortString(g.date) === dateToShortString(day)
       )
@@ -160,7 +163,8 @@ export const settleTeamsPerGamesDays = (
     homeTeam: teamCards.find((team: ITeamCard) =>
       team.games?.find(
         (g) =>
-          g.id === game.id &&
+          g.startTime === game.startTime &&
+          g.fieldId === game.fieldId &&
           g.teamPosition === 2 &&
           dateToShortString(g.date) === dateToShortString(day)
       )
@@ -191,8 +195,9 @@ export const settleTeamsPerGames = (
       awayTeam: teamCards.find((team: ITeamCard) =>
         team.games?.find(
           (g) =>
-            g.id === game.id &&
             g.teamPosition === 1 &&
+            g.startTime === game.startTime &&
+            g.fieldId === game.fieldId &&
             dateToShortString(g.date) ===
               dateToShortString(days[+selectedDay - 1])
         )
@@ -200,8 +205,9 @@ export const settleTeamsPerGames = (
       homeTeam: teamCards.find((team: ITeamCard) =>
         team.games?.find(
           (g) =>
-            g.id === game.id &&
             g.teamPosition === 2 &&
+            g.startTime === game.startTime &&
+            g.fieldId === game.fieldId &&
             dateToShortString(g.date) ===
               dateToShortString(days[+selectedDay - 1])
         )
@@ -212,7 +218,8 @@ export const settleTeamsPerGames = (
           .find((games) =>
             games?.find(
               (teamCardGame) =>
-                teamCardGame.id === game.id &&
+                teamCardGame.startTime === game.startTime &&
+                teamCardGame.fieldId === game.fieldId &&
                 teamCardGame.date === days[+selectedDay - 1]
             )
           )

@@ -8,8 +8,8 @@ import {
   DELETE_MESSAGES_SUCCESS,
   RESPONSES_FETCH_SUCCESS,
   OPTIONS_FETCH_SUCCESS,
-  REFRESH_RESPONSE_SUCCESS,
   MESSAGE_FETCH_SUCCESS,
+  TEMPLATES_FETCH_SUCCESS,
 } from './actionTypes';
 import { Toasts } from 'components/common';
 import { IMessageToSend, IPollOption, IRecipientDetails } from '../create-message';
@@ -18,8 +18,8 @@ import { getVarcharEight } from 'helpers';
 import { Auth } from 'aws-amplify';
 import { IMember, IEventDetails, IDivision, IPool, ITeam } from 'common/models';
 import { chunk } from 'lodash-es';
-import { IMessage } from 'common/models/event-link';
-import { getMessageTail, mapResponses, sortBySendDatetime } from "../helpers";
+import { IMessage, IMessageTemplate } from 'common/models/event-link';
+import { getMessageTail, mapResponses, mapTemplates, sortBySendDatetime } from "../helpers";
 import { IResponse } from "..";
 
 interface IExtendedMessage extends IMessageToSend {
@@ -56,10 +56,10 @@ export const getMessageSuccess = (
   payload,
 });
 
-export const refreshResponsesSuccess = (
-  payload: IResponse[]
-): { type: string; payload: IResponse[] } => ({
-  type: REFRESH_RESPONSE_SUCCESS,
+export const getTemplatesSuccess = (
+  payload: IMessageTemplate[]
+): { type: string; payload: IMessageTemplate[] } => ({
+  type: TEMPLATES_FETCH_SUCCESS,
   payload,
 });
 
@@ -159,7 +159,7 @@ export const saveMessages: ActionCreator<ThunkAction<
   if (pollOptions) {
     const options = pollOptions.map((opt: IPollOption) => {
       return {
-        answer_option_id: getVarcharEight(),
+        answer_option_id: opt.id,
         message_id: messageToSave.message_id,
         response_message: opt.responseMessage,
         has_response_YN: opt.hasResponse,
@@ -242,26 +242,6 @@ export const getResponses: ActionCreator<ThunkAction<
   dispatch(getResponsesSuccess(mappedResponses));
 };
 
-export const refreshMessage: ActionCreator<ThunkAction<
-  void,
-  {},
-  null,
-  { type: string }
->> = (messageId?: string) => async (dispatch: Dispatch) => {
-  const options = await api.get(
-    `/messaging_response_options?message_id=${messageId}`
-  );
-  const responses = await api.get(`/messaging_recipients?message_id=${messageId}`);
-
-  if (!responses) {
-    return Toasts.errorToast("Could not load the responses.");
-  }
-
-  const mappedResponses = mapResponses(responses, options);
-
-  dispatch(refreshResponsesSuccess(mappedResponses));
-};
-
 export const updateMessage: ActionCreator<ThunkAction<
   void,
   {},
@@ -275,4 +255,21 @@ export const updateMessage: ActionCreator<ThunkAction<
   }
 
   dispatch(getMessageSuccess(message[0]));
+};
+
+export const getTemplates: ActionCreator<ThunkAction<
+  void,
+  {},
+  null,
+  { type: string }
+>> = () => async (dispatch: Dispatch) => {
+  const serverTemplates = await api.get(`/messaging_templates`);
+
+  if (!serverTemplates) {
+    return Toasts.errorToast("Couldn't load the templates.");
+  }
+
+  const templates = mapTemplates(serverTemplates);
+
+  dispatch(getTemplatesSuccess(templates));
 };

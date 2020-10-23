@@ -757,6 +757,8 @@ class Schedules extends Component<Props, State> {
           ...(item?.games?.map((game) => ({
             ...game,
             date: game.date || date,
+            startTime: game.startTime,
+            fieldId: game.fieldId,
           })) || []),
         ],
       }));

@@ -104,7 +104,8 @@ const RenderGameSlot = (props: Props) => {
   const findTeamScore = (team: ITeamCard) => {
     return team.games?.find(
       (tc) =>
-        tc.id === game.id &&
+        tc.fieldId === game.fieldId &&
+        tc.startTime === game.startTime &&
         dateToShortString(tc.date) === dateToShortString(gameDate)
     )?.teamScore;
   };
@@ -152,6 +153,10 @@ const RenderGameSlot = (props: Props) => {
     awayTeam?.state && homeTeam?.state
       ? awayTeam.state !== homeTeam.state
       : true;
+  const isCustomBracket = bracket?.id
+    ? bracket?.customPlayoff
+    : event?.custom_playoffs_YN;
+
   return (
     <td
       className={`${styles.gameSlotContainer} ${
@@ -206,9 +211,7 @@ const RenderGameSlot = (props: Props) => {
 
             {!awayTeam &&
               (!!awaySeedId || !!awayDependsUpon) &&
-              !event?.custom_playoffs_YN &&
-              !bracket?.customPlayoff &&
-              !!bracketGameId && (
+              !!bracketGameId && !isCustomBracket && (
                 <SeedCard
                   type={MatrixTableDropEnum.BracketDrop}
                   round={playoffRound}
@@ -238,12 +241,13 @@ const RenderGameSlot = (props: Props) => {
               )}
 
             {!awayTeam &&
-              (awayDisplayName || bracketGameId) &&
-              (!!event?.custom_playoffs_YN || !!bracket?.customPlayoff) && (
+              ((awayDisplayName && awayDisplayName.length > 0) ||
+                bracketGameId) &&
+              !!isCustomBracket && (
                 <CustomSeedCard
                   game={game}
                   type={MatrixTableDropEnum.BracketDrop}
-                  displayName={game.awayDisplayName}
+                  displayName={awayDisplayName}
                   slotId={id}
                   teamId={awayTeamId}
                   teamName={awayTeamName}
@@ -323,9 +327,8 @@ const RenderGameSlot = (props: Props) => {
 
             {!homeTeam &&
               (!!homeSeedId || !!homeDependsUpon) &&
-              !event?.custom_playoffs_YN &&
-              !bracket?.customPlayoff &&
-              bracketGameId && (
+              !!bracketGameId &&
+              !isCustomBracket && (
                 <SeedCard
                   type={MatrixTableDropEnum.BracketDrop}
                   round={playoffRound}
@@ -355,12 +358,13 @@ const RenderGameSlot = (props: Props) => {
               )}
 
             {!homeTeam &&
-              (homeDisplayName || bracketGameId) &&
-              (!!event?.custom_playoffs_YN || !!bracket?.customPlayoff) && (
+              ((homeDisplayName && homeDisplayName.length > 0) ||
+                bracketGameId) &&
+              !!isCustomBracket && (
                 <CustomSeedCard
                   game={game}
                   type={MatrixTableDropEnum.BracketDrop}
-                  displayName={game.homeDisplayName}
+                  displayName={homeDisplayName}
                   slotId={id}
                   teamId={homeTeamId}
                   teamName={homeTeamName}

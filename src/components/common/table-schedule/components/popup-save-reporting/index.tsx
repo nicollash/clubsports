@@ -24,6 +24,8 @@ import {
   IEventDetails,
   ISchedule,
   INormalizedGame,
+  ISchedulesDetails,
+  ISchedulesGame,
 } from "common/models";
 import {
   ButtonColors,
@@ -55,6 +57,7 @@ interface Props {
   event: IEventDetails;
   schedule: ISchedule;
   scheduleTeamDetails?: IScheduleTeamDetails[];
+  schedulesGames: ISchedulesDetails[] | ISchedulesGame[];
   normalizedGames?: INormalizedGame[];
   timeSlots: ITimeSlot[];
   pools?: IPool[];
@@ -82,6 +85,7 @@ const PopupSaveReporting = ({
   fields,
   eventDays,
   isOpen,
+  schedulesGames,
   onClose,
 }: Props) => {
   const [isAllowDownload, changeAllowDownload] = React.useState<boolean>(true);
@@ -122,11 +126,11 @@ const PopupSaveReporting = ({
         event={event}
         games={gamesByDay}
         fields={fields}
-        timeSlots={timeSlots}
         facilities={facilities}
         schedule={schedule}
         teamCards={teamCards}
         scorerMobile={scorerMobile}
+        schedulesGames={schedulesGames}
       />,
       event.event_name ? `${event.event_name} Master Schedule` : "Schedule"
     );
@@ -137,11 +141,11 @@ const PopupSaveReporting = ({
         event={event}
         games={gamesByDay}
         fields={fields}
-        timeSlots={timeSlots}
         facilities={facilities}
         schedule={schedule}
         teamCards={teamCards}
         scorerMobile={scorerMobile}
+        schedulesGames={schedulesGames}
       />,
       event.event_name
         ? `${event.event_name} Master Schedule Score - PDF`
@@ -161,12 +165,12 @@ const PopupSaveReporting = ({
         event={event}
         games={gamesByDay}
         fields={fields}
-        timeSlots={timeSlots}
         facilities={facilities}
         schedule={schedule}
         teamCards={teamCards}
         isHeatMap={true}
         scorerMobile={scorerMobile}
+        schedulesGames={schedulesGames}
       />,
       name
     );
@@ -183,6 +187,7 @@ const PopupSaveReporting = ({
         facilities={facilities}
         schedule={schedule}
         scorerMobile={scorerMobile}
+        schedulesGames={schedulesGames}
       />,
       event.event_name
         ? `${event.event_name} Master Fields Schedule`

@@ -63,7 +63,8 @@ const getLockedValue = (team?: ITeamCard, game?: IGame) =>
   game &&
   team?.games?.find(
     (teamGame) =>
-      teamGame.id === game?.id &&
+      teamGame.startTime === game?.startTime &&
+      teamGame.fieldId === game?.fieldId &&
       dateToShortString(teamGame.date) === dateToShortString(game?.gameDate)
   )?.isTeamLocked
     ? 1
@@ -109,7 +110,7 @@ export const mapSchedulesTeamCards = async (
     updated_by: memberId,
     updated_datetime: new Date().toISOString(),
   }));
-  
+
   return scheduleDetails;
 };
 
@@ -175,13 +176,15 @@ export const mapTeamCardsToSchedulesGames = async (
     away_team_score:
       game.awayTeam?.games?.find(
         (g) =>
-          g.id === game.id &&
+          g.startTime === game.startTime &&
+          g.fieldId === game.fieldId &&
           dateToShortString(game.gameDate) === dateToShortString(g.date)
       )?.teamScore || null,
     home_team_score:
       game.homeTeam?.games?.find(
         (g) =>
-          g.id === game.id &&
+          g.startTime === game.startTime &&
+          g.fieldId === game.fieldId &&
           dateToShortString(game.gameDate) === dateToShortString(g.date)
       )?.teamScore || null,
     is_active_YN: 1,
@@ -191,7 +194,8 @@ export const mapTeamCardsToSchedulesGames = async (
     is_bracket_YN: null,
     is_cancelled_YN: game.awayTeam?.games?.find(
       (g) =>
-        g.id === game.id &&
+        g.startTime === game.startTime &&
+        g.fieldId === game.fieldId &&
         dateToShortString(game.gameDate) === dateToShortString(g.date)
     )?.isCancelled
       ? 1
@@ -216,6 +220,8 @@ export const mapTeamsFromSchedulesDetails = (
     awayPoolId: item.pool_id,
     homePoolId: item.pool_id,
     date: dateToShortString(item.game_date) || undefined,
+    startTime: item.game_time,
+    fieldId: item.field_id,
     awayTeamLocked: item.away_team_locked,
     homeTeamLocked: item.home_team_locked,
     gameType: String(item.game_type) || GameType.game,
@@ -237,6 +243,8 @@ export const mapTeamsFromSchedulesDetails = (
             awayTeamLocked,
             homeTeamLocked,
             gameType,
+            startTime,
+            fieldId,
           }) => ({
             id: Number(matrixGameId),
             awayTeamId: awayTeamId!,
@@ -247,6 +255,8 @@ export const mapTeamsFromSchedulesDetails = (
                 ? Boolean(awayTeamLocked)
                 : Boolean(homeTeamLocked),
             date,
+            startTime: startTime!,
+            fieldId: fieldId!,
             gameType,
           })
         ),
@@ -294,6 +304,8 @@ export const mapTeamsFromShedulesGames = (
               game.fieldId === scheduleGame.fieldId
           )?.id!,
           date: dateToShortString(scheduleGame.date),
+          startTime: scheduleGame.startTime || undefined,
+          fieldId: scheduleGame.fieldId,
           isCancelled: scheduleGame.isCancelled,
           teamPosition: scheduleGame.awayTeamId === team.id ? 1 : 2,
           teamScore:

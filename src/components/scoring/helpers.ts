@@ -1,20 +1,22 @@
-import { ISchedulesGame, ISchedulesDetails } from 'common/models';
-import { IGame } from 'components/common/matrix-table/helper';
-import { IBracketGame } from 'components/playoffs/bracketGames';
-import { orderBy } from 'lodash-es';
-import { formatTimeSlot, dateToShortString } from 'helpers';
+import { ISchedulesGame, ISchedulesDetails } from "common/models";
+import { IGame } from "components/common/matrix-table/helper";
+import { IBracketGame } from "components/playoffs/bracketGames";
+import { orderBy } from "lodash-es";
+import { formatTimeSlot, dateToShortString } from "helpers";
 
 const mapGamesWithSchedulesGames = (
   games: IGame[],
   schedulesGames: ISchedulesGame[],
+  selectedDay?: string
 ) => {
   const mappedGames = games?.map((game: IGame) => ({
     ...game,
+    gameDate: game.gameDate || selectedDay,
     varcharId: schedulesGames.find(
       (schedulesGame: ISchedulesGame) =>
         game.fieldId === schedulesGame.field_id &&
         game.startTime === schedulesGame.game_time &&
-        dateToShortString(game.gameDate) ===
+        dateToShortString(selectedDay || game.gameDate) ===
           dateToShortString(schedulesGame.game_date)
     )?.game_id,
   }));
@@ -26,10 +28,10 @@ const mapGamesWithSchedulesDetails = (
   games: IGame[],
   schedulesGames: ISchedulesDetails[]
 ) => {
-  const mappedGames = games?.map(game => ({
+  const mappedGames = games?.map((game: IGame) => ({
     ...game,
     varcharId: schedulesGames.find(
-      schedulesGame =>
+      (schedulesGame: ISchedulesDetails) =>
         game.fieldId === schedulesGame.field_id &&
         game.startTime === schedulesGame.game_time &&
         dateToShortString(game.gameDate) ===

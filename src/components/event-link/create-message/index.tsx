@@ -12,7 +12,7 @@ import {
 } from "components/common";
 import styles from './styles.module.scss';
 import history from 'browserhistory';
-import { getData, saveMessages } from '../logic/actions';
+import { getData, saveMessages, getTemplates } from '../logic/actions';
 import { IEventDetails, IDivision, IPool, ITeam } from "common/models";
 import Filter from './filter';
 import { IScheduleFilter } from './filter';
@@ -35,6 +35,9 @@ import PollOptions from "./poll-options";
 import Navigation from "./navigation";
 import { CardMessageTypes } from "components/common/card-message/types";
 import MessageBody from "./message-body";
+import { getVarcharEight } from "helpers";
+import ApplyTemplatePopup from "./apply-template";
+import { IMessageTemplate } from "common/models/event-link";
 
 interface MatchParams {
   eventId: string;
@@ -59,7 +62,7 @@ export interface IRecipientDetails {
 }
 
 export interface IPollOption {
-  index: number,
+  id: string,
   responseMessage: string;
   hasResponse: boolean;
   answerCode: string;
@@ -67,16 +70,18 @@ export interface IPollOption {
 }
 
 interface Props {
+  events: IEventDetails[];
+  divisions: IDivision[];
+  pools: IPool[];
+  teams: ITeam[];
+  templates: IMessageTemplate[];
   getData: (eventId?: string) => void;
   saveMessages: (
     data: IMessageToSend,
     recipientDetails: IRecipientDetails,
     pollOptions?: IPollOption[]
   ) => void;
-  events: IEventDetails[];
-  divisions: IDivision[];
-  pools: IPool[];
-  teams: ITeam[];
+  getTemplates: () => void;
 }
 
 const CreateMessage = ({
@@ -85,8 +90,10 @@ const CreateMessage = ({
   pools,
   teams,
   match,
+  templates,
   getData,
   saveMessages,
+  getTemplates,
 }: Props & RouteComponentProps<MatchParams>) => {
   const currentEventId = match.params.eventId;
 
@@ -121,14 +128,14 @@ const CreateMessage = ({
 
   const [pollOptions, setPollOptions] = useState<IPollOption[]>([
     {
-      index: 0,
+      id: getVarcharEight(),
       responseMessage: '',
       hasResponse: false,
       answerCode: '1',
       answerText: 'Yes',
     },
     {
-      index: 1,
+      id: getVarcharEight(),
       responseMessage: '',
       hasResponse: false,
       answerCode: '0',
@@ -138,6 +145,7 @@ const CreateMessage = ({
 
   const [messageType, setMessageType] = useState<string>(MessageType.ONE_WAY);
   const [isSendLater, setIsSendLater] = useState<boolean>(false);
+  const [isOpenApplyPopup, setIsOpenApplyPopup] = useState<boolean>(false);
 
   const eventOptions = events.length
     ? events.map((e: IEventDetails) => ({
@@ -193,7 +201,7 @@ const CreateMessage = ({
     setPollOptions([
       ...pollOptions,
       {
-        index: pollOptions.length,
+        id: getVarcharEight(),
         responseMessage: '',
         hasResponse: false,
         answerCode: '',
@@ -220,6 +228,10 @@ const CreateMessage = ({
       teamIds,
       groups,
     });
+  };
+
+  const onApplyTemplate = () => {
+    setIsOpenApplyPopup(true);
   };
 
   const onMessageTypeChange = (e: IInputEvent) =>
@@ -297,6 +309,7 @@ const CreateMessage = ({
       <Navigation
         onCancelClick={onCancelClick}
         onSave={onSave}
+        onApplyTemplate={onApplyTemplate}
       />
       <HeadingLevelTwo margin="24px 0">Create New Message</HeadingLevelTwo>
       <div className={styles.btnsGroup}>
@@ -411,6 +424,12 @@ const CreateMessage = ({
           </div>
         </div>
       </div>
+      <ApplyTemplatePopup
+        isOpen={isOpenApplyPopup}
+        onClose={() => setIsOpenApplyPopup(false)}
+        getTemplates={getTemplates}
+        templates={templates}
+      />
     </div>
   );
 };
@@ -423,6 +442,7 @@ const mapStateToProps = (state: {
       pools: IPool[];
       teams: ITeam[];
     };
+    templates: IMessageTemplate[],
   };
 }) => {
   return {
@@ -430,12 +450,14 @@ const mapStateToProps = (state: {
     divisions: state.eventLink.data.divisions,
     pools: state.eventLink.data.pools,
     teams: state.eventLink.data.teams,
+    templates: state.eventLink.templates,
   };
 };
 
 const mapDispatchToProps = {
   getData,
   saveMessages,
+  getTemplates,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateMessage);

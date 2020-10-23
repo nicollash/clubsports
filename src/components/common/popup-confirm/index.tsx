@@ -16,11 +16,13 @@ interface Props {
   customNo?: string;
   customYes?: string;
   showCancelByLeft?: boolean;
+  isHTML?: boolean;
 }
 
 const PopupConfirm = ({
   message,
   isOpen,
+  isHTML,
   onClose,
   onCanceClick,
   onYesClick,
@@ -50,7 +52,11 @@ const PopupConfirm = ({
             <WarningIcon style={{ fill: "#FFCB00" }} />
           </div>
         ) : null}
-        <p className={styles.popupText}>{message}</p>
+        {isHTML ? (
+          <div dangerouslySetInnerHTML={{ __html: message }} />
+        ) : (
+          <p className={styles.popupText}>{message}</p>
+        )}
       </div>
       <p className={styles.btnsWrapper}>
         <span className={styles.exitBtnWrapper}>

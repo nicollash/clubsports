@@ -17,9 +17,9 @@ const PollOptions = ({
   onAddAdditionalOption,
 }: IProps) => {
 
-  const onChange = (ind: number, field: string, value: string | number) => {
+  const onChange = (id: string, field: string, value: string | number) => {
     const currentOptions = options.map((opt: IPollOption) => {
-      return opt.index === ind
+      return opt.id === id
         ? {
             ...opt,
             [field]: value,
@@ -29,8 +29,8 @@ const PollOptions = ({
     onChangeValue(currentOptions);
   };
 
-  const onDelete = (ind: number) => {
-    const currentOptions = options.filter((opt: IPollOption) => opt.index !== ind);
+  const onDelete = (id: string) => {
+    const currentOptions = options.filter((opt: IPollOption) => opt.id !== id);
     onChangeValue(currentOptions);
   };
 
@@ -42,20 +42,18 @@ const PollOptions = ({
         <div className={styles.labelResp}>Your reply if this response</div>
       </div>
       {options.map((opt: IPollOption) => (
-        <div key={opt.index} className={styles.pollsWrapper}>
+        <div key={opt.id} className={styles.pollsWrapper}>
           <Input
-            key={opt.index}
             fullWidth={true}
             onChange={(e: IInputEvent) =>
-              onChange(opt.index, "answerText", e.target.value)
+              onChange(opt.id, "answerText", e.target.value)
             }
             value={opt.answerText}
           />
           <Input
-            key={opt.index}
             fullWidth={true}
             onChange={(e: IInputEvent) =>
-              onChange(opt.index, "answerCode", e.target.value)
+              onChange(opt.id, "answerCode", e.target.value)
             }
             value={opt.answerCode}
           />
@@ -69,7 +67,7 @@ const PollOptions = ({
               ]}
               onChange={(e: IInputEvent) =>
                 onChange(
-                  opt.index,
+                  opt.id,
                   "hasResponse",
                   e.target.checked ? 1 : 0
                 )
@@ -78,14 +76,14 @@ const PollOptions = ({
             <Input
               fullWidth={true}
               onChange={(e: IInputEvent) =>
-                onChange(opt.index, "responseMessage", e.target.value)
+                onChange(opt.id, "responseMessage", e.target.value)
               }
               value={opt.responseMessage}
               disabled={!Boolean(opt.hasResponse)}
             />
             <div className={styles.deleteBttn}>
               <Button
-                onClick={() => onDelete(opt.index)}
+                onClick={() => onDelete(opt.id)}
                 variant={ButtonVariant.OUTLINED}
                 color={ButtonColors.INHERIT}
                 type={ButtonTypes.DANGER_LINK}

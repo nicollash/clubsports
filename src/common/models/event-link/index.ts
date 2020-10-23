@@ -20,3 +20,12 @@ export interface IMessage {
   updated_by: string;
   updated_datetime: string;
 }
+
+export interface IMessageTemplate {
+  messageTemplateId: string;
+  messageType: string | null;
+  messageContent: string | null;
+  subject: string | null;
+  responseOptions: string | null;
+  type: string | null;
+}

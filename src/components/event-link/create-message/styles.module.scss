@@ -9,6 +9,11 @@
     & > * {
       margin-left: 15px;
     }
+
+    & > button:nth-child(2) {
+      position: absolute;
+      top: 90px;
+    }
   }
 }
 .btnsGroup {
@@ -204,4 +209,8 @@
 }
 .redactor {
   height: 320px;
+}
+
+.applyBtn {
+  position: absolute;
 }

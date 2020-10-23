@@ -5,6 +5,7 @@ import ITimeSlot from 'common/models/schedule/timeSlots';
 import { IGame } from 'components/common/matrix-table/helper';
 import { ITeamCard } from 'common/models/schedule/teams';
 import { styles } from './styles';
+import { getDisplayName } from 'components/common/matrix-table/dnd/seed';
 
 const EVEN_COLOR = '#DCDCDC';
 
@@ -13,6 +14,7 @@ interface Props {
   games: IGame[];
   isEven: boolean;
   isRequaredSmsScoring: boolean;
+  teamCards?: ITeamCard[];
 }
 
 const RowTimeSlot = ({
@@ -20,6 +22,7 @@ const RowTimeSlot = ({
   games,
   isEven,
   isRequaredSmsScoring,
+  teamCards,
 }: Props) => {
   const formatPhoneNumber = (phoneNumberString: string) => {
     const cleaned = ('' + phoneNumberString).replace(/\D/g, '');
@@ -46,6 +49,87 @@ const RowTimeSlot = ({
       </Text>
     </View>
   );
+  const getBracketTeam = (
+    teamName?: string,
+    divisionName?: string,
+    round?: number,
+    dependsUpon?: number,
+    seedId?: number,
+    displayName?: string
+  ) => {
+    return (
+      <>
+        {teamName || displayName ? (
+          <>
+            <Text style={styles.teamName}>
+              {teamName || displayName}
+            </Text>
+            {divisionName && !displayName && (
+              <Text style={styles.divisionNameWrapper}>
+                {`(${divisionName})`}
+              </Text>
+            )}
+          </>
+        ) : seedId ? (
+          <>
+            <Text style={styles.teamName}>{`Seed ${seedId}`}</Text>
+            {divisionName && (
+              <Text style={styles.divisionNameWrapper}>
+                {`(${divisionName})`}
+              </Text>
+            )}
+          </>
+        ) : (
+          <Text style={styles.teamName}>
+            {getDisplayName(round, dependsUpon)}
+          </Text>
+        )}
+      </>
+    );
+  };
+
+  const getBracketGame = (game: IGame) => {
+    const {
+      awaySeedId,
+      homeSeedId,
+      playoffRound,
+      divisionName,
+      awayDependsUpon,
+      homeDependsUpon,
+      awayDisplayName,
+      homeDisplayName,
+    } = game;
+
+    const awayTeamName = teamCards?.find((item) => item.id === game.awayTeamId)
+      ?.name;
+    const homeTeamName = teamCards?.find((item) => item.id === game.homeTeamId)
+      ?.name;
+
+    return (
+      <>
+        <View style={styles.team} key={`away ${game.id}`}>
+          {getBracketTeam(
+            awayTeamName,
+            divisionName,
+            playoffRound,
+            awayDependsUpon,
+            awaySeedId,
+            awayDisplayName
+          )}
+        </View>
+        <View style={styles.team} key={`home ${game.id}`}>
+          {getBracketTeam(
+            homeTeamName,
+            divisionName,
+            playoffRound,
+            homeDependsUpon,
+            homeSeedId,
+            homeDisplayName
+          )}
+        </View>
+      </>
+    );
+  };
 
   return (
     <View
@@ -57,19 +141,34 @@ const RowTimeSlot = ({
       <View style={styles.timeGameWrapper}>
         <Text style={styles.timeSlot}>{formatTimeSlot(timeSlot.time)}</Text>
         {isRequaredSmsScoring && (
-          <Text style={styles.gameIdSlot}>{games[0]?.varcharId}</Text>
+          <Text style={styles.gameIdSlot}>{games[0]?.bracketGameId ? games[0]?.bracketGameId : games[0].varcharId}</Text>
         )}
       </View>
-      {games.map(game => (
-        <View style={styles.gamesWrapper} key={game.id}>
-          {game.awayTeam?.name && game.homeTeam?.name && (
-            <>
-              {getTeam(game.awayTeam)}
-              {getTeam(game.homeTeam)}
-            </>
-          )}
-        </View>
-      ))}
+      {games.map(game => {
+        const isBracketGame =
+          !game.awayTeam &&
+          (game.awaySeedId || game.awayDependsUpon || game.awaySourceType) &&
+          game.bracketGameId;
+
+        if (isBracketGame) {
+          return (
+            <View style={styles.gamesWrapper} key={game.id}>
+              {getBracketGame(game)}
+            </View>
+          )
+        }
+        return (
+          <View style={styles.gamesWrapper} key={game.id}>
+            {game.awayTeam?.name && game.homeTeam?.name && (
+              <>
+                {getTeam(game.awayTeam)}
+                {getTeam(game.homeTeam)}
+              </>
+            )}
+          </View>
+        )
+      }
+      )}
       <View style={styles.scoresWrapper}>
         <View style={styles.scoresContainer} >
           <Text style={styles.scores}>{games.map(game => game.awayTeamScore ? game.awayTeamScore : "")}</Text>

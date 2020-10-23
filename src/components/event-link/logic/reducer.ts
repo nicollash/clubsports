@@ -5,12 +5,13 @@ import {
   DELETE_MESSAGES_SUCCESS,
   RESPONSES_FETCH_SUCCESS,
   OPTIONS_FETCH_SUCCESS,
-  REFRESH_RESPONSE_SUCCESS,
   MESSAGE_FETCH_SUCCESS,
+  TEMPLATES_FETCH_SUCCESS,
 } from './actionTypes';
 import { IDivision, IEventDetails, IPool, ITeam } from 'common/models';
 import { IResponse } from "..";
-import { IMessage } from "common/models/event-link";
+import { IMessage, IMessageTemplate } from "common/models/event-link";
+import { sortBySendDatetime } from "../helpers";
 
 export interface IState {
   data: {
@@ -23,6 +24,7 @@ export interface IState {
   message: IMessage | undefined;
   responses: IResponse[];
   messagesAreLoading: boolean;
+  templates: IMessageTemplate[];
 }
 
 const defaultState: IState = {
@@ -36,6 +38,7 @@ const defaultState: IState = {
   message: undefined,
   messagesAreLoading: true,
   responses: [],
+  templates: [],
 };
 
 export default (
@@ -82,19 +85,16 @@ export default (
     case OPTIONS_FETCH_SUCCESS: {
       return { ...state, options: action.payload };
     }
-    case REFRESH_RESPONSE_SUCCESS: {
-      const updatedResponses = state?.responses.filter(
-        (resp: IResponse) => resp.messageId !== action.payload[0]?.messageId
-      );
-      updatedResponses.push(action.payload);
-      return { ...state, responses: updatedResponses.flat() };
-    }
     case MESSAGE_FETCH_SUCCESS: {
       const updatedMessages = state.messages.filter(
         (mess: IMessage) => mess.message_id !== action.payload.message_id
       );
       updatedMessages.push(action.payload);
-      return { ...state, messages: updatedMessages };
+      const filterMesssages = sortBySendDatetime(updatedMessages);
+      return { ...state, messages: filterMesssages };
+    }
+    case TEMPLATES_FETCH_SUCCESS: {
+      return { ...state, templates: action.payload };
     }
     default:
       return state;

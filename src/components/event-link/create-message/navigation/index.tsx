@@ -5,9 +5,14 @@ import { Button, Paper } from "components/common";
 interface INavigationProps {
   onCancelClick: () => void;
   onSave: () => void;
+  onApplyTemplate: () => void;
 };
 
-const Navigation = ({ onCancelClick, onSave }: INavigationProps) => (
+const Navigation = ({
+  onCancelClick,
+  onSave,
+  onApplyTemplate,
+}: INavigationProps) => (
   <Paper sticky={true}>
     <div className={styles.btnsWrapper}>
       <Button
@@ -15,6 +20,13 @@ const Navigation = ({ onCancelClick, onSave }: INavigationProps) => (
         variant="text"
         onClick={onCancelClick}
         label="Cancel"
+      />
+      <Button
+        color="primary"
+        variant="text"
+        onClick={onApplyTemplate}
+        label="Apply template"
+        disabled={true}
       />
       <Button
         color="primary"

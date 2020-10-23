@@ -24,6 +24,7 @@ import {
   ScheduleCreationType,
   INormalizedGame,
   IBracket,
+  ISchedulesGame,
 } from "common/models";
 import { IField } from "common/models/schedule/fields";
 import ITimeSlot from "common/models/schedule/timeSlots";
@@ -104,6 +105,7 @@ interface Props {
   facilities: IScheduleFacility[];
   scheduleData: ISchedule;
   schedulesDetails?: ISchedulesDetails[];
+  schedulesGames?: ISchedulesGame[];
   scheduleTeamDetails?: IScheduleTeamDetails[];
   normalizedGames?: INormalizedGame[];
   eventSummary: IEventSummary[];
@@ -129,6 +131,7 @@ interface Props {
     schedulesDetailsToModify: ISchedulesDetails[]
   ) => void;
   updateGamesChanged?: (item: IChangedGame) => void;
+  selectedDayChanged?: (day: string) => void;
   onGamesListChange?: (
     item: IMatchup[],
     teamIdToDeleteGame?: string,
@@ -161,6 +164,7 @@ const TableSchedule = ({
   facilities,
   scheduleData,
   schedulesDetails,
+  schedulesGames,
   scheduleTeamDetails,
   normalizedGames,
   timeSlots,
@@ -188,6 +192,7 @@ const TableSchedule = ({
   addTeams,
   addNewPool,
   updateGamesChanged,
+  selectedDayChanged,
 }: Props) => {
   const minGamesNum =
     Number(scheduleData?.min_num_games) || event.min_num_of_games;
@@ -226,6 +231,10 @@ const TableSchedule = ({
         eventSummary,
       })
     );
+
+    if (selectedDayChanged) {
+      selectedDayChanged(days[+(filterValues?.selectedDay || 1) - 1]);
+    }
   }, filterDepArray);
 
   const [optimizeBy, onOptimizeClick] = useState<OptimizeTypes>(
@@ -343,7 +352,7 @@ const TableSchedule = ({
     };
 
     onGameScoreUpdate({
-      id: foundBracketGame.gridNum,
+      id: foundBracketGame.id,
       startTime: foundBracketGame.startTime,
       fieldId: foundBracketGame.fieldId,
       date: foundBracketGame.gameDate,
@@ -356,6 +365,9 @@ const TableSchedule = ({
   const onFilterChange = (data: IScheduleFilter) => {
     const newData = mapFilterValues({ teamCards, pools }, data);
     changeFilterValues({ ...newData });
+    if (selectedDayChanged) {
+      selectedDayChanged(days[+(filterValues?.selectedDay || 1) - 1]);
+    }
   };
 
   const toggleZooming = () => changeZoomingAction(!zoomingDisabled);
@@ -597,7 +609,7 @@ const TableSchedule = ({
   const getTimeSlotsBySelectedDay = (): ITimeSlot[] => {
     let date = "";
     if (filterValues.selectedDay) {
-      date = days[+filterValues.selectedDay - 1] || "";
+      date = days[+(filterValues.selectedDay || 1) - 1];
     }
 
     if (schedulesDetails) {
@@ -607,6 +619,16 @@ const TableSchedule = ({
             dateToShortString(v.game_date) === dateToShortString(date)
         ),
         TimeSlotsEntityTypes.SCHEDULE_DETAILS
+      );
+    }
+
+    if (schedulesGames) {
+      return getTimeSlotsFromEntities(
+        schedulesGames!.filter(
+          (v: ISchedulesGame) =>
+            dateToShortString(v.game_date) === dateToShortString(date)
+        ),
+        TimeSlotsEntityTypes.SCHEDULE_GAMES
       );
     }
 
@@ -694,6 +716,8 @@ const TableSchedule = ({
               gameType,
               teamPosition: TeamPositionEnum.awayTeam,
               date: game.gameDate,
+              startTime: game.startTime,
+              fieldId: game.fieldId,
               isTeamLocked: false,
             },
           ],
@@ -714,6 +738,8 @@ const TableSchedule = ({
               id: game.id,
               gameType,
               teamPosition: TeamPositionEnum.homeTeam,
+              startTime: game.startTime,
+              fieldId: game.fieldId,
               date: game.gameDate,
               isTeamLocked: false,
             },
@@ -752,6 +778,8 @@ const TableSchedule = ({
                       ? TeamPositionEnum.awayTeam
                       : TeamPositionEnum.homeTeam,
                   date: game.gameDate,
+                  startTime: game.startTime,
+                  fieldId: game.fieldId,
                 },
               ],
             };
@@ -778,7 +806,9 @@ const TableSchedule = ({
       teamCards.filter((teamCard) =>
         teamCard.games?.find(
           (teamCardGame) =>
-            teamCardGame.id === game!.id && teamCardGame.date === game!.gameDate
+            teamCardGame.startTime === game!.startTime &&
+            teamCardGame.fieldId === game!.fieldId &&
+            teamCardGame.date === game!.gameDate
         )
       ).length > 0;
 
@@ -1062,6 +1092,7 @@ const TableSchedule = ({
               eventDays={days}
               isOpen={isPopupSaveReportOpen}
               teamCards={teamCards}
+              schedulesGames={schedulesDetails!}
               onClose={togglePopupSaveReport}
             />
           </>

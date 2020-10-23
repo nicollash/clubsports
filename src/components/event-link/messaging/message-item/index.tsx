@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { SectionDropdown, Button, DataGrid, MenuButton, Loader } from 'components/common';
+import { SectionDropdown, Button, DataGrid, MenuButton, Loader, PopupConfirm } from 'components/common';
 import DeleteIcon from '@material-ui/icons/Delete';
 import styles from '../../styles.module.scss';
 import moment from 'moment';
@@ -39,7 +39,6 @@ interface IProps {
   message: IMessage;
   responses: IResponse[];
   deleteMessages: BindingCbWithOne<string>;
-  refreshMessage: (messageId: string) => void;
   getResponses: (messageId: string) => void;
   updateMessage: (messageId: string) => void;
 };
@@ -52,7 +51,6 @@ const MessageItem = ({
   message,
   responses,
   deleteMessages,
-  refreshMessage,
   getResponses,
   updateMessage,
 }: IProps) => {
@@ -73,6 +71,7 @@ const MessageItem = ({
       message.status === MessageStatus.PREPARING ||
       message.status === MessageStatus.NEW
   );
+  const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setIsRefreshLoading(false);
@@ -160,7 +159,7 @@ const MessageItem = ({
 
   const onRefreshClick = () => {
     setIsRefreshLoading(true);
-    refreshMessage(message.message_id);
+    getResponses(message.message_id);
   };
 
   const deleteMessage = `You are about to delete this message and this cannot be undone.
@@ -172,7 +171,11 @@ const MessageItem = ({
         <div className={styles.msTitleContainer}>
           <p className={styles.msTitle}>
             {message.message_title}
-            {responses?.length !== 0 ? `(${responses.length})` : null}
+            <span className={styles.msTitleTR}>
+              {responses?.length !== 0
+                ? `(${responses.length} target recipient(s))`
+                : null}
+            </span>
           </p>
           <p className={styles.msDeliveryDate}>
             {new Date(message.send_datetime) < new Date()
@@ -186,10 +189,13 @@ const MessageItem = ({
           <div>
             <div className={styles.msContentMessage}>
               <div>
-                <span className={styles.msContentTitle}>Message:</span>{' '}
-                {message.message_type === Type.TEXT
-                  ? message.message_body
-                  : message.message_type}
+                <Button
+                  label="Show message"
+                  variant="text"
+                  color="secondary"
+                  onClick={() => setIsConfirmPopupOpen(true)}
+                  btnStyles={{ marginLeft: -8 }}
+                />
               </div>
               <div>
                 <Button
@@ -206,9 +212,9 @@ const MessageItem = ({
                   color="secondary"
                   onClick={() => {}}
                 />
-                <div>
+                <>
                   {isRefreshLoading ? (
-                    <Loader size={20} styles={{ backgroudColor: '#00A3EA', margin: '0 10px' }}/>
+                    <Loader size={20} styles={{ width: 104, padding: '6px 8px' }}/>
                   ) : (
                     <Button
                       label="Refresh"
@@ -218,7 +224,7 @@ const MessageItem = ({
                       onClick={onRefreshClick}
                     />
                   )}
-                </div>
+                </>
                 <MenuButton
                   label='Export'
                   variant='text'
@@ -355,6 +361,14 @@ const MessageItem = ({
         isOpen={isDeleteModalOpen}
         onClose={onDeleteModalClose}
         onDeleteClick={onMessagesDelete}
+      />
+      <PopupConfirm
+        message={message.message_body}
+        isOpen={isConfirmPopupOpen}
+        onClose={() => setIsConfirmPopupOpen(false)}
+        onCanceClick={() => setIsConfirmPopupOpen(false)}
+        onYesClick={() => setIsConfirmPopupOpen(false)}
+        isHTML={message.message_type === Type.EMAIL}
       />
     </li>
   );

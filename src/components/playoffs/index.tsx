@@ -277,8 +277,9 @@ class Playoffs extends Component<IProps> {
       (checkMultiDay(event, bracket) &&
         (!prevState.multiDay?.length || !prevState.selectedDay))
     ) {
+      const gms = this.calculateNeccessaryData();
       const res = this.calculatePlayoffTimeSlots();
-      this.populateBracketGamesData(res);
+      this.populateBracketGamesData(res, gms);
     }
 
     if (
@@ -335,6 +336,8 @@ class Playoffs extends Component<IProps> {
       schedulesDetails,
     } = this.props;
 
+    const { selectedDay, multiDay } = this.state;
+
     if (!event || !schedule || !fields || !teams || !divisions || !facilities)
       return;
 
@@ -342,14 +345,26 @@ class Playoffs extends Component<IProps> {
 
     const timeSlots = calculateTimeSlots(
       timeValues,
-      schedulesDetails,
+      schedulesDetails?.filter(
+        (sd: ISchedulesDetails) =>
+          dateToShortString(sd.game_date) ===
+          dateToShortString(
+            !selectedDay || multiDay.length === 0
+              ? event.event_enddate
+              : multiDay[+(selectedDay || 1) - 1]
+          )
+      ),
       TimeSlotsEntityTypes.SCHEDULE_DETAILS
     );
 
     const mappedFields = mapFieldsData(fields, facilities);
     const sortedFields = sortFieldsByPremier(mappedFields);
 
-    const { games } = defineGames(sortedFields, timeSlots!);
+    const { games } = defineGames(
+      sortedFields,
+      timeSlots!,
+      multiDay[+(selectedDay || 1) - 1]
+    );
     const mappedTeams = mapTeamsData(teams, divisions);
 
     const mappedFacilities = mapFacilitiesData(facilities);
@@ -361,6 +376,8 @@ class Playoffs extends Component<IProps> {
       teams: mappedTeams,
       facilities: mappedFacilities,
     });
+
+    return games;
   };
 
   retrieveBracketsData = () => {
@@ -541,13 +558,13 @@ class Playoffs extends Component<IProps> {
   };
 
   /* PUT BRACKET GAMES INTO GAMES */
-  populateBracketGamesData = (pOTS?: ITimeSlot[]) => {
+  populateBracketGamesData = (pOTS?: ITimeSlot[], gamesList?: IGame[]) => {
     const { bracketGames, divisions, event, bracket } = this.props;
     const { games, playoffTimeSlots, multiDay, selectedDay } = this.state;
     if (!games || !playoffTimeSlots || !divisions) return;
 
     const definedGames = populateDefinedGamesWithPlayoffState(
-      games,
+      gamesList || games,
       pOTS || playoffTimeSlots
     );
 
