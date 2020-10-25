@@ -25,19 +25,18 @@ const HeaderSchedule = ({
   let idx = splitIdx * 0;
   const currentPageStartGameIdx = idx * DEFAULT_COLUMNS_COUNT;
   const currentPageEndGameIdx = (idx + 1) * DEFAULT_COLUMNS_COUNT;
-
   const getHeaderDate = () => {
     const retView: any[] = [];
     let startGameIdx = 0;
 
     days.forEach((date) => {
       const gamesCount = getGamesCountForDay(teamDetails, date);
-      const endGameIdx = startGameIdx + gamesCount;
+      // const endGameIdx = startGameIdx + gamesCount;
       if (
         startGameIdx >= currentPageStartGameIdx &&
         startGameIdx < currentPageEndGameIdx
       ) {
-        let gameCellCount = endGameIdx - startGameIdx;
+        let gameCellCount = gamesCount;
 
         if (gameCellCount > DEFAULT_COLUMNS_COUNT)
           gameCellCount = DEFAULT_COLUMNS_COUNT;

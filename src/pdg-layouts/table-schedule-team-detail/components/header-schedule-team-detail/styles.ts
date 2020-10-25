@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   mainHeaderDivisionWrapper: {
-    flexDirection: "column",
-    textAlign: "center",
+    flexDirection: "row",
+    alignItems: "center",
     fontSize: 10,
     marginRight: 3,
     width: 80,
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     fontSize: 10,
     marginRight: 3,
-    width: 96,
+    width: 66,
     backgroundColor: "#D9FFF2",
   },
   mainHeaderGameDate: {
@@ -59,10 +59,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   mainHeaderDateWrapper: {
-    fontSize: 10,
+    flexDirection: "row",
+    alignItems: "center",
     marginRight: 3,
     backgroundColor: "#808080",
     color: "#ffffff",
+    height: 20,
   },
   mainHeaderDivisionNameWrapper: {
     marginRight: 3,
@@ -71,17 +73,21 @@ const styles = StyleSheet.create({
   },
   mainHeaderCountsIndividualWrapper: {
     flexDirection: "row",
+    alignItems: "center",
     marginRight: 3,
     backgroundColor: "#D9FFF2",
   },
   mainHeaderGameWrapper: {
     flexDirection: "row",
     backgroundColor: "#ffffff",
-    color: "#000000",
+    color: "#000000",    
   },
   mainHeaderGameCellWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
     marginRight: 3,
     width: 80,
+    height: 20,
   },
   mainHeaderCell: {
     fontSize: 10,
@@ -93,7 +99,7 @@ const styles = StyleSheet.create({
     marginRight: 3,
     marginTop: 1,
     textAlign: "center",
-    width: 30,
+    width: 20,
   },
   mainHeaderNameCell: {
     fontSize: 10,
@@ -103,12 +109,17 @@ const styles = StyleSheet.create({
     width: 80,
   },
   logoWrapper: {
-    width: 100,
+    position: "absolute",
+    top: 0,
+    right: 20,
+    width: 70,
+    justifyContent: "center",
+    backgroundColor: "#ffffff",
   },
   logo: {
     objectFit: "contain",
-    height: 100,
-    marginLeft: 20,
+    height: 40,
+    marginLeft: 10,
   },
 });
 

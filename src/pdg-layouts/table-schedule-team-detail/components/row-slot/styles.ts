@@ -30,13 +30,13 @@ const styles = StyleSheet.create({
     marginRight: 3,
     alignItems: "center",
     height: 25,
-    width: 96,
+    width: 66,
   },
   teamCountCell: {
     marginRight: 2,
     fontSize: 10,
     textAlign: "center",
-    width: 30,
+    width: 20,
   },
   teamGame: {
     marginRight: 3,

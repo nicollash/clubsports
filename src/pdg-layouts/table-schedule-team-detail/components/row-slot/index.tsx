@@ -44,12 +44,12 @@ const RowTeamSlot = ({
   let total = 0;
 
   const viewGames = () => {
-    const gamesRow = dateGames.map((dateItem: any, index) => {
+    const gamesRow = dateGames.map((dateItem: any) => {
       let rowsView: any[] = [];
       const dateKey = Object.keys(dateItem)[0];
       const dateIdx = days.find((day) => day === dateKey);
       if (dateIdx === null) {
-        const gamesCountForDay = getGamesCountForDay(teamDetails, days[index]);
+        const gamesCountForDay = getGamesCountForDay(teamDetails, dateKey);
         const emptyGameNames = [...Array(gamesCountForDay).keys()];
         const emptySubRow = emptyGameNames.map((index) => {
           return (
