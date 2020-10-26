@@ -32,6 +32,7 @@ import {
   SAVE_TEAMS_SUCCESS,
   SAVE_TEAMS_FAILURE,
   CREATE_COACHES_SUCCESS,
+  SAVE_COACHES_SUCCESS,
   DELETE_COACHE_SUCCESS,
   CREATE_TEAMS_SUCCESS,
   CREATE_PLAYERS_SUCCESS,
@@ -130,8 +131,8 @@ const saveTeams = (teams: ITeam[], cb?: (param?: object) => void) => async (
   getState: () => IAppState
 ) => {
   try {
-    const { divisions } = getState().teams;
-
+    const { divisions, coaches } = getState().teams;
+    let currentCoaches = coaches;
     for await (const division of divisions) {
       await Yup.array()
         .of(teamSchema)
@@ -162,6 +163,16 @@ const saveTeams = (teams: ITeam[], cb?: (param?: object) => void) => async (
             team_id: null,
           }));
           await Api.put(`/reg_responses_teams`, registrants);
+        }
+        const deletedDivisionName = divisions.find((it) => it.division_id === team.division_id)?.long_name;
+        const deletedCoaches = coaches.filter(
+          (it) => (it.division_name === deletedDivisionName &&
+                 it.team_name === team.long_name) 
+        )
+        for (let index = 0; index < deletedCoaches.length; index ++) {
+          const deleteCoache = deletedCoaches[index];
+          await Api.delete(`/teams_contacts?team_contact_id=${deleteCoache.team_contact_id}`);
+          currentCoaches.splice(index,1);
         }
         isDeleted = true;
       } else {
@@ -195,8 +206,128 @@ const saveTeams = (teams: ITeam[], cb?: (param?: object) => void) => async (
       },
     });
 
+    dispatch({
+      type: SAVE_COACHES_SUCCESS,
+      payload: {
+        coaches: currentCoaches,
+      },
+    });
+
     if (isDeleted && !isChanged) Toasts.successToast("Teams deleted successfully");
     else Toasts.successToast("Teams saved successfully");
+
+  } catch (err) {
+    dispatch({
+      type: SAVE_TEAMS_FAILURE,
+    });
+
+    Toasts.errorToast(err.message);
+  }
+};
+
+const saveTeamContact = (contactId: string, team: ITeam, cb?: (param?: object) => void) => async (
+  dispatch: Dispatch,
+  getState: () => IAppState
+) => {
+  try {
+    const { divisions, teams, coaches } = getState().teams;
+    const coache = coaches.find((it) => it.team_contact_id === contactId);
+    if (!coache) {
+      Toasts.errorToast('Not Found Contact name');
+      return;
+    }
+
+    let division_name_changed = '' ;
+    let team_name_index = -1 ;
+    for await (const division of divisions) {
+      if (team.division_id === division.division_id) {
+       division_name_changed = division.long_name;
+       const findTeams = teams.filter((it) => it.division_id === division.division_id);
+       team_name_index = findTeams.findIndex((it) => it.long_name === team.long_name);
+      }
+    }
+    if (division_name_changed === '') {
+      Toasts.errorToast('Not Found Division name');
+      return;
+    };
+    if (team_name_index < 0) {
+      Toasts.errorToast('Not Found Team name');
+      return;
+    }
+
+    await Yup.array()
+      .of(coacheSchema)
+      .unique(
+        (coache) => `${coache.first_name}_${coache.last_name}`,
+        "Oops! It looks like you already have team in that division with the same long name. The team must have a unique long name within a division."
+      )
+      .validate(
+        coaches.filter((it) => (it.division_name ===division_name_changed &&
+                                it.team_name ===team.long_name
+                      ))      
+      );
+
+    const currentTeams: ITeam[] = teams;
+    const currentCoaches: ICoache[] = coaches;
+
+    let progress = 0;
+    let isDeleted = false;
+    let isChanged = false;
+    if (team.isDelete) { 
+      await Api.delete(`/teams_contacts?team_contact_id=${contactId}`);
+      const index = coaches.findIndex(it => it.team_contact_id === contactId)
+      if (index) currentCoaches.splice(index,1);
+      isDeleted = true;
+      delete team.isDelete;
+    }
+    
+    if (team.isChange && !team.isDelete) {
+      const updated_coache: ICoache = {
+        ...coache,
+        division_name: division_name_changed,
+        team_name: team.long_name ? team.long_name : '',
+        first_name: team.contact_first_name ? team.contact_first_name : '',
+        last_name: team.contact_last_name ? team.contact_last_name : '',
+        phone_num: team.phone_num,
+        contact_email: team.contact_email,
+      };
+      delete team.isChange;
+      await Api.put(`/teams_contacts?team_contact_id=${contactId}`, updated_coache);
+      const index = coaches.findIndex(it => it.team_contact_id === contactId)
+      if (index) {
+        currentCoaches[index] = updated_coache;
+      }
+
+      isChanged = true;
+    }
+
+    if (cb) {
+      cb({
+        type: "progress",
+        data: [
+          {
+            status: "Processing ...",
+            msg: `${progress / 1}`,
+          },
+        ],
+      });
+    }
+    dispatch({
+      type: SAVE_COACHES_SUCCESS,
+      payload: {
+        coaches: currentCoaches,
+      },
+    });
+
+    dispatch({
+      type: SAVE_TEAMS_SUCCESS,
+      payload: {
+        teams: currentTeams,
+      },
+    });
+
+    if (isDeleted && !isChanged) Toasts.successToast("Team contact deleted successfully");
+    else Toasts.successToast("Team contact saved successfully");
 
   } catch (err) {
     dispatch({
@@ -618,7 +749,6 @@ export const createTeamsCsv: ActionCreator<ThunkAction<
     const teamsInDivision = allTeams.filter(
       (t: ITeam) => t.division_id === team.division_id
     );
-    console.log("teamsInDivision: ", team, teamsInDivision);
 
     try {
       await Yup.array()
@@ -754,7 +884,6 @@ export const createTeamsContactsCsv = (
   teamsContacts: Partial<ICoache>[],
   cb: (param?: object) => void
 ) => async (dispatch: Dispatch, getState: () => IAppState) => {
-  console.log('teamsContacts =>', teamsContacts);
 
   if (!teamsContacts || !teamsContacts[0]) return;
 
@@ -764,8 +893,8 @@ export const createTeamsContactsCsv = (
       ({
         first_name: coache.first_name?.trim(),
         last_name: coache.last_name?.trim(),
-        // division_name: coache.division_name?.trim(),
-        // team_name: coache.team_name?.trim(),
+        division_name: coache.division_name?.trim(),
+        team_name: coache.team_name?.trim(),
         allow_sms_YN: 1,
         contact_email: coache.contact_email?.trim(),
         phone_num: coache.phone_num?.trim(),
@@ -776,26 +905,45 @@ export const createTeamsContactsCsv = (
   const reportedRows: string[] = [];
   try {
     const currentCoaches = getState().teams.coaches;
-    console.log('currentCoaches =>', currentCoaches);
     if (currentCoaches && currentCoaches[0]) {
       const currentCoacheskeys = currentCoaches.map(
         (coache) =>
           `${coache.division_name}_${coache.team_name}_${coache.first_name}_${coache.last_name}`
       );
 
-      const comingCoacheskeys = comingCoaches.map(
-        (coache) =>
-          `${coache.division_name}_${coache.team_name}_${coache.first_name}_${coache.last_name}`
-      );
+      const teamsInEvent = getState().teams;
+      for (let index = 0; index < comingCoaches.length; index ++ ) {
+        const coache = comingCoaches[index];
+        // check if user selected correct division.
+        const selectedDivision = teamsInEvent.divisions.find(
+          (division) => division.long_name === coache.division_name
+        );
+        if (!selectedDivision) {
+          reportedRows.push(`${index + 1}th row is invalid Division Name.`);
+          continue;
+        }
 
-      comingCoacheskeys.forEach((key, index) => {
+        // check if user selected available team.
+        const filteredTeamByDivision = teamsInEvent.teams.filter(
+          (team) => team.division_id === selectedDivision.division_id
+        );
+        const selectedTeam = filteredTeamByDivision.find(
+          (team) => team.long_name === coache.team_name
+        );
+        if (!selectedTeam) {
+          reportedRows.push(`${index + 1}th row is invalid Team Name.`);
+          continue;
+        }
+
+        const key = `${coache.division_name}_${coache.team_name}_${coache.first_name}_${coache.last_name}`;
         if (currentCoacheskeys.includes(key)) {
           reportedRows.push(`${index + 1}th row already exists.`);
         } else {
           dupsCoaches.push(comingCoaches[index]);
-          reportedRows.push(`importing`);
+          reportedRows.push(`Importing`);
         }
-      });
+      };
+
       if (reportedRows.length !== 0) {
         cb({
           type: "error",
@@ -837,16 +985,14 @@ export const createTeamsContactsCsv = (
       const invalidCoache = err.value[err.value.length - 1];
       const conflictedCoache = comingCoaches.find(
         (coache) =>
-          // coache.division_name === invalidCoache.division_name &&
-          coache.team_id === invalidCoache.team_id &&
+          coache.division_name === invalidCoache.division_name &&
+          coache.team_name === invalidCoache.team_name &&
           coache.first_name === invalidCoache.first_name &&
           coache.last_name === invalidCoache.last_name 
       );
-      console.log('conflictedCoache =>', conflictedCoache);
       if (conflictedCoache) {
         const indexConflicted = comingCoaches.lastIndexOf(conflictedCoache);
-        console.log('indexConflicted =>', indexConflicted);
-        reportedRows[indexConflicted] = 'conflicted';
+        reportedRows[indexConflicted] = 'Conflicted';
         const index = cleanedCoaches.lastIndexOf(conflictedCoache);
         if (index) cleanedCoaches.splice(index,1);
       }
@@ -861,45 +1007,18 @@ export const createTeamsContactsCsv = (
         })),
       });
     }
-    console.log('cleanedCoaches =>', cleanedCoaches);
-    // let validatedCoaches = cleanedCoaches;
-    // cleanedCoaches.forEach((coache) => {
-    //   // check if user selected correct division.
-    //   const selectedDivision = getState().teams.divisions.find(
-    //     (division) => division.short_name === coache.division_name
-    //   );
-    //   if (!selectedDivision) {
-    //     validatedCoaches = validatedCoaches.filter((it) => (it.division_name !== selectedDivision.division_name))
-    //     throw { message: "Division Should be selected" };
-    //   }
-
-    //   // check if user selected available team.
-    //   const filteredTeamByDivision = getState().teams.teams.filter(
-    //     (team) => team.division_id === selectedDivision.division_id
-    //   );
-    //   const selectedTeam = filteredTeamByDivision.find(
-    //     (team) => team.short_name === coache.team_name
-    //   );
-    //   if (!selectedTeam) {
-    //     validatedCoaches = validatedCoaches.filter((it) => (it.team_name !== selectedTeam.short_name))
-    //     throw {
-    //       message: `There is a team in the form names the ${coache.team_name}. But that team doesn't exist. Please address this issue and try to import again.`,
-    //     };
-    //   }
-    // });
 
     const addedCoaches: ICoache[] = [];
     let progress = 0;
     for await (const coache of cleanedCoaches) {
-      console.log('cleanedCoaches=>', cleanedCoaches);
        // post coache data
       const data = {
         team_contact_id: getVarcharEight(),
         team_id: getVarcharEight(),
         first_name: coache.first_name,
         last_name: coache.last_name,
-        // division_name: "2021",
-        // team_name: "Team 1",
+        division_name: coache.division_name,
+        team_name: coache.team_name,
         // team_id: "",
         allow_sms_YN: 1,
         contact_email: coache.contact_email,
@@ -907,27 +1026,25 @@ export const createTeamsContactsCsv = (
         role: coache.role,
       };
       const response = await Api.post("/teams_contacts", data);
-      console.log('response=>', response);
       if (!response || response?.errorType === "Error" || response?.message === false) {
         Toasts.errorToast("Couldn't create a teams contacts");
         const indexFailed = comingCoaches.findIndex(
           (coache) =>
-            // coache.division_name === data.division_name &&
-            coache.team_id === data.team_id &&
+            coache.division_name === data.division_name &&
+            coache.team_name === data.team_name &&
             coache.first_name === data.first_name &&
             coache.last_name === data.last_name 
         );
-         reportedRows[indexFailed] = 'import failed';
+         reportedRows[indexFailed] = 'Import failed';
       } else {
-        console.log('added Coache=>', data);
-        const indexFailed = comingCoaches.findIndex(
+        const indexSuccessed = comingCoaches.findIndex(
           (coache) =>
-            // coache.division_name === data.division_name &&
-            coache.team_id === data.team_id &&
+            coache.division_name === data.division_name &&
+            coache.team_name === data.team_name &&
             coache.first_name === data.first_name &&
             coache.last_name === data.last_name 
         );
-        reportedRows[indexFailed] = 'import successed';
+        reportedRows[indexSuccessed] = 'Import successed';
         addedCoaches.push(data as ICoache);
         progress += 1;
 
@@ -940,6 +1057,16 @@ export const createTeamsContactsCsv = (
             },
           ],
         });
+
+        if (reportedRows.length !== 0) {
+          cb({
+            type: "error",
+            data: reportedRows.map((report: string, index: number) => ({
+              index,
+              msg: report,
+            })),
+          });
+        }
       }
       
     }
@@ -958,7 +1085,7 @@ export const createTeamsContactsCsv = (
       dispatch({
         type: CREATE_COACHES_SUCCESS,
         payload: {
-          data: addedCoaches,
+          coaches: addedCoaches,
         },
       });
     } else {
@@ -1091,6 +1218,7 @@ export const createPlayersCsv = (
 export {
   loadPools,
   saveTeams,
+  saveTeamContact,
   deleteTeam,
   loadTeamsData,
   canceledDelete,

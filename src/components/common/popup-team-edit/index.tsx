@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
 import axios from "axios";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { orderBy } from "lodash-es";
@@ -18,7 +17,6 @@ import { BindingAction } from "common/models/callback";
 import { ISelectOption, IUSAState, IDivision } from "common/models";
 import { ITeam, ITeamWithResults } from "common/models/teams";
 import { Icons } from "common/enums/icons";
-import { IAppState } from "reducers/root-reducer.types";
 import { ISchedulesGameWithNames } from "common/models";
 import styles from "./styles.module.scss";
 import { formatPhoneNumber } from "helpers/formatPhoneNumber";
@@ -65,7 +63,8 @@ interface Props {
   isLoadingNames?: boolean;
   isOpenDeleteConfirm?: boolean;
   onCheckTeam?: (team: ITeam | ITeamWithResults) => void;
-  onSaveTeamClick: BindingAction;
+  onSaveTeamClick: (contactId: string) => void;
+  // onSaveTeamClick: BindingAction;
   onDeleteTeamClick: (team: ITeam | ITeamWithResults) => void;
   onChangeTeam: (evt: React.ChangeEvent<HTMLInputElement>) => void;
   onChangePhoneNumber: (value: string) => void;
@@ -105,29 +104,16 @@ const TeamDetailsPopup = ({
   const [isDelete, setIsDelete] = useState(false);
   const [checkStatus, setCheckStatus] = useState(false);
 
-  const { coaches } = useSelector((state: IAppState) => state.teams);
-  const coache = coaches.find((coache) => coache.team_contact_id === contactId);
-  const contactFirstName = (contactId === '') 
-    ? team?.contact_first_name
-    : coache?.first_name;
-   
-  const contactLastName = (contactId === '')
-    ? team?.contact_last_name
-    : coache?.last_name;
-
-  const contactPhone: string = contactId === '' 
-    ? (team?.phone_num ? team.phone_num : '')
-    : (coache?.phone_num ? coache.phone_num : '');
-
-  const contactEmail = (contactId === '') 
-    ? team?.contact_email
-    : coaches.find((coache) => coache.team_contact_id === contactId)?.contact_email;
+  const contactFirstName = team?.contact_first_name;  
+  const contactLastName = team?.contact_last_name;
+  const contactPhone: string = team?.phone_num ? team.phone_num : '';
+  const contactEmail = team?.contact_email;
 
   useEffect(() => {
     setIsOpenConf(isOpenConfirm);
     onDeletePopup(isOpenDeleteConfirm!);
     if (checkStatus && isDivisionEdited && isOpenDeleteConfirm) {
-      onSaveTeamClick();
+      onSaveTeamClick(contactId);
     }
   }, [isOpenConfirm, isOpenDeleteConfirm, checkStatus]);
 
@@ -177,7 +163,7 @@ const TeamDetailsPopup = ({
       onCheckTeam(team);
       setCheckStatus(true);
     } else {
-      onSaveTeamClick();
+      onSaveTeamClick(contactId);
     }
   };
 
@@ -196,22 +182,25 @@ const TeamDetailsPopup = ({
     if (onDeleteTeamFromSchedule) {
       onDeleteTeamFromSchedule();
     }
-    onSaveTeamClick();
+    onSaveTeamClick(contactId);
   };
 
   const divisionsOptions = divisions?.map((item) => {
     return { value: item.division_id, label: item.long_name };
   });
 
-  const warningMessage = `This team is in the ${
+  const warningMessage = contactId === '' ? `This team is in the ${
     schedulesNames ? schedulesNames.join(", ") : null
   } schedule. If deleted, all of their games would 
-   need to be updated with a new team. Proceed?`;
-
+   need to be updated with a new team. Proceed?` :
+   `Do you proceed to delete this team contact?`;
+  const deleteConfirmMessage = contactId === '' ? deleteMessage : "Please input contact name to confirm";
+  const deleteTitle = contactId === '' ? team.long_name : `${contactFirstName} ${contactLastName}`;
+  const deleteType = contactId === '' ? 'team' : `player`;
   const warningMessageDivision = `This team is in the ${
     schedulesNames ? schedulesNames.join(", ") : null
   } schedule. Delete team from schedules?`;
-console.log('contactId => ', contactId)
+
   return (
     <div className={styles.popupWrapper}>
       <div className={styles.headerWrapper}>
@@ -334,7 +323,7 @@ console.log('contactId => ', contactId)
                       <b>First Name: </b>
                       <input
                         onChange={onChangeTeam}
-                        value={contactFirstName || ""}
+                        defaultValue={contactFirstName || ""}
                         name={FORM_FIELDS.CONTACT_FIRST_NAME}
                         type="text"
                       />
@@ -343,7 +332,7 @@ console.log('contactId => ', contactId)
                       <b>Last Name: </b>
                       <input
                         onChange={onChangeTeam}
-                        value={contactLastName || ""}
+                        defaultValue={contactLastName || ""}
                         name={FORM_FIELDS.CONTACT_LAST_NAME}
                         type="text"
                       />
@@ -421,7 +410,7 @@ console.log('contactId => ', contactId)
             <Button
               onClick={confirmDelete}
               icon={getIcon(Icons.DELETE, DELETE_ICON_STYLES)}
-              label="Delete Team"
+              label={contactId === '' ? "Delete Team" :  "Delete Team Contact"}
               variant="text"
               color="inherit"
             />
@@ -462,7 +451,7 @@ console.log('contactId => ', contactId)
           message={warningMessageDivision}
           isOpen={isOpenConf || false}
           onClose={onCloseModal}
-          onCanceClick={onSaveTeamClick}
+          onCanceClick={() => onSaveTeamClick(contactId)}
           onYesClick={onDeleteTeam}
         />
       )}
@@ -471,9 +460,9 @@ console.log('contactId => ', contactId)
       </Backdrop>
       {isDelete && (
         <DeletePopupConfrim
-          type={"team"}
-          message={deleteMessage}
-          deleteTitle={team.long_name!}
+          type={deleteType}
+          message={deleteConfirmMessage}
+          deleteTitle={deleteTitle!}
           isOpen={isDeletePopupOpen}
           onClose={onDeletePopupClose}
           onDeleteClick={() => onDeleteTeamClick(team)}

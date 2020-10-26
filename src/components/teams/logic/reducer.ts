@@ -9,6 +9,7 @@ import {
   CREATE_TEAMS_SUCCESS,
   CREATE_PLAYERS_SUCCESS,
   CREATE_COACHES_SUCCESS,
+  SAVE_COACHES_SUCCESS,
   DELETE_PLAYER_SUCCESS,
   DELETE_COACHE_SUCCESS,
   CHECK_DELETE_TEAM_START,
@@ -130,11 +131,15 @@ const teamsReducer = (
       };
     }
     case CREATE_COACHES_SUCCESS: {
-      const { data } = action.payload;
+      const { coaches } = action.payload;
       return {
         ...state,
-        coaches: [...state.coaches, ...data],
+        coaches: [...state.coaches, ...coaches],
       };
+    }
+    case SAVE_COACHES_SUCCESS: {
+      const { coaches } = action.payload;
+      return { ...state, coaches };
     }
     case SAVE_PLAYER_SUCCESS: {
       const { player } = action.payload;

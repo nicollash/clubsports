@@ -5,6 +5,7 @@ import { RouteComponentProps } from "react-router-dom";
 import {
   loadPools,
   saveTeams,
+  saveTeamContact,
   deleteTeam,
   savePlayer,
   deletePlayer,
@@ -62,6 +63,7 @@ interface Props {
   isLoadingSchedulesAndBracketsNames: boolean;
   loadPools: (divisionId: string) => void;
   saveTeams: (teams: ITeam[], cb?: (param?: object) => void) => void;
+  saveTeamContact: (contactId: string, team: ITeam, cb?: (param?: object) => void) => void;
   deleteTeam: () => void;
   savePlayer: (player: IPlayer[]) => void;
   deletePlayer: (player: IPlayer[]) => void;
@@ -144,13 +146,20 @@ class Teams extends React.Component<
 
   onSaveClick = () => {
     const eventId = this.props.match.params.eventId;
-    const { saveTeams } = this.props;
-    const { teams } = this.state;
+    const { saveTeams, saveTeamContact } = this.props;
+    const { configurableTeam, teams, configuralbeTeamContactId } = this.state;
 
     if (eventId) {
-      saveTeams(teams);
+      if (configuralbeTeamContactId === '') {
+        saveTeams(teams);
+      } else if (configurableTeam) {
+        saveTeamContact(configuralbeTeamContactId, configurableTeam);
+      }
     }
-    this.setState({ isConfirmModalOpen: false });
+    this.setState({ 
+      isConfirmModalOpen: false,
+      changesAreMade: false,
+    });
   };
 
   onCancelClick = () => {
@@ -161,16 +170,31 @@ class Teams extends React.Component<
   };
 
   onDeleteTeam = (team: ITeam) => {
-    this.props.deleteTeam();
+    const { saveTeamContact } = this.props;
+    const { configuralbeTeamContactId, configurableTeam } = this.state;
+    if (configuralbeTeamContactId === '') {
+      this.props.deleteTeam();
 
-    this.setState(
-      ({ teams }) => ({
-        teams: teams.map((it) =>
-          it.team_id === team.team_id ? { ...it, isDelete: true } : it
-        ),
-      }),
-      this.onSaveClick
-    );
+      this.setState(
+        ({ teams }) => ({
+          teams: teams.map((it) =>
+            it.team_id === team.team_id ? { ...it, isDelete: true } : it
+          ),
+        }),
+        this.onSaveClick
+      );
+    } else {
+      this.setState({
+        configurableTeam: {
+          ...(configurableTeam as ITeam),
+          isDelete: true,
+        },
+      });
+      saveTeamContact(
+        configuralbeTeamContactId, 
+        { ...(configurableTeam) as ITeam, isDelete: true }
+      );
+    }
 
     this.onCloseModal();
   };
@@ -315,29 +339,32 @@ class Teams extends React.Component<
   };
 
   onSaveTeam = () => {
-    const { configurableTeam, teams } = this.state;
+    const { configurableTeam, teams, configuralbeTeamContactId } = this.state;
     let newTeams = teams;
 
     if (configurableTeam) {
-      let newTeam = configurableTeam;
-      if (
-        configurableTeam.phone_num &&
-        configurableTeam.phone_num.length < 10
-      ) {
-        newTeam = {
-          ...configurableTeam,
-          phone_num: null,
-        };
+      if (configuralbeTeamContactId === '') {
+        let newTeam = configurableTeam;
+        if (
+          configurableTeam.phone_num &&
+          configurableTeam.phone_num.length < 10
+        ) {
+          newTeam = {
+            ...configurableTeam,
+            phone_num: null,
+          };
+        }
+        const configurableTeamIndex = teams.findIndex(
+          (team) => team.team_id === configurableTeam.team_id
+        );
+        if (configurableTeamIndex > -1) {
+          newTeams[configurableTeamIndex] = newTeam;
+        }
+        this.setState({
+          teams: newTeams,
+        });
       }
-      const configurableTeamIndex = teams.findIndex(
-        (team) => team.team_id === configurableTeam.team_id
-      );
-      if (configurableTeamIndex > -1) {
-        newTeams[configurableTeamIndex] = newTeam;
-      }
-      this.setState({
-        teams: newTeams,
-      });
+      
       this.onSaveClick();
     }
 
@@ -402,7 +429,10 @@ class Teams extends React.Component<
   };
 
   onConfirmModalClose = () => {
-    this.setState({ isConfirmModalOpen: false });
+    this.setState({ 
+      isConfirmModalOpen: false,
+      changesAreMade: false,
+    });
   };
 
   onCancel = () => {
@@ -614,6 +644,7 @@ export default connect(
       {
         loadPools,
         saveTeams,
+        saveTeamContact,
         savePlayer,
         deleteTeam,
         deletePlayer,

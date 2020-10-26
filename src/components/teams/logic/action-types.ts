@@ -26,6 +26,7 @@ export const CREATE_TEAMS_SUCCESS = 'TEAMS:CREATE_TEAMS_SUCCESS';
 
 export const DELETE_COACHE_SUCCESS = 'DELETE_COACHE_SUCCESS';
 export const CREATE_COACHES_SUCCESS = 'CREATE_COACHES_SUCCESS';
+export const SAVE_COACHES_SUCCESS = 'SAVE_COACHES_SUCCESS';
 
 export const CREATE_PLAYERS_SUCCESS = 'CREATE_PLAYERS_SUCCESS';
 export const SAVE_PLAYER_SUCCESS = 'SAVE_PLAYER_SUCCESS';
@@ -93,7 +94,14 @@ export interface createPlayersSuccess {
 export interface createCoachesSuccess {
   type: 'CREATE_COACHES_SUCCESS';
   payload: {
-    data: ICoache[];
+    coaches: ICoache[];
+  }
+};
+
+export interface saveCoachesSuccess {
+  type: 'SAVE_COACHES_SUCCESS';
+  payload: {
+    coaches: ICoache[];
   }
 };
 
@@ -154,6 +162,7 @@ export type TeamsAction =
   | createTeamsSuccess
   | savePlayerSuccess
   | createCoachesSuccess
+  | saveCoachesSuccess
   | deleteCoacheSuccess
   | deletePlayerSuccess
   | createPlayersSuccess

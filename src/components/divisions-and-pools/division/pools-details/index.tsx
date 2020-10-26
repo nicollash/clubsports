@@ -221,6 +221,7 @@ const PoolsDetails = ({
   };
 
   const onSaveTeam = () => {
+
     if (configurableTeam) {
       const changedTeams = teams.map(it =>
         it.team_id === configurableTeam.team_id ? configurableTeam : it

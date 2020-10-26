@@ -24,7 +24,21 @@ interface Props {
 
 const TeamItem = ({ team, division, poolName, onEditPopupOpen }: Props) => {
   const { coaches } = useSelector((state: IAppState) => state.teams);
-  const onEdit = (contactId: string) => onEditPopupOpen(contactId, team, division, poolName || '');
+  const onEdit = (contactId: string) => {
+    let editTeam = team;
+    if (contactId !== '') {
+      const coache = coaches.find((it) => it.team_contact_id === contactId);
+      if (coache)
+        editTeam = {
+          ...team,
+          contact_first_name: coache?.first_name,
+          contact_last_name: coache?.last_name,
+          phone_num: coache?.phone_num,
+          contact_email: coache?.contact_email,
+        }as ITeam      
+    }
+    onEditPopupOpen(contactId, editTeam, division, poolName || '')
+  };
 
   const inviteLink = `${window.location.origin.toString()}/register/event/${
     division.event_id
@@ -35,9 +49,8 @@ const TeamItem = ({ team, division, poolName, onEditPopupOpen }: Props) => {
   }`;
 
   // console.log('coaches=>', coaches);
-  const teamCoaches = coaches.filter((coache) => coache);
-  // const teamCoaches = coaches.filter((coache) => coache.division_name !== division.short_name 
-  //                                               && coache.team_name !== team.short_name )
+  const teamCoaches = coaches.filter((coache) => coache.division_name === division.long_name 
+                                                && coache.team_name === team.long_name )
   const getTeamCoaches = () => {
     return teamCoaches.map((teamCoache) =>
     <tr className={styles.team}>
